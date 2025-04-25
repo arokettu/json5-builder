@@ -33,7 +33,12 @@ final class Encoder
 
     private function encodeValue(mixed $value, string $indent): void
     {
-        if (\is_integer($value)) {
+        if (\is_bool($value)) {
+            fwrite($this->resource, $value ? 'true' : 'false');
+            return;
+        }
+
+        if (\is_int($value)) {
             fwrite($this->resource, json_encode($value));
             return;
         }
@@ -95,7 +100,41 @@ final class Encoder
 
     private function encodeString(string $string): void
     {
-        fwrite($this->resource, json_encode($string));
+        $quotes = $this->options->quotes;
+
+        // check if changing quotes may result in unescaped quotes
+        if ($this->options->tryOtherQuotes) {
+            $hasSingleQuotes = str_contains($string, "'");
+            $hasDoubleQuotes = str_contains($string, '"');
+            $preferrableQuotes = ($hasSingleQuotes xor $hasDoubleQuotes);
+
+            if ($preferrableQuotes) {
+                if ($hasSingleQuotes && $quotes === Options\Quotes::Single) {
+                    $quotes = Options\Quotes::Double;
+                } elseif ($hasDoubleQuotes && $quotes === Options\Quotes::Double) {
+                    $quotes = Options\Quotes::Single;
+                }
+            }
+        }
+
+        $encoded = json_encode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        if ($this->options->multiline) {
+            $hasLineEndings = str_contains($string, "\n");
+
+            if ($hasLineEndings) {
+                $encoded = str_replace("\\n", "\\n\\\n", $encoded);
+                $encoded = "\"\\\n" . substr($encoded, 1);
+            }
+        }
+
+        if ($quotes === Options\Quotes::Single) {
+            $encoded = substr($encoded, 1, -1); // remove quotes
+            $encoded = str_replace(['\\"', "'"], ['"', "\\'"], $encoded); // unescape " and escape '
+            $encoded = "'{$encoded}'"; // add single quotes
+        }
+
+        fwrite($this->resource, $encoded);
     }
 
     private function encodeList(iterable $list, string $indent): void
