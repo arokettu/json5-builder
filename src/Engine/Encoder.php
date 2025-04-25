@@ -28,6 +28,7 @@ final class Encoder
     public function encode(): void
     {
         $this->encodeValue($this->value, '');
+        fwrite($this->resource, "\n");
     }
 
     private function encodeValue(mixed $value, string $indent): void
@@ -61,7 +62,11 @@ final class Encoder
         }
 
         if (is_array($value)) {
-            $this->encodeObject($value, $indent);
+            match (array_is_list($value)) {
+                true  => $this->encodeList($value, $indent),
+                false => $this->encodeObject($value, $indent),
+            };
+
             return;
         }
 
@@ -93,6 +98,22 @@ final class Encoder
         fwrite($this->resource, json_encode($string));
     }
 
+    private function encodeList(iterable $list, string $indent): void
+    {
+        $indent2 = $indent . $this->options->indent;
+
+        fwrite($this->resource, "[\n");
+
+        foreach ($list as $value) {
+            fwrite($this->resource, $indent2);
+            $this->encodeValue($value, $indent2);
+            fwrite($this->resource, ",\n");
+        }
+
+        fwrite($this->resource, $indent);
+        fwrite($this->resource, "]");
+    }
+
     private function encodeObject(mixed $object, string $indent): void
     {
         if ($object instanceof stdClass) {
@@ -107,11 +128,11 @@ final class Encoder
             fwrite($this->resource, $indent2);
             $this->encodeKey((string)$key);
             fwrite($this->resource, ": ");
-            $this->encodeValue($value, $indent);
+            $this->encodeValue($value, $indent2);
             fwrite($this->resource, ",\n");
         }
 
         fwrite($this->resource, $indent);
-        fwrite($this->resource, "}\n");
+        fwrite($this->resource, "}");
     }
 }
