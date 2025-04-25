@@ -1,9 +1,20 @@
 {
     "name": "arokettu/json5-builder",
     "type": "library",
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "sort-packages": true
+    },
     "autoload": {
         "psr-4": {
             "Arokettu\\Json5\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Arokettu\\Json5\\Tests\\": "tests"
         }
     },
     "require": {
@@ -11,6 +22,8 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "psy/psysh": "*"
+        "psy/psysh": "*",
+        "sandfox.dev/code-standard": "^1.2025.03.27",
+        "squizlabs/php_codesniffer": "*"
     }
 }

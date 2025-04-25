@@ -33,17 +33,12 @@ final class Encoder
 
     private function encodeValue(mixed $value, string $indent): void
     {
-        if ($value instanceof JsonSerializable) {
-            $this->encodeValue($value->jsonSerialize(), $indent);
-            return;
-        }
-
-        if (is_integer($value)) {
+        if (\is_integer($value)) {
             fwrite($this->resource, json_encode($value));
             return;
         }
 
-        if (is_float($value)) {
+        if (\is_float($value)) {
             fwrite($this->resource, match (true) {
                 is_nan($value) => 'NaN',
                 is_infinite($value) => (string)$value,
@@ -52,7 +47,7 @@ final class Encoder
             return;
         }
 
-        if (is_string($value)) {
+        if (\is_string($value)) {
             $this->encodeString($value);
             return;
         }
@@ -61,7 +56,12 @@ final class Encoder
             fwrite($this->resource, json_encode($value));
         }
 
-        if (is_array($value)) {
+        if ($value instanceof JsonSerializable) {
+            $this->encodeValue($value->jsonSerialize(), $indent);
+            return;
+        }
+
+        if (\is_array($value)) {
             match (array_is_list($value)) {
                 true  => $this->encodeList($value, $indent),
                 false => $this->encodeObject($value, $indent),
