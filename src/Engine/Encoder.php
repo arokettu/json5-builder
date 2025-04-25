@@ -19,7 +19,7 @@ final class Encoder
      * @param resource $resource
      */
     public function __construct(
-        private mixed $value,
+        private readonly mixed $value,
         private readonly Options $options,
         private $resource,
     ) {
@@ -33,6 +33,11 @@ final class Encoder
 
     private function encodeValue(mixed $value, string $indent): void
     {
+        if ($value === null) {
+            fwrite($this->resource, 'null');
+            return;
+        }
+
         if (\is_bool($value)) {
             fwrite($this->resource, $value ? 'true' : 'false');
             return;
@@ -47,7 +52,7 @@ final class Encoder
             fwrite($this->resource, match (true) {
                 is_nan($value) => 'NaN',
                 is_infinite($value) => (string)$value,
-                default => json_encode($value),
+                default => json_encode($value, $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0),
             });
             return;
         }
@@ -58,7 +63,8 @@ final class Encoder
         }
 
         if ($value instanceof RawJson5Serializable) {
-            fwrite($this->resource, json_encode($value));
+            fwrite($this->resource, $value->getRawJson5());
+            return;
         }
 
         if ($value instanceof JsonSerializable) {
@@ -85,7 +91,7 @@ final class Encoder
 
     private function encodeKey(string $key): void
     {
-        if ($this->options->avoidQuotes === false) {
+        if ($this->options->avoidKeyQuotes === false) {
             $this->encodeString($key, $this->options->keyQuotes);
             return;
         }
@@ -117,7 +123,7 @@ final class Encoder
 
         $encoded = json_encode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        if ($this->options->multiline) {
+        if ($this->options->multilineStrings) {
             $hasLineEndings = str_contains($string, "\n");
             $hasOnlyLineEndings = $hasLineEndings && preg_match('/^\n*$/', $string);
 

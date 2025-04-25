@@ -7,12 +7,15 @@ namespace Arokettu\Json5;
 final class Options
 {
     public function __construct(
-        public bool $avoidQuotes = true,
+        // strings
         public Options\Quotes $keyQuotes = Options\Quotes::Single,
         public Options\Quotes $valueQuotes = Options\Quotes::Double,
-        public bool $multiline = true,
-        public bool $trailingComma = true,
+        public bool $avoidKeyQuotes = true,
         public bool $tryOtherQuotes = true,
+        public bool $multilineStrings = true,
+        // floats
+        public bool $preserveZeroFraction = false,
+        // formatting
         public string $indent = '    ',
     ) {
     }
