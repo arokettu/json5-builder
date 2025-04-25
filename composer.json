@@ -1,0 +1,16 @@
+{
+    "name": "arokettu/json5-builder",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Arokettu\\Json5\\": "src"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "psy/psysh": "*"
+    }
+}

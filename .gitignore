@@ -1,0 +1,9 @@
+# ide
+/.idea
+
+# composer
+/composer.lock
+/vendor
+
+# dev
+/debug
