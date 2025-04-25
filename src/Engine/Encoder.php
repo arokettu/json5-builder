@@ -53,7 +53,7 @@ final class Encoder
         }
 
         if (\is_string($value)) {
-            $this->encodeString($value);
+            $this->encodeString($value, $this->options->valueQuotes);
             return;
         }
 
@@ -86,7 +86,7 @@ final class Encoder
     private function encodeKey(string $key): void
     {
         if ($this->options->avoidQuotes === false) {
-            $this->encodeString($key);
+            $this->encodeString($key, $this->options->keyQuotes);
             return;
         }
 
@@ -95,13 +95,11 @@ final class Encoder
             return;
         }
 
-        $this->encodeString($key);
+        $this->encodeString($key, $this->options->keyQuotes);
     }
 
-    private function encodeString(string $string): void
+    private function encodeString(string $string, Options\Quotes $quotes): void
     {
-        $quotes = $this->options->quotes;
-
         // check if changing quotes may result in unescaped quotes
         if ($this->options->tryOtherQuotes) {
             $hasSingleQuotes = str_contains($string, "'");
@@ -121,10 +119,17 @@ final class Encoder
 
         if ($this->options->multiline) {
             $hasLineEndings = str_contains($string, "\n");
+            $hasOnlyLineEndings = $hasLineEndings && preg_match('/^\n*$/', $string);
 
-            if ($hasLineEndings) {
+            if ($hasLineEndings && !$hasOnlyLineEndings) {
                 $encoded = str_replace("\\n", "\\n\\\n", $encoded);
                 $encoded = "\"\\\n" . substr($encoded, 1);
+
+                // do not output a newline for a final newline
+                if (str_ends_with($string, "\n")) {
+                    $encoded = substr($encoded, 0, -3);
+                    $encoded .= '"';
+                }
             }
         }
 
