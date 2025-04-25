@@ -20,5 +20,8 @@ class IntegerTest extends TestCase
     {
         self::assertEquals("0x123\n", Json5Encoder::encode(new HexInteger(0x123)));
         self::assertEquals("-0x123\n", Json5Encoder::encode(new HexInteger(-0x123)));
+
+        // JSON is supported too
+        self::assertEquals("291", json_encode(new HexInteger(0x123)));
     }
 }

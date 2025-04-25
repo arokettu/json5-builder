@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5\Values;
 
-use Arokettu\Json5\RawJson5Serializable;
+use JsonSerializable;
 
-final class HexInteger implements RawJson5Serializable
+final class HexInteger implements RawJson5Serializable, JsonSerializable
 {
     public function __construct(
         public readonly int $value,
@@ -20,5 +20,10 @@ final class HexInteger implements RawJson5Serializable
         } else {
             return '-0x' . strtoupper(dechex(-$this->value));
         }
+    }
+
+    public function jsonSerialize(): int
+    {
+        return $this->value;
     }
 }

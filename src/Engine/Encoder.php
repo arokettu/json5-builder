@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
-use Arokettu\Json5\RawJson5Serializable;
+use Arokettu\Json5\Values\Json5Serializable;
+use Arokettu\Json5\Values\RawJson5Serializable;
 use ArrayObject;
 use JsonSerializable;
 use stdClass;
@@ -64,6 +65,11 @@ final class Encoder
 
         if ($value instanceof RawJson5Serializable) {
             fwrite($this->resource, $value->getRawJson5());
+            return;
+        }
+
+        if ($value instanceof Json5Serializable) {
+            $this->encodeValue($value->json5Serialize(), $indent);
             return;
         }
 
