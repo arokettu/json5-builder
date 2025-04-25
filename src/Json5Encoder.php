@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5;
 
-final class Encoder
+final class Json5Encoder
 {
     public static function encode(mixed $value, Options $options = new Options()): string
     {
