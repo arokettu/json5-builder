@@ -27,9 +27,9 @@ class StringValuesTest extends TestCase
     public function testAutodetectQuotes(): void
     {
         $singleQuotesNoDetect = new Options(valueQuotes: Options\Quotes::Single, tryOtherQuotes: false);
-        $singleQuotesDetect   = new Options(valueQuotes: Options\Quotes::Single, tryOtherQuotes: true);
+        $singleQuotesDetect   = new Options(valueQuotes: Options\Quotes::Single);
         $doubleQuotesNoDetect = new Options(valueQuotes: Options\Quotes::Double, tryOtherQuotes: false);
-        $doubleQuotesDetect   = new Options(valueQuotes: Options\Quotes::Double, tryOtherQuotes: true);
+        $doubleQuotesDetect   = new Options(valueQuotes: Options\Quotes::Double);
 
         $strings = [
             'simple',
