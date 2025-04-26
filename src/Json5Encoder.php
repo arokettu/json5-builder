@@ -11,6 +11,8 @@ final class Json5Encoder
         $stream = fopen('php://temp', 'r+');
         (new Engine\Encoder($value, $options, $stream))->encode();
         rewind($stream);
-        return stream_get_contents($stream);
+        $json5 = stream_get_contents($stream);
+        fclose($stream);
+        return $json5;
     }
 }
