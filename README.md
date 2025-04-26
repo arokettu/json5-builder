@@ -22,7 +22,7 @@ $config = new CommentDecorator(
         'bareKeys' => 'Look, no quotes!',
         'value' => new CommentDecorator(
             new HexInteger(0xFFF),
-             commentAfter: 'This is a very important value'
+            commentAfter: 'This is a very important value'
          ),
         'notAvailableInJSON' => [NAN, INF],
         'end' => 'auto trailing comma ->'
