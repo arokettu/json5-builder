@@ -188,9 +188,14 @@ final class Encoder
         fwrite($this->resource, $encoded);
     }
 
-    private function encodeList(iterable $list, string $indent): void
+    private function encodeList(array $list, string $indent): void
     {
         $indent2 = $indent . $this->options->indent;
+
+        if (\count($list) === 0) {
+            fwrite($this->resource, "[]");
+            return;
+        }
 
         fwrite($this->resource, "[\n");
 
@@ -211,10 +216,15 @@ final class Encoder
         fwrite($this->resource, "]");
     }
 
-    private function encodeObject(mixed $object, string $indent): void
+    private function encodeObject(array|stdClass|ArrayObject $object, string $indent): void
     {
         if ($object instanceof stdClass) {
             $object = get_object_vars($object);
+        }
+
+        if (\count($object) === 0) {
+            fwrite($this->resource, "{}");
+            return;
         }
 
         $indent2 = $indent . $this->options->indent;
