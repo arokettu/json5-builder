@@ -16,3 +16,6 @@
 # js
 /node_modules
 /package*.json
+
+# docs
+/docs/build
