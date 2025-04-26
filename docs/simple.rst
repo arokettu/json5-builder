@@ -32,6 +32,8 @@ The main differences:
   An object must be an instance of ``stdClass`` or ``ArrayObject``,
   or implement ``JsonSerializable`` or ``Json5Serializable``.
   You can replicate the ``json_encode()`` behavior by wrapping an object with ``ArrayObject``.
+* The document is always pretty-printed.
+* Trailing commas are always used.
 
 Use :ref:`json5_options` and :ref:`json5_objects` to customize your output.
 

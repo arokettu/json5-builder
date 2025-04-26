@@ -2,3 +2,267 @@
 
 Options
 #######
+
+.. highlight:: php
+
+``\Arokettu\Json5\Options``
+
+An object to control generic options.
+All options are exposed as both constructor arguments and fields::
+
+    <?php
+
+    use Arokettu\Json5\Options;
+    use Arokettu\Json5\Options\BareKeys;
+
+    $options = new Options(bareKeys: BareKeys::Unicode);
+
+    // same as
+
+    $options = new Options();
+    $options->bareKeys = BareKeys::Unicode;
+
+    // apply options
+
+    echo Json5Encoder::encode($value, $options);
+
+String options
+==============
+
+``bareKeys``
+------------
+
+Default: ``BareKeys::Ascii``
+
+Controls rendering of unquoted keys, value is an enum ``\Arokettu\Json5\Options\BareKeys``
+
+Possible values:
+
+``BareKeys::None``
+    All keys are quoted.
+``BareKeys::Ascii``
+    Allows only ``$``, ``_``, ASCII letters and digits in unquoted keys, maximizes readability and compatibility.
+``BareKeys::Unicode``
+    Leaves any ES 5.1 IdentifierName_ keys unquoted.
+    This allows unquoted Unicode keys and may be incompatible with some parsers.
+    It also depends on what version of Unicode is implemented in your PCRE engine.
+
+.. _IdentifierName: https://262.ecma-international.org/5.1/#sec-7.6
+
+::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Options;
+    use Arokettu\Json5\Options\BareKeys;
+
+    $value = [
+        'ascii' => 'unquoted in Ascii and Unicode',
+        'ユニコード' => 'unquoted in Unicode',
+        'contains space' => 'always quoted',
+    ];
+
+    echo Json5Encoder::encode($value, new Options(bareKeys: BareKeys::None));
+    echo Json5Encoder::encode($value, new Options(bareKeys: BareKeys::Ascii));
+    echo Json5Encoder::encode($value, new Options(bareKeys: BareKeys::Unicode));
+
+.. code-block:: json5
+
+    // None
+    {
+        'ascii': "unquoted in Ascii and Unicode",
+        'ユニコード': "unquoted in Unicode",
+        'contains space': "always quoted",
+    }
+    // Ascii
+    {
+        ascii: "unquoted in Ascii and Unicode",
+        'ユニコード': "unquoted in Unicode",
+        'contains space': "always quoted",
+    }
+    // Unicode
+    {
+        ascii: "unquoted in Ascii and Unicode",
+        ユニコード: "unquoted in Unicode",
+        'contains space': "always quoted",
+    }
+
+``keyQuotes``, ``valueQuotes``
+------------------------------
+
+Default: ``keyQuotes = Quotes::Single``, ``valueQuotes = Quotes::Double``
+
+Controls rendering of strings and quoted keys. The value is an enum ``\Arokettu\Json5\Options\Quotes``::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Options;
+    use Arokettu\Json5\Options\Quotes;
+
+    $value = [
+        'some key' => 'some value',
+    ];
+
+    // invert the default config
+    echo Json5Encoder::encode($value, new Options(
+        keyQuotes: Quotes::Double,
+        valueQuotes: Quotes::Single,
+    ));
+
+.. code-block:: json5
+
+    {
+        "some key": 'some value',
+    }
+
+``tryOtherQuotes``
+------------------
+
+Default: ``true``
+
+Overrides ``keyQuotes`` / ``valueQuotes`` for readability for some strings.
+In case a string contains target quotes but does not contain the other type, the quote type switches::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Options;
+
+    require __DIR__ . '/../vendor/autoload.php';
+
+    $value = [
+        'default key quotes' => 'default value quotes',
+        "that's a key" => 'a so called "value"',
+        "both here: '\"" => "both here: '\"",
+    ];
+
+    echo Json5Encoder::encode($value, new Options(tryOtherQuotes: false));
+    echo Json5Encoder::encode($value, new Options(tryOtherQuotes: true));
+
+.. code-block:: json5
+
+    // Disabled
+    {
+        'default key quotes': "default value quotes",
+        'that\'s a key': "a so called \"value\"",
+        'both here: \'"': "both here: '\"",
+    }
+    // Enabled
+    {
+        'default key quotes': "default value quotes",
+        "that's a key": 'a so called "value"', // obviously more readable
+        'both here: \'"': "both here: '\"", // we don't try to guess here
+    }
+
+``multilineStrings``
+--------------------
+
+Default: ``false``.
+
+Renders multiline values on multiple lines.
+Multiline support is poor in both JSON and JSON5.
+(It's better in JSON6 but neither JSON6 is widely used nor I like the standard in general)
+This rendering mode tries to make multiline values look somewhat better
+by rendering them in heredoc style by postfixing lines with ``"\n\"``::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Options;
+
+    $value = [
+        'limerick' => <<<TEXT
+            The limerick packs laughs anatomical
+            Into space that is quite economical.
+            But the good ones I’ve seen
+            So seldom are clean
+            And the clean ones so seldom are comical.
+            TEXT,
+        'author' => 'unknown',
+        'take some newlines with you' => "\n\n\n\n", // won't become a multiline
+    ];
+
+    echo Json5Encoder::encode($value, new Options(multilineStrings: true));
+
+.. code-block:: json5
+
+    {
+        limerick: "\
+    The limerick packs laughs anatomical\n\
+    Into space that is quite economical.\n\
+    But the good ones I’ve seen\n\
+    So seldom are clean\n\
+    And the clean ones so seldom are comical.",
+        author: "unknown",
+        'take some newlines with you': "\n\n\n\n",
+    }
+
+Float options
+=============
+
+``preserveZeroFraction``
+------------------------
+
+Default: ``false``.
+
+.. note:: https://www.php.net/manual/en/json.constants.php#constant.json-preserve-zero-fraction
+
+Applies ``JSON_PRESERVE_ZERO_FRACTION`` to float values, ensuring that they are always encoded as a float value::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Options;
+
+    $value = [
+        'int' => 123,
+        'float' => (float)123,
+        'surely_float' => 1.23,
+    ];
+
+    echo Json5Encoder::encode($value, new Options(preserveZeroFraction: true));
+
+.. code-block:: json5
+
+    {
+        int: 123,
+        float: 123.0, // would be 123 by default
+        surely_float: 1.23,
+    }
+
+
+Formatting options
+==================
+
+``indent``
+----------
+
+Default: ``'    '`` (4 spaces).
+
+A pretty print indentation.
+Must contain only JSON5 ignorable whitespace, usually spaces and tabs::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Options;
+
+    $value = [
+        'key' => 'value',
+        'list' => ['item1', 'item2'],
+    ];
+
+    echo Json5Encoder::encode($value, new Options(indent: "\t"));
+
+
+.. code-block:: json5
+
+    {
+            key: "value",
+            list: [
+                    "item1",
+                    "item2",
+            ],
+    }

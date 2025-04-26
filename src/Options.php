@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5;
 
-use Arokettu\Json5\Options\BareKeys;
 use ValueError;
 
 final class Options
@@ -13,7 +12,7 @@ final class Options
         // strings
         public Options\Quotes $keyQuotes = Options\Quotes::Single,
         public Options\Quotes $valueQuotes = Options\Quotes::Double,
-        public BareKeys $bareKeys = Options\BareKeys::Ascii,
+        public Options\BareKeys $bareKeys = Options\BareKeys::Ascii,
         public bool $tryOtherQuotes = true,
         public bool $multilineStrings = false,
         // floats
