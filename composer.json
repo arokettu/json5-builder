@@ -1,8 +1,8 @@
 {
     "name": "arokettu/json5-builder",
     "type": "library",
-    "description": "JSON5 config builder",
-    "keywords": ["json5", "configuration", "config", "builder"],
+    "description": "JSON5 config builder/encoder",
+    "keywords": ["json5", "configuration", "config", "builder", "encode"],
     "license": "MIT",
     "authors": [{
         "name": "Anton Smirnov",
