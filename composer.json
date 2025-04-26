@@ -1,6 +1,15 @@
 {
     "name": "arokettu/json5-builder",
     "type": "library",
+    "description": "JSON5 config builder",
+    "keywords": ["json5", "configuration", "config", "builder"],
+    "license": "MIT",
+    "authors": [{
+        "name": "Anton Smirnov",
+        "email": "sandfox+composer@sandfox.me",
+        "role": "developer",
+        "homepage": "https://sandfox.me/"
+    }],
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
