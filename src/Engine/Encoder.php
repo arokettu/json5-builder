@@ -16,6 +16,18 @@ use stdClass;
  */
 final class Encoder
 {
+    // IdentifierName patterns
+    // UnicodeEscapeSequence is also allowed but ignore it for simplicity
+    private const UNICODE_LETTER = '\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}';
+    private const UNICODE_COMBINING_MARK = '\p{Mn}\p{Mc}';
+    private const UNICODE_DIGIT = '\p{Nd}';
+    private const UNICODE_CONNECTOR_PUNCTUATION = '\p{Pc}';
+    private const ZWNJ = '\x{200c}';
+    private const ZWJ = '\x{200d}';
+    private const IDENTIFIER_START = '$_' . self::UNICODE_LETTER;
+    private const IDENTIFIER_PART = self::IDENTIFIER_START . self::UNICODE_COMBINING_MARK . self::UNICODE_DIGIT .
+        self::UNICODE_CONNECTOR_PUNCTUATION . self::ZWNJ . self::ZWJ;
+
     /**
      * @param resource $resource
      */
@@ -102,7 +114,7 @@ final class Encoder
             return;
         }
 
-        if (preg_match('/^[\p{L}$_][\p{L}$_\p{N}\p{Pc}]*$/u', $key)) {
+        if (preg_match('/^[' . self::IDENTIFIER_START . '][' . self::IDENTIFIER_PART . ']*$/u', $key)) {
             fwrite($this->resource, $key);
             return;
         }

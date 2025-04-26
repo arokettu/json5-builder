@@ -11,3 +11,7 @@
 # test
 /.phpunit.result.cache
 /reports
+
+# js
+/node_modules
+/package*.json
