@@ -89,6 +89,22 @@ class IndentTest extends TestCase
             }
 
             JSON5, Json5Encoder::encode($data, $all));
+
+        // set by property too
+        $all2 = new Options();
+        $all2->indent = $chars;
+        self::assertEquals(<<<JSON5
+            {
+            {$chars}obj: {
+            {$chars}{$chars}list: [
+            {$chars}{$chars}{$chars}"item1",
+            {$chars}{$chars}{$chars}"item2",
+            {$chars}{$chars}{$chars}"item3",
+            {$chars}{$chars}],
+            {$chars}},
+            }
+
+            JSON5, Json5Encoder::encode($data, $all2));
     }
 
     public function testNonWhitespace(): void
@@ -110,5 +126,19 @@ class IndentTest extends TestCase
         self::expectExceptionMessage('Indent must contain only whitespace characters');
 
         new Options(indent: $indent);
+    }
+
+    public function testPropertyValidatedToo(): void
+    {
+        $indent = "\x0c\x0c"; // passes \s check but is invalid in JSON
+
+        // sanity check
+        self::assertMatchesRegularExpression('/^\s+$/', $indent);
+
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('Indent must contain only whitespace characters');
+
+        $options = new Options();
+        $options->indent = $indent;
     }
 }
