@@ -10,6 +10,7 @@ use Arokettu\Json5\Values\RawJson5Serializable;
 use ArrayObject;
 use JsonSerializable;
 use stdClass;
+use TypeError;
 
 /**
  * @internal
@@ -110,7 +111,7 @@ final class Encoder
             return;
         }
 
-        throw new \LogicException('Unsupported type');
+        throw new TypeError('Unsupported type: ' . get_debug_type($value));
     }
 
     private function encodeKey(string $key): void
