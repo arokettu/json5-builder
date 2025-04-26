@@ -24,9 +24,15 @@ final class Encoder
     private const UNICODE_CONNECTOR_PUNCTUATION = '\p{Pc}';
     private const ZWNJ = '\x{200c}';
     private const ZWJ = '\x{200d}';
-    private const IDENTIFIER_START = '$_' . self::UNICODE_LETTER;
-    private const IDENTIFIER_PART = self::IDENTIFIER_START . self::UNICODE_COMBINING_MARK . self::UNICODE_DIGIT .
-        self::UNICODE_CONNECTOR_PUNCTUATION . self::ZWNJ . self::ZWJ;
+    private const UNICODE_IDENTIFIER_START = '$_' . self::UNICODE_LETTER;
+    private const UNICODE_IDENTIFIER_PART = self::UNICODE_IDENTIFIER_START . self::UNICODE_COMBINING_MARK .
+        self::UNICODE_DIGIT . self::UNICODE_CONNECTOR_PUNCTUATION . self::ZWNJ . self::ZWJ;
+    private const UNICODE_PATTERN =
+        '/^[' . self::UNICODE_IDENTIFIER_START . '][' . self::UNICODE_IDENTIFIER_PART . ']*$/u';
+    private const ASCII_IDENTIFIER_START = '$_' . 'a-zA-Z';
+    private const ASCII_IDENTIFIER_PART = self::ASCII_IDENTIFIER_START . '0-9';
+    private const ASCII_PATTERN =
+        '/^[' . self::ASCII_IDENTIFIER_START . '][' . self::ASCII_IDENTIFIER_PART . ']*$/';
 
     /**
      * @param resource $resource
@@ -109,12 +115,13 @@ final class Encoder
 
     private function encodeKey(string $key): void
     {
-        if ($this->options->avoidKeyQuotes === false) {
-            $this->encodeString($key, $this->options->keyQuotes);
-            return;
-        }
+        $pattern = match ($this->options->bareKeys) {
+            Options\BareKeys::None => false,
+            Options\BareKeys::Ascii => self::ASCII_PATTERN,
+            Options\BareKeys::Unicode => self::UNICODE_PATTERN,
+        };
 
-        if (preg_match('/^[' . self::IDENTIFIER_START . '][' . self::IDENTIFIER_PART . ']*$/u', $key)) {
+        if ($pattern && preg_match($pattern, $key)) {
             fwrite($this->resource, $key);
             return;
         }

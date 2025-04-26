@@ -12,8 +12,8 @@ class StringKeysTest extends TestCase
 {
     public function testStrings(): void
     {
-        $singleQuotes = new Options(keyQuotes: Options\Quotes::Single, avoidKeyQuotes: false, indent: '');
-        $doubleQuotes = new Options(keyQuotes: Options\Quotes::Double, avoidKeyQuotes: false, indent: '');
+        $singleQuotes = new Options(keyQuotes: Options\Quotes::Single, bareKeys: Options\BareKeys::None, indent: '');
+        $doubleQuotes = new Options(keyQuotes: Options\Quotes::Double, bareKeys: Options\BareKeys::None, indent: '');
 
         self::assertEquals("{\n'abcd': null,\n}\n", Json5Encoder::encode(['abcd' => null], $singleQuotes));
         self::assertEquals("{\n\"abcd\": null,\n}\n", Json5Encoder::encode(['abcd' => null], $doubleQuotes));
@@ -108,6 +108,24 @@ class StringKeysTest extends TestCase
                 "with'quote": 5,
                 _ok_: 6,
                 $ok$: 7,
+                'ключ': 8,
+                '鍵': 9,
+                'cmárk⁀123': 10,
+                'Auf‌lage﹎क्‍ष': 11,
+                'com,ma': 12,
+            }
+
+            JSON5, Json5Encoder::encode($data, new Options()));
+
+        self::assertEquals(<<<'JSON5'
+            {
+                simple: 1,
+                '2digit': 2,
+                digit3: 3,
+                'with"quote': 4,
+                "with'quote": 5,
+                _ok_: 6,
+                $ok$: 7,
                 ключ: 8,
                 鍵: 9,
                 cmárk⁀123: 10,
@@ -115,6 +133,6 @@ class StringKeysTest extends TestCase
                 'com,ma': 12,
             }
 
-            JSON5, Json5Encoder::encode($data));
+            JSON5, Json5Encoder::encode($data, new Options(bareKeys: Options\BareKeys::Unicode)));
     }
 }
