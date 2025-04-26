@@ -19,7 +19,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $config = new CommentDecorator(
     [
-        'bareKeys' => 'Look, no quotes!',
+        'bareKeys' => '<- Look, no quotes!',
         'value' => new CommentDecorator(
             new HexInteger(0xFFF),
             commentAfter: 'This is a very important value'
@@ -42,7 +42,7 @@ will result in
 // This is my cool JSON5 config!
 //
 {
-    bareKeys: "Look, no quotes!",
+    bareKeys: "<- Look, no quotes!",
     value: 0xFFF, // This is a very important value
     notAvailableInJSON: [
         NaN,
