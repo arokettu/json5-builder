@@ -14,7 +14,7 @@ final class CommentDecorator implements JsonSerializable
         public readonly string|null $commentBefore = null,
         public readonly string|null $commentAfter = null,
     ) {
-        if (str_contains($this->commentAfter, "\n")) {
+        if ($this->commentAfter !== null && str_contains($this->commentAfter, "\n")) {
             throw new ValueError('The comment after must be a single line string');
         }
     }
