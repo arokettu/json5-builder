@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
+use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\RawJson5Serializable;
 use ArrayObject;
@@ -47,7 +48,15 @@ final class Encoder
 
     public function encode(): void
     {
-        $this->encodeValue($this->value, '');
+        $value = $this->value;
+
+        if ($value instanceof CommentDecorator) {
+            $this->renderComment($value->commentBefore, '');
+        }
+        $this->encodeValue($value, '');
+        if ($value instanceof CommentDecorator) {
+            $this->renderCommentLine($value->commentAfter, ' ');
+        }
         fwrite($this->resource, "\n");
     }
 
@@ -181,9 +190,16 @@ final class Encoder
         fwrite($this->resource, "[\n");
 
         foreach ($list as $value) {
+            if ($value instanceof CommentDecorator) {
+                $this->renderComment($value->commentBefore, $indent2);
+            }
             fwrite($this->resource, $indent2);
             $this->encodeValue($value, $indent2);
-            fwrite($this->resource, ",\n");
+            fwrite($this->resource, ",");
+            if ($value instanceof CommentDecorator) {
+                $this->renderCommentLine($value->commentAfter, ' ');
+            }
+            fwrite($this->resource, "\n");
         }
 
         fwrite($this->resource, $indent);
@@ -201,14 +217,49 @@ final class Encoder
         fwrite($this->resource, "{\n");
 
         foreach ($object as $key => $value) {
+            if ($value instanceof CommentDecorator) {
+                $this->renderComment($value->commentBefore, $indent2);
+            }
             fwrite($this->resource, $indent2);
             $this->encodeKey((string)$key);
             fwrite($this->resource, ": ");
             $this->encodeValue($value, $indent2);
-            fwrite($this->resource, ",\n");
+            fwrite($this->resource, ",");
+            if ($value instanceof CommentDecorator) {
+                $this->renderCommentLine($value->commentAfter, ' ');
+            }
+            fwrite($this->resource, "\n");
         }
 
         fwrite($this->resource, $indent);
         fwrite($this->resource, "}");
+    }
+
+    private function renderComment(string|null $comment, string $indent): void
+    {
+        if ($comment === null) {
+            return;
+        }
+
+        $lines = explode("\n", $comment);
+
+        foreach ($lines as $line) {
+            $this->renderCommentLine($line, $indent);
+            fwrite($this->resource, "\n");
+        }
+    }
+
+    private function renderCommentLine(string|null $commentLine, string $indent): void
+    {
+        if ($commentLine === null) {
+            return;
+        }
+
+        fwrite($this->resource, $indent);
+        fwrite($this->resource, '//');
+        if ($commentLine !== '') {
+            fwrite($this->resource, ' ');
+            fwrite($this->resource, $commentLine);
+        }
     }
 }
