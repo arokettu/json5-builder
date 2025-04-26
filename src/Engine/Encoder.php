@@ -64,7 +64,7 @@ final class Encoder
         }
 
         if ($value instanceof RawJson5Serializable) {
-            fwrite($this->resource, $value->getRawJson5());
+            fwrite($this->resource, $value->json5SerializeRaw());
             return;
         }
 

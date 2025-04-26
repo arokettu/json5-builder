@@ -13,7 +13,7 @@ final class HexInteger implements RawJson5Serializable, JsonSerializable
     ) {
     }
 
-    public function getRawJson5(): string
+    public function json5SerializeRaw(): string
     {
         if ($this->value >= 0) {
             return '0x' . strtoupper(dechex($this->value));

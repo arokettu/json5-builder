@@ -53,7 +53,7 @@ class SerializableTest extends TestCase
             {
             }
 
-            public function getRawJson5(): string
+            public function json5SerializeRaw(): string
             {
                 return (string)$this->value;
             }
@@ -76,7 +76,7 @@ class SerializableTest extends TestCase
                 return 'json5';
             }
 
-            public function getRawJson5(): string
+            public function json5SerializeRaw(): string
             {
                 return '"raw"';
             }

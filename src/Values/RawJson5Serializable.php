@@ -9,5 +9,5 @@ namespace Arokettu\Json5\Values;
  */
 interface RawJson5Serializable
 {
-    public function getRawJson5(): string;
+    public function json5SerializeRaw(): string;
 }
