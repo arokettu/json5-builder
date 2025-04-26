@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5;
 
+use ValueError;
+
 final class Options
 {
     public function __construct(
@@ -18,5 +20,8 @@ final class Options
         // formatting
         public string $indent = '    ',
     ) {
+        if (!preg_match('/^[\x20\x09\x0a\x0d]*$/', $this->indent)) {
+            throw new ValueError('Indent must contain only whitespace characters');
+        }
     }
 }
