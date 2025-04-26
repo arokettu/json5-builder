@@ -4,6 +4,13 @@
     "description": "JSON5 config builder/encoder",
     "keywords": ["json5", "configuration", "config", "builder", "encode"],
     "license": "MIT",
+    "homepage": "https://sandfox.dev/php/json5-builder.html",
+    "support": {
+        "source": "https://gitlab.com/sandfox/json5-builder",
+        "issues": "https://gitlab.com/sandfox/json5-builder/-/issues",
+        "docs": "https://json5-builder.readthedocs.io/",
+        "chat": "https://gitter.im/arokettu/community"
+    },
     "authors": [{
         "name": "Anton Smirnov",
         "email": "sandfox+composer@sandfox.me",
