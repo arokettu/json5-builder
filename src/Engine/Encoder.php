@@ -77,7 +77,7 @@ final class Encoder
         }
 
         if (\is_string($value)) {
-            $this->encodeString($value, $this->options->valueQuotes);
+            $this->encodeString($value, $this->options->valueQuotes, $this->options->multilineStrings);
             return;
         }
 
@@ -126,10 +126,10 @@ final class Encoder
             return;
         }
 
-        $this->encodeString($key, $this->options->keyQuotes);
+        $this->encodeString($key, $this->options->keyQuotes, false);
     }
 
-    private function encodeString(string $string, Options\Quotes $quotes): void
+    private function encodeString(string $string, Options\Quotes $quotes, bool $multilineStrings): void
     {
         // check if changing quotes may result in unescaped quotes
         if ($this->options->tryOtherQuotes) {
@@ -148,7 +148,7 @@ final class Encoder
 
         $encoded = json_encode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        if ($this->options->multilineStrings) {
+        if ($multilineStrings) {
             $hasLineEndings = str_contains($string, "\n");
             $hasOnlyLineEndings = $hasLineEndings && preg_match('/^\n*$/', $string);
 
