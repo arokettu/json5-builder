@@ -52,7 +52,7 @@ final class Encoder
         if (\is_float($value)) {
             fwrite($this->resource, match (true) {
                 is_nan($value) => 'NaN',
-                is_infinite($value) => (string)$value,
+                is_infinite($value) => $value > 0 ? 'Infinity' : '-Infinity',
                 default => json_encode($value, $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0),
             });
             return;

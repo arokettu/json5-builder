@@ -24,8 +24,8 @@ class FloatTest extends TestCase
     {
         // values supported by JSON5 but not JSON
         self::assertEquals("NaN\n", Json5Encoder::encode(NAN));
-        self::assertEquals("INF\n", Json5Encoder::encode(+INF));
-        self::assertEquals("-INF\n", Json5Encoder::encode(-INF));
+        self::assertEquals("Infinity\n", Json5Encoder::encode(+INF));
+        self::assertEquals("-Infinity\n", Json5Encoder::encode(-INF));
     }
 
     public function testZeroFraction(): void
