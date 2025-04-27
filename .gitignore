@@ -19,3 +19,4 @@
 
 # docs
 /docs/build
+/docs/__pycache__
