@@ -64,10 +64,14 @@ final class Encoder
 
     private function encodeValue(mixed $value, string $indent): void
     {
+        // null
+
         if ($value === null) {
             fwrite($this->resource, 'null');
             return;
         }
+
+        // scalars
 
         if (\is_bool($value)) {
             fwrite($this->resource, $value ? 'true' : 'false');
@@ -96,20 +100,7 @@ final class Encoder
             return;
         }
 
-        if ($value instanceof RawJson5Serializable) {
-            fwrite($this->resource, $value->json5SerializeRaw());
-            return;
-        }
-
-        if ($value instanceof Json5Serializable) {
-            $this->encodeValue($value->json5Serialize(), $indent);
-            return;
-        }
-
-        if ($value instanceof JsonSerializable) {
-            $this->encodeValue($value->jsonSerialize(), $indent);
-            return;
-        }
+        // arrays
 
         if (\is_array($value)) {
             match (array_is_list($value)) {
@@ -120,12 +111,21 @@ final class Encoder
             return;
         }
 
-        if ($value instanceof stdClass || $value instanceof ArrayObject) {
-            $this->encodeObject($value, $indent);
-            return;
-        }
+        // objects & unknown values
 
-        throw new TypeError('Unsupported type: ' . get_debug_type($value));
+        match (true) {
+            $value instanceof RawJson5Serializable,
+                => fwrite($this->resource, $value->json5SerializeRaw()),
+            $value instanceof Json5Serializable,
+                => $this->encodeValue($value->json5Serialize(), $indent),
+            $value instanceof JsonSerializable,
+                => $this->encodeValue($value->jsonSerialize(), $indent),
+            $value instanceof stdClass,
+            $value instanceof ArrayObject,
+                => $this->encodeObject($value, $indent),
+            default
+                => throw new TypeError('Unsupported type: ' . get_debug_type($value)),
+        };
     }
 
     private function encodeKey(string $key): void
