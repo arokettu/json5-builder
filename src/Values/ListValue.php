@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5\Values;
 
-final class ListValue implements IterableValueInterface
+final class ListValue implements Internal\IterableValueInterface
 {
-    use IterableValueTrait;
-    use IterableValueListTrait;
+    use Internal\IterableValueTrait;
+    use Internal\IterableValueListTrait;
 }

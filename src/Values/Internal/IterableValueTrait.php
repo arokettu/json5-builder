@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Arokettu\Json5\Values;
+namespace Arokettu\Json5\Values\Internal;
 
+use Arokettu\Json5\Values\Json5Serializable;
 use ArrayIterator;
 use ArrayObject;
 use JsonSerializable;

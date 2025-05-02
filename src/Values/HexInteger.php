@@ -6,7 +6,7 @@ namespace Arokettu\Json5\Values;
 
 use JsonSerializable;
 
-final class HexInteger implements RawJson5Serializable, JsonSerializable
+final class HexInteger implements Internal\RawJson5Serializable, JsonSerializable
 {
     public function __construct(
         public readonly int $value,

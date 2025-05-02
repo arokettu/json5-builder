@@ -6,10 +6,10 @@ namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\CommentDecorator;
+use Arokettu\Json5\Values\Internal\RawJson5Serializable;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
 use Arokettu\Json5\Values\ObjectValue;
-use Arokettu\Json5\Values\RawJson5Serializable;
 use ArrayObject;
 use JsonException;
 use JsonSerializable;

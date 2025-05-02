@@ -6,7 +6,7 @@ namespace Arokettu\Json5\Tests\Objects;
 
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\Values\Json5Serializable;
-use Arokettu\Json5\Values\RawJson5Serializable;
+use Arokettu\Json5\Values\Internal\RawJson5Serializable;
 use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 
