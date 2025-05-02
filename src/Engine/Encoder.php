@@ -7,6 +7,8 @@ namespace Arokettu\Json5\Engine;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\Json5Serializable;
+use Arokettu\Json5\Values\ListValue;
+use Arokettu\Json5\Values\ObjectValue;
 use Arokettu\Json5\Values\RawJson5Serializable;
 use ArrayObject;
 use JsonException;
@@ -113,13 +115,22 @@ final class Encoder
 
         // objects & unknown values
 
+        /** @noinspection PhpDuplicateMatchArmBodyInspection sorted by priorities */
         match (true) {
+            // very special serializable
             $value instanceof RawJson5Serializable,
                 => fwrite($this->resource, $value->json5SerializeRaw()),
+            // special objects
+            $value instanceof ListValue,
+                => $this->encodeList($value, $indent),
+            $value instanceof ObjectValue,
+                => $this->encodeObject($value, $indent),
+            // serializables
             $value instanceof Json5Serializable,
                 => $this->encodeValue($value->json5Serialize(), $indent),
             $value instanceof JsonSerializable,
                 => $this->encodeValue($value->jsonSerialize(), $indent),
+            // other objects
             $value instanceof stdClass,
             $value instanceof ArrayObject,
                 => $this->encodeObject($value, $indent),
@@ -188,18 +199,16 @@ final class Encoder
         fwrite($this->resource, $encoded);
     }
 
-    private function encodeList(array $list, string $indent): void
+    private function encodeList(iterable $list, string $indent): void
     {
         $indent2 = $indent . $this->options->indent;
 
-        if (\count($list) === 0) {
-            fwrite($this->resource, "[]");
-            return;
-        }
-
-        fwrite($this->resource, "[\n");
+        fwrite($this->resource, "[");
+        $empty = true;
 
         foreach ($list as $value) {
+            $empty = false;
+            fwrite($this->resource, "\n");
             if ($value instanceof CommentDecorator) {
                 $this->renderComment($value->commentBefore, $indent2);
             }
@@ -209,29 +218,29 @@ final class Encoder
             if ($value instanceof CommentDecorator) {
                 $this->renderCommentLine($value->commentAfter, ' ');
             }
-            fwrite($this->resource, "\n");
         }
 
-        fwrite($this->resource, $indent);
+        if (!$empty) {
+            fwrite($this->resource, "\n");
+            fwrite($this->resource, $indent);
+        }
         fwrite($this->resource, "]");
     }
 
-    private function encodeObject(array|stdClass|ArrayObject $object, string $indent): void
+    private function encodeObject(iterable|stdClass $object, string $indent): void
     {
         if ($object instanceof stdClass) {
             $object = get_object_vars($object);
         }
 
-        if (\count($object) === 0) {
-            fwrite($this->resource, "{}");
-            return;
-        }
-
         $indent2 = $indent . $this->options->indent;
 
-        fwrite($this->resource, "{\n");
+        fwrite($this->resource, "{");
+        $empty = true;
 
         foreach ($object as $key => $value) {
+            $empty = false;
+            fwrite($this->resource, "\n");
             if ($value instanceof CommentDecorator) {
                 $this->renderComment($value->commentBefore, $indent2);
             }
@@ -243,10 +252,12 @@ final class Encoder
             if ($value instanceof CommentDecorator) {
                 $this->renderCommentLine($value->commentAfter, ' ');
             }
-            fwrite($this->resource, "\n");
         }
 
-        fwrite($this->resource, $indent);
+        if (!$empty) {
+            fwrite($this->resource, "\n");
+            fwrite($this->resource, $indent);
+        }
         fwrite($this->resource, "}");
     }
 
