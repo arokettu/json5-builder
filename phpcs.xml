@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset>
-    <rule ref="SandFox_PHP81"/>
+    <rule ref="SandFox_PHP84"/>
     <file>src</file>
     <file>tests</file>
 </ruleset>
