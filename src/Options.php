@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5;
 
-use Error;
 use ValueError;
 
 /**
@@ -12,8 +11,6 @@ use ValueError;
  */
 final class Options
 {
-    private string $indent;
-
     public function __construct(
         // strings
         public Options\Quotes $keyQuotes = Options\Quotes::Single,
@@ -24,35 +21,14 @@ final class Options
         // floats
         public bool $preserveZeroFraction = false,
         // formatting
-        string $indent = '    ', // todo: property hook in PHP 8.4+
+        public string $indent = '    ' {
+            set {
+                if (!preg_match('/^[\x20\x09\x0a\x0d]*$/', $value)) {
+                    throw new ValueError('Indent must contain only whitespace characters');
+                }
+                $this->indent = $value;
+            }
+        },
     ) {
-        $this->setIndent($indent);
-    }
-
-    private function setIndent(string $indent): void
-    {
-        if (!preg_match('/^[\x20\x09\x0a\x0d]*$/', $indent)) {
-            throw new ValueError('Indent must contain only whitespace characters');
-        }
-        $this->indent = $indent;
-    }
-
-    public function __set(string $name, mixed $value): void
-    {
-        if ($name === 'indent') {
-            $this->setIndent($value);
-            return;
-        }
-
-        throw new Error('No such property: ' . $name);
-    }
-
-    public function __get(string $name): mixed
-    {
-        if ($name === 'indent') {
-            return $this->indent;
-        }
-
-        throw new Error('No such property: ' . $name);
     }
 }
