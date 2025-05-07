@@ -6,6 +6,7 @@ namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\CommentDecorator;
+use Arokettu\Json5\Values\CompactList;
 use Arokettu\Json5\Values\InlineList;
 use Arokettu\Json5\Values\InlineObject;
 use Arokettu\Json5\Values\Internal\RawJson5Serializable;
@@ -126,7 +127,9 @@ final class Encoder
             $value instanceof ListValue,
                 => $this->encodeList($value, $indent),
             $value instanceof InlineList,
-                => $this->encodeInlineList($value, $indent),
+                => $this->encodeInlineList($value, $indent, false),
+            $value instanceof CompactList,
+                => $this->encodeInlineList($value, $indent, true),
             $value instanceof ObjectValue,
                 => $this->encodeObject($value, $indent),
             $value instanceof InlineObject,
@@ -233,24 +236,35 @@ final class Encoder
         fwrite($this->resource, "]");
     }
 
-    private function encodeInlineList(iterable $list, string $indent): void
+    private function encodeInlineList(iterable $list, string $indent, bool $extraIndent): void
     {
+        $indent2 = $extraIndent ? $indent . $this->options->indent : $indent;
+
         fwrite($this->resource, "[");
-        $first = true;
+        $empty = true;
 
         foreach ($list as $value) {
-            if ($first) {
-                $first = false;
+            if ($empty) {
+                $empty = false;
+                if ($extraIndent) {
+                    fwrite($this->resource, "\n");
+                    fwrite($this->resource, $indent2);
+                }
             } else {
                 fwrite($this->resource, ", ");
             }
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentBefore, '', ' ');
             }
-            $this->encodeValue($value, $indent);
+            $this->encodeValue($value, $indent2);
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentAfter, ' ', '');
             }
+        }
+
+        if ($extraIndent && !$empty) {
+            fwrite($this->resource, ",\n");
+            fwrite($this->resource, $indent);
         }
 
         fwrite($this->resource, "]");
