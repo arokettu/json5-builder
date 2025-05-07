@@ -12,12 +12,12 @@ namespace Arokettu\Json5\Values;
 use JsonSerializable;
 use ValueError;
 
-final class CommentDecorator implements JsonSerializable
+final readonly class CommentDecorator implements JsonSerializable
 {
     public function __construct(
-        public readonly mixed $value,
-        public readonly string|null $commentBefore = null,
-        public readonly string|null $commentAfter = null,
+        public mixed $value,
+        public string|null $commentBefore = null,
+        public string|null $commentAfter = null,
     ) {
         if ($this->commentAfter !== null && str_contains($this->commentAfter, "\n")) {
             throw new ValueError('The comment after must be a single line string');
