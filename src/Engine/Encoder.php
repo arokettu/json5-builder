@@ -6,6 +6,7 @@ namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\CommentDecorator;
+use Arokettu\Json5\Values\InlineList;
 use Arokettu\Json5\Values\Internal\RawJson5Serializable;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
@@ -123,6 +124,8 @@ final class Encoder
             // special objects
             $value instanceof ListValue,
                 => $this->encodeList($value, $indent),
+            $value instanceof InlineList,
+                => $this->encodeInlineList($value, $indent),
             $value instanceof ObjectValue,
                 => $this->encodeObject($value, $indent),
             // serializables
@@ -227,6 +230,29 @@ final class Encoder
         fwrite($this->resource, "]");
     }
 
+    private function encodeInlineList(iterable $list, string $indent): void
+    {
+        fwrite($this->resource, "[");
+        $empty = true;
+
+        foreach ($list as $value) {
+            if ($empty) {
+                $empty = false;
+            } else { // not a first item
+                fwrite($this->resource, ", ");
+            }
+            if ($value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentBefore, '', ' ');
+            }
+            $this->encodeValue($value, $indent);
+            if ($value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentAfter, ' ', '');
+            }
+        }
+
+        fwrite($this->resource, "]");
+    }
+
     private function encodeObject(iterable|stdClass $object, string $indent): void
     {
         if ($object instanceof stdClass) {
@@ -273,6 +299,24 @@ final class Encoder
             $this->renderCommentLine($line, $indent);
             fwrite($this->resource, "\n");
         }
+    }
+
+    private function renderInlineComment(string|null $comment, string $prefix, string $postfix): void
+    {
+        if ($comment === null) {
+            return;
+        }
+
+        if (str_contains($comment, '*/')) {
+            $comment = str_replace('*/', '* /', $comment);
+            trigger_error("Multiline comment can't contain '*/' sequence, replacing with '* /'");
+        }
+
+        fwrite($this->resource, $prefix);
+        fwrite($this->resource, '/* ');
+        fwrite($this->resource, $comment);
+        fwrite($this->resource, ' */');
+        fwrite($this->resource, $postfix);
     }
 
     private function renderCommentLine(string|null $commentLine, string $indent): void
