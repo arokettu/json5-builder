@@ -16,6 +16,7 @@ use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
 use Arokettu\Json5\Values\ObjectValue;
 use ArrayObject;
+use Error;
 use JsonException;
 use JsonSerializable;
 use stdClass;
@@ -44,6 +45,10 @@ final class Encoder
     private const ASCII_IDENTIFIER_PART = self::ASCII_IDENTIFIER_START . '0-9';
     private const ASCII_PATTERN =
         '/^[' . self::ASCII_IDENTIFIER_START . '][' . self::ASCII_IDENTIFIER_PART . ']*$/';
+
+    private const STATE_START = 0;
+    private const STATE_AFTER_EOL = 1;
+    private const STATE_AFTER_VALUE = 2;
 
     /**
      * @param resource $resource
@@ -257,19 +262,42 @@ final class Encoder
         $indent2 = $extraIndent ? $indent . $this->options->indent : $indent;
 
         fwrite($this->resource, "[");
-        $empty = true;
+        $state = self::STATE_START;
 
         foreach ($list as $value) {
-            if ($empty) {
-                $empty = false;
-                if ($extraIndent) {
-                    fwrite($this->resource, "\n");
-                    fwrite($this->resource, $indent2);
-                }
-            } else {
-                fwrite($this->resource, ", ");
+            switch ($state) {
+                case self::STATE_START:
+                    if ($extraIndent) {
+                        fwrite($this->resource, "\n");
+                        fwrite($this->resource, $indent2);
+                    }
+                    break;
+
+                case self::STATE_AFTER_VALUE:
+                    fwrite($this->resource, ",");
+                    break;
+
+                case self::STATE_AFTER_EOL:
+                    // extended indent for both lists
+                    fwrite($this->resource, $indent);
+                    fwrite($this->resource, $this->options->indent);
+                    break;
+
+                default:
+                    throw new Error("Shouldn't happen");
             }
-            // todo: comment, eol
+
+            if ($value instanceof EndOfLine) {
+                fwrite($this->resource, "\n");
+                $state = self::STATE_AFTER_EOL;
+                continue;
+            }
+
+            if ($state === self::STATE_AFTER_VALUE) {
+                fwrite($this->resource, " ");
+            }
+
+            // todo: comment
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentBefore, '', ' ');
             }
@@ -277,9 +305,11 @@ final class Encoder
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentAfter, ' ', '');
             }
+
+            $state = self::STATE_AFTER_VALUE;
         }
 
-        if ($extraIndent && !$empty) {
+        if ($extraIndent && $state === self::STATE_AFTER_VALUE) {
             fwrite($this->resource, ",\n");
             fwrite($this->resource, $indent);
         }
@@ -345,6 +375,9 @@ final class Encoder
         $empty = true;
 
         foreach ($object as $key => $value) {
+            if ($value instanceof EndOfLine) {
+                continue;
+            }
             if ($empty) {
                 $empty = false;
                 fwrite($this->resource, " ");
