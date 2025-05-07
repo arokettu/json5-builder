@@ -12,7 +12,7 @@ namespace Arokettu\Json5\Engine\Helpers;
 trait RenderCommentTrait
 {
     /** @var resource */
-    private $resource;
+    private readonly mixed $resource;
 
     private function renderComment(string|null $comment, string $indent): void
     {

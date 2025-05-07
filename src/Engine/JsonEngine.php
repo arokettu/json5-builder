@@ -27,23 +27,23 @@ use TypeError;
 /**
  * @internal
  */
-final class JsonEngine
+final readonly class JsonEngine
 {
     use Helpers\RenderCommentTrait;
 
-    private const STATE_START = 0;
-    private const STATE_AFTER_EOL = 1;
-    private const STATE_AFTER_VALUE = 2;
-    private const STATE_AFTER_COMMENT = 3;
+    private const int STATE_START = 0;
+    private const int STATE_AFTER_EOL = 1;
+    private const int STATE_AFTER_VALUE = 2;
+    private const int STATE_AFTER_COMMENT = 3;
 
     /**
      * @param resource $resource
      */
     public function __construct(
-        private readonly bool $jsonc,
-        private readonly mixed $value,
-        private readonly Options $options,
-        private $resource,
+        private bool $jsonc,
+        private mixed $value,
+        private Options $options,
+        private mixed $resource,
     ) {
     }
 

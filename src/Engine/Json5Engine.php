@@ -29,40 +29,40 @@ use TypeError;
 /**
  * @internal
  */
-final class Json5Engine
+final readonly class Json5Engine
 {
     use Helpers\RenderCommentTrait;
 
     // IdentifierName patterns
     // UnicodeEscapeSequence is also allowed but ignore it for simplicity
-    private const UNICODE_LETTER = '\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}';
-    private const UNICODE_COMBINING_MARK = '\p{Mn}\p{Mc}';
-    private const UNICODE_DIGIT = '\p{Nd}';
-    private const UNICODE_CONNECTOR_PUNCTUATION = '\p{Pc}';
-    private const ZWNJ = '\x{200c}';
-    private const ZWJ = '\x{200d}';
-    private const UNICODE_IDENTIFIER_START = '$_' . self::UNICODE_LETTER;
-    private const UNICODE_IDENTIFIER_PART = self::UNICODE_IDENTIFIER_START . self::UNICODE_COMBINING_MARK .
+    private const string UNICODE_LETTER = '\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}';
+    private const string UNICODE_COMBINING_MARK = '\p{Mn}\p{Mc}';
+    private const string UNICODE_DIGIT = '\p{Nd}';
+    private const string UNICODE_CONNECTOR_PUNCTUATION = '\p{Pc}';
+    private const string ZWNJ = '\x{200c}';
+    private const string ZWJ = '\x{200d}';
+    private const string UNICODE_IDENTIFIER_START = '$_' . self::UNICODE_LETTER;
+    private const string UNICODE_IDENTIFIER_PART = self::UNICODE_IDENTIFIER_START . self::UNICODE_COMBINING_MARK .
         self::UNICODE_DIGIT . self::UNICODE_CONNECTOR_PUNCTUATION . self::ZWNJ . self::ZWJ;
-    private const UNICODE_PATTERN =
+    private const string UNICODE_PATTERN =
         '/^[' . self::UNICODE_IDENTIFIER_START . '][' . self::UNICODE_IDENTIFIER_PART . ']*$/u';
-    private const ASCII_IDENTIFIER_START = '$_' . 'a-zA-Z';
-    private const ASCII_IDENTIFIER_PART = self::ASCII_IDENTIFIER_START . '0-9';
-    private const ASCII_PATTERN =
+    private const string ASCII_IDENTIFIER_START = '$_' . 'a-zA-Z';
+    private const string ASCII_IDENTIFIER_PART = self::ASCII_IDENTIFIER_START . '0-9';
+    private const string ASCII_PATTERN =
         '/^[' . self::ASCII_IDENTIFIER_START . '][' . self::ASCII_IDENTIFIER_PART . ']*$/';
 
-    private const STATE_START = 0;
-    private const STATE_AFTER_EOL = 1;
-    private const STATE_AFTER_VALUE = 2;
-    private const STATE_AFTER_COMMENT = 3;
+    private const int STATE_START = 0;
+    private const int STATE_AFTER_EOL = 1;
+    private const int STATE_AFTER_VALUE = 2;
+    private const int STATE_AFTER_COMMENT = 3;
 
     /**
      * @param resource $resource
      */
     public function __construct(
-        private readonly mixed $value,
-        private readonly Options $options,
-        private $resource,
+        private mixed $value,
+        private Options $options,
+        private mixed $resource,
     ) {
     }
 
