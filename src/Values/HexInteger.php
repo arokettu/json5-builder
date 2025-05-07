@@ -12,11 +12,11 @@ namespace Arokettu\Json5\Values;
 use JsonSerializable;
 use ValueError;
 
-final class HexInteger implements Internal\RawJson5Serializable, JsonSerializable
+final readonly class HexInteger implements Internal\RawJson5Serializable, JsonSerializable
 {
     public function __construct(
-        public readonly int $value,
-        public readonly int $padding = 0,
+        public int $value,
+        public int $padding = 0,
     ) {
         if ($this->padding < 0) {
             throw new ValueError('Padding must be a non-negative integer');
