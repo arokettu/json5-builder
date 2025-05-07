@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
+use Arokettu\Json5\Values\Comment;
 use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\CompactList;
+use Arokettu\Json5\Values\EndOfLine;
 use Arokettu\Json5\Values\InlineList;
 use Arokettu\Json5\Values\InlineObject;
 use Arokettu\Json5\Values\Internal\RawJson5Serializable;
@@ -216,21 +218,35 @@ final class Encoder
         $empty = true;
 
         foreach ($list as $value) {
-            $empty = false;
-            fwrite($this->resource, "\n");
+            if ($empty) {
+                $empty = false;
+                fwrite($this->resource, "\n");
+            }
+
+            if ($value instanceof EndOfLine) {
+                fwrite($this->resource, "\n");
+                continue;
+            }
+            if ($value instanceof Comment) {
+                $this->renderComment($value->comment, $indent2);
+                continue;
+            }
             if ($value instanceof CommentDecorator) {
                 $this->renderComment($value->commentBefore, $indent2);
             }
+
             fwrite($this->resource, $indent2);
             $this->encodeValue($value, $indent2);
             fwrite($this->resource, ",");
+
             if ($value instanceof CommentDecorator) {
                 $this->renderCommentLine($value->commentAfter, ' ');
             }
+
+            fwrite($this->resource, "\n");
         }
 
         if (!$empty) {
-            fwrite($this->resource, "\n");
             fwrite($this->resource, $indent);
         }
         fwrite($this->resource, "]");
@@ -253,6 +269,7 @@ final class Encoder
             } else {
                 fwrite($this->resource, ", ");
             }
+            // todo: comment, eol
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentBefore, '', ' ');
             }
@@ -282,23 +299,37 @@ final class Encoder
         $empty = true;
 
         foreach ($object as $key => $value) {
-            $empty = false;
-            fwrite($this->resource, "\n");
+            if ($empty) {
+                $empty = false;
+                fwrite($this->resource, "\n");
+            }
+
+            if ($value instanceof EndOfLine) {
+                fwrite($this->resource, "\n");
+                continue;
+            }
+            if ($value instanceof Comment) {
+                $this->renderComment($value->comment, $indent2);
+                continue;
+            }
             if ($value instanceof CommentDecorator) {
                 $this->renderComment($value->commentBefore, $indent2);
             }
+
             fwrite($this->resource, $indent2);
             $this->encodeKey((string)$key);
             fwrite($this->resource, ": ");
             $this->encodeValue($value, $indent2);
             fwrite($this->resource, ",");
+
             if ($value instanceof CommentDecorator) {
                 $this->renderCommentLine($value->commentAfter, ' ');
             }
+
+            fwrite($this->resource, "\n");
         }
 
         if (!$empty) {
-            fwrite($this->resource, "\n");
             fwrite($this->resource, $indent);
         }
         fwrite($this->resource, "}");
@@ -320,6 +351,7 @@ final class Encoder
             } else {
                 fwrite($this->resource, ", ");
             }
+            // todo: comment, eol
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentBefore, '', ' ');
             }
