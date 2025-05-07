@@ -51,6 +51,7 @@ final class Encoder
     private const STATE_START = 0;
     private const STATE_AFTER_EOL = 1;
     private const STATE_AFTER_VALUE = 2;
+    private const STATE_AFTER_COMMENT = 3;
 
     /**
      * @param resource $resource
@@ -287,6 +288,9 @@ final class Encoder
                     fwrite($this->resource, ',');
                     break;
 
+                case self::STATE_AFTER_COMMENT:
+                    break;
+
                 case self::STATE_AFTER_EOL:
                     // extended indent for both lists
                     fwrite($this->resource, $indent);
@@ -303,11 +307,16 @@ final class Encoder
                 continue;
             }
 
-            if ($state === self::STATE_AFTER_VALUE) {
+            if ($state === self::STATE_AFTER_VALUE || $state === self::STATE_AFTER_COMMENT) {
                 fwrite($this->resource, " ");
             }
 
-            // todo: comment
+            if ($value instanceof Comment) {
+                $this->renderInlineComment($value->comment, '', '');
+                $state = self::STATE_AFTER_COMMENT;
+                continue;
+            }
+
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentBefore, '', ' ');
             }
