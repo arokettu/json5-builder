@@ -8,6 +8,7 @@ use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\Comment;
 use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\CompactList;
+use Arokettu\Json5\Values\CompactObject;
 use Arokettu\Json5\Values\EndOfLine;
 use Arokettu\Json5\Values\InlineList;
 use Arokettu\Json5\Values\InlineObject;
@@ -20,6 +21,7 @@ use Error;
 use JsonException;
 use JsonSerializable;
 use stdClass;
+use Traversable;
 use TypeError;
 use ValueError;
 
@@ -115,7 +117,7 @@ final class Encoder
         // arrays
 
         if (\is_array($value)) {
-            $this->encodeContainer($value, $indent, !array_is_list($value));
+            $this->encodeContainer($value, !array_is_list($value), $indent);
             return;
         }
 
@@ -128,15 +130,17 @@ final class Encoder
                 => fwrite($this->resource, $value->json5SerializeRaw()),
             // special objects
             $value instanceof ListValue,
-                => $this->encodeContainer($value, $indent, false),
+                => $this->encodeContainer($value, false, $indent),
             $value instanceof InlineList,
-                => $this->encodeInlineList($value, $indent, false),
+                => $this->encodeInlineContainer($value, false, $indent, false),
             $value instanceof CompactList,
-                => $this->encodeInlineList($value, $indent, true),
+                => $this->encodeInlineContainer($value, false, $indent, true),
             $value instanceof ObjectValue,
-                => $this->encodeContainer($value, $indent, true),
+                => $this->encodeContainer($value, true, $indent),
             $value instanceof InlineObject,
-                => $this->encodeInlineObject($value, $indent),
+                => $this->encodeInlineContainer($value, true, $indent, false),
+            $value instanceof CompactObject,
+                => $this->encodeInlineContainer($value, true, $indent, true),
             // serializables
             $value instanceof Json5Serializable,
                 => $this->encodeValue($value->json5Serialize(), $indent),
@@ -145,7 +149,7 @@ final class Encoder
             // other objects
             $value instanceof stdClass,
             $value instanceof ArrayObject,
-                => $this->encodeContainer($value, $indent, true),
+                => $this->encodeContainer($value, true, $indent),
             default
                 => throw new TypeError('Unsupported type: ' . get_debug_type($value)),
         };
@@ -211,7 +215,7 @@ final class Encoder
         fwrite($this->resource, $encoded);
     }
 
-    private function encodeContainer(iterable|stdClass $container, string $indent, bool $object): void
+    private function encodeContainer(iterable|stdClass $container, bool $object, string $indent): void
     {
         if ($container instanceof stdClass) {
             $container = get_object_vars($container);
@@ -261,24 +265,26 @@ final class Encoder
         fwrite($this->resource, $object ? '}' : ']');
     }
 
-    private function encodeInlineList(iterable $list, string $indent, bool $extraIndent): void
+    private function encodeInlineContainer(Traversable $list, bool $object, string $indent, bool $extraIndent): void
     {
         $indent2 = $extraIndent ? $indent . $this->options->indent : $indent;
 
-        fwrite($this->resource, "[");
+        fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
 
-        foreach ($list as $value) {
+        foreach ($list as $key => $value) {
             switch ($state) {
                 case self::STATE_START:
                     if ($extraIndent) {
                         fwrite($this->resource, "\n");
                         fwrite($this->resource, $indent2);
+                    } elseif ($object) {
+                        fwrite($this->resource, ' ');
                     }
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                    fwrite($this->resource, ",");
+                    fwrite($this->resource, ',');
                     break;
 
                 case self::STATE_AFTER_EOL:
@@ -305,6 +311,10 @@ final class Encoder
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentBefore, '', ' ');
             }
+            if ($object) {
+                $this->encodeKey((string)$key);
+                fwrite($this->resource, ": ");
+            }
             $this->encodeValue($value, $indent2);
             if ($value instanceof CommentDecorator) {
                 $this->renderInlineComment($value->commentAfter, ' ', '');
@@ -313,50 +323,15 @@ final class Encoder
             $state = self::STATE_AFTER_VALUE;
         }
 
-        if ($extraIndent && $state === self::STATE_AFTER_VALUE) {
-            fwrite($this->resource, ",\n");
-            fwrite($this->resource, $indent);
-        }
-
-        fwrite($this->resource, "]");
-    }
-
-    private function encodeInlineObject(iterable|stdClass $object, string $indent): void
-    {
-        if ($object instanceof stdClass) {
-            $object = get_object_vars($object);
-        }
-
-        fwrite($this->resource, "{");
-        $empty = true;
-
-        foreach ($object as $key => $value) {
-            if ($value instanceof EndOfLine) {
-                continue;
-            }
-            if ($empty) {
-                $empty = false;
+        if ($state === self::STATE_AFTER_VALUE) {
+            if ($extraIndent) {
+                fwrite($this->resource, ",\n");
+                fwrite($this->resource, $indent);
+            } elseif ($object) {
                 fwrite($this->resource, " ");
-            } else {
-                fwrite($this->resource, ", ");
-            }
-            // todo: comment, eol
-            if ($value instanceof CommentDecorator) {
-                $this->renderInlineComment($value->commentBefore, '', ' ');
-            }
-            $this->encodeKey((string)$key);
-            fwrite($this->resource, ": ");
-            $this->encodeValue($value, $indent);
-            if ($value instanceof CommentDecorator) {
-                $this->renderInlineComment($value->commentAfter, ' ', '');
             }
         }
-
-        if (!$empty) {
-            fwrite($this->resource, " ");
-        }
-
-        fwrite($this->resource, "}");
+        fwrite($this->resource, $object ? '}' : ']');
     }
 
     private function renderComment(string|null $comment, string $indent): void
