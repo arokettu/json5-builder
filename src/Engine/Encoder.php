@@ -7,6 +7,7 @@ namespace Arokettu\Json5\Engine;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\InlineList;
+use Arokettu\Json5\Values\InlineObject;
 use Arokettu\Json5\Values\Internal\RawJson5Serializable;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
@@ -128,6 +129,8 @@ final class Encoder
                 => $this->encodeInlineList($value, $indent),
             $value instanceof ObjectValue,
                 => $this->encodeObject($value, $indent),
+            $value instanceof InlineObject,
+                => $this->encodeInlineObject($value, $indent),
             // serializables
             $value instanceof Json5Serializable,
                 => $this->encodeValue($value->json5Serialize(), $indent),
@@ -233,12 +236,12 @@ final class Encoder
     private function encodeInlineList(iterable $list, string $indent): void
     {
         fwrite($this->resource, "[");
-        $empty = true;
+        $first = true;
 
         foreach ($list as $value) {
-            if ($empty) {
-                $empty = false;
-            } else { // not a first item
+            if ($first) {
+                $first = false;
+            } else {
                 fwrite($this->resource, ", ");
             }
             if ($value instanceof CommentDecorator) {
@@ -284,6 +287,40 @@ final class Encoder
             fwrite($this->resource, "\n");
             fwrite($this->resource, $indent);
         }
+        fwrite($this->resource, "}");
+    }
+
+    private function encodeInlineObject(iterable|stdClass $object, string $indent): void
+    {
+        if ($object instanceof stdClass) {
+            $object = get_object_vars($object);
+        }
+
+        fwrite($this->resource, "{");
+        $empty = true;
+
+        foreach ($object as $key => $value) {
+            if ($empty) {
+                $empty = false;
+                fwrite($this->resource, " ");
+            } else {
+                fwrite($this->resource, ", ");
+            }
+            if ($value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentBefore, '', ' ');
+            }
+            $this->encodeKey((string)$key);
+            fwrite($this->resource, ": ");
+            $this->encodeValue($value, $indent);
+            if ($value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentAfter, ' ', '');
+            }
+        }
+
+        if (!$empty) {
+            fwrite($this->resource, " ");
+        }
+
         fwrite($this->resource, "}");
     }
 
