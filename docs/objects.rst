@@ -37,6 +37,8 @@ Renders an integer in a hexadecimal form::
         "hex": 3735928559
     }
 
+.. error:: Known issue: ``PHP_INT_MIN`` value is not handled correctly
+
 ``CommentDecorator``
 ====================
 
