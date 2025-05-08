@@ -278,27 +278,12 @@ final class Encoder
                 case self::STATE_START:
                     if ($extraIndent) {
                         fwrite($this->resource, "\n");
-                        fwrite($this->resource, $indent2);
-                    } elseif ($object) {
-                        fwrite($this->resource, ' ');
                     }
                     break;
 
                 case self::STATE_AFTER_VALUE:
                     fwrite($this->resource, ',');
                     break;
-
-                case self::STATE_AFTER_COMMENT:
-                    break;
-
-                case self::STATE_AFTER_EOL:
-                    // extended indent for both lists
-                    fwrite($this->resource, $indent);
-                    fwrite($this->resource, $this->options->indent);
-                    break;
-
-                default:
-                    throw new Error("Shouldn't happen");
             }
 
             if ($value instanceof EndOfLine) {
@@ -307,8 +292,25 @@ final class Encoder
                 continue;
             }
 
-            if ($state === self::STATE_AFTER_VALUE || $state === self::STATE_AFTER_COMMENT) {
-                fwrite($this->resource, ' ');
+            switch ($state) {
+                case self::STATE_START:
+                    if ($extraIndent) {
+                        fwrite($this->resource, $indent2);
+                    } elseif ($object) {
+                        fwrite($this->resource, ' ');
+                    }
+                    break;
+
+                case self::STATE_AFTER_VALUE:
+                case self::STATE_AFTER_COMMENT:
+                    fwrite($this->resource, ' ');
+                    break;
+
+                case self::STATE_AFTER_EOL:
+                    // extended indent for both lists
+                    fwrite($this->resource, $indent);
+                    fwrite($this->resource, $this->options->indent);
+                    break;
             }
 
             if ($value instanceof Comment) {
@@ -332,14 +334,23 @@ final class Encoder
             $state = self::STATE_AFTER_VALUE;
         }
 
-        if ($state === self::STATE_AFTER_VALUE) {
-            if ($extraIndent) {
-                fwrite($this->resource, ",\n");
-                fwrite($this->resource, $indent);
-            } elseif ($object) {
-                fwrite($this->resource, ' ');
-            }
+        switch ($state) {
+            case self::STATE_AFTER_VALUE:
+                if ($extraIndent) {
+                    fwrite($this->resource, ",\n");
+                    fwrite($this->resource, $indent);
+                } elseif ($object) {
+                    fwrite($this->resource, ' ');
+                }
+                break;
+
+            case self::STATE_AFTER_EOL:
+                if ($extraIndent) {
+                    fwrite($this->resource, "\n");
+                }
+                break;
         }
+
         fwrite($this->resource, $object ? '}' : ']');
     }
 

@@ -38,28 +38,28 @@ class EolTest extends TestCase
             JSON5, Json5Encoder::encode($list));
     }
 
-//    public function testCompactList(): void
-//    {
-//        $list = [
-////            new EndOfLine(),
-//            'value1',
-//            'value2',
-//            new EndOfLine(),
-//            'value3',
-//            'value4',
-////            new EndOfLine(),
-//        ];
-//
-//        self::assertEquals(<<<JSON5
-//            [
-//
-//                "value1", "value2",
-//                "value3", "value4",
-//
-//            ]
-//
-//            JSON5, Json5Encoder::encode(new CompactList($list)));
-//    }
+    public function testCompactList(): void
+    {
+        $list = [
+            new EndOfLine(),
+            'value1',
+            'value2',
+            new EndOfLine(),
+            'value3',
+            'value4',
+            new EndOfLine(),
+        ];
+
+        self::assertEquals(<<<JSON5
+            [
+
+                "value1", "value2",
+                "value3", "value4",
+
+            ]
+
+            JSON5, Json5Encoder::encode(new CompactList($list)));
+    }
 
     public function testInlineList(): void
     {
