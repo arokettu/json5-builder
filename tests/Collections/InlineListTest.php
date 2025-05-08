@@ -92,4 +92,59 @@ class InlineListTest extends TestCase
 
             JSON5, Json5Encoder::encode(new InlineList($class)));
     }
+
+    public function testInlineListOfObjects(): void
+    {
+        $list = new InlineList([
+            ['a' => 1, 'b' => 2],
+            ['abc' => '123', 'xyz' => '456'],
+            ['key1' => 'value1', 'key2' => 'value2'],
+            ['list' => [1], 'obj' => ['k' => 'v']],
+        ]);
+
+        self::assertEquals(<<<JSON5
+            [{
+                a: 1,
+                b: 2,
+            }, {
+                abc: "123",
+                xyz: "456",
+            }, {
+                key1: "value1",
+                key2: "value2",
+            }, {
+                list: [
+                    1,
+                ],
+                obj: {
+                    k: "v",
+                },
+            }]
+
+            JSON5, Json5Encoder::encode($list));
+    }
+
+    public function testObjectOfInlineLists(): void
+    {
+        $obj = [
+            'list1' => new InlineList([1,2,3]),
+            'list2' => new InlineList(['a', 'b', 'c']),
+            'list3' => new InlineList([[1,2], ['a' => 'b', 'c' => 'd']]),
+        ];
+
+        self::assertEquals(<<<JSON5
+            {
+                list1: [1, 2, 3],
+                list2: ["a", "b", "c"],
+                list3: [[
+                    1,
+                    2,
+                ], {
+                    a: "b",
+                    c: "d",
+                }],
+            }
+
+            JSON5, Json5Encoder::encode($obj));
+    }
 }
