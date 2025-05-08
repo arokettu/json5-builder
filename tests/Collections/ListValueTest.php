@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5\Tests\Collections;
 
+use Arokettu\Json\Json;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
@@ -115,5 +116,13 @@ class ListValueTest extends TestCase
             ]
 
             JSON5, Json5Encoder::encode(new ListValue($class)));
+    }
+
+    // for other lists too
+    public function testJsonTransparency(): void
+    {
+        $list = new ListValue(['a' => 1, 'b' => 2, 'c' => 3]);
+
+        self::assertEquals('[1,2,3]', Json::encode($list));
     }
 }

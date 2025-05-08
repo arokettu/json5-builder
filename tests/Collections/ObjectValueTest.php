@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5\Tests\Collections;
 
+use Arokettu\Json\Json;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ObjectValue;
@@ -115,5 +116,13 @@ class ObjectValueTest extends TestCase
             }
 
             JSON5, Json5Encoder::encode(new ObjectValue($class)));
+    }
+
+    // for other objects too
+    public function testJsonTransparency(): void
+    {
+        $obj = new ObjectValue([1,2,3]);
+
+        self::assertEquals('{"0":1,"1":2,"2":3}', Json::encode($obj));
     }
 }
