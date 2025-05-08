@@ -9,7 +9,7 @@ use Arokettu\Json5\Values\CommentDecorator;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
-class CommentsTest extends TestCase
+class CommentDecoratorTest extends TestCase
 {
     public function testCommentAfterShouldNotBeMultiline(): void
     {
