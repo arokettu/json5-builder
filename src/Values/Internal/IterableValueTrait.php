@@ -7,6 +7,7 @@ namespace Arokettu\Json5\Values\Internal;
 use Arokettu\Json5\Values\Json5Serializable;
 use ArrayIterator;
 use ArrayObject;
+use Generator;
 use JsonSerializable;
 use stdClass;
 use Traversable;
@@ -41,7 +42,7 @@ trait IterableValueTrait
         $this->traversable = $iterable;
     }
 
-    public function getIterator(): iterable
+    public function getIterator(): Generator
     {
         yield from $this->traversable;
     }
