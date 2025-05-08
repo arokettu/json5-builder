@@ -6,9 +6,14 @@ namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\Values\CommentDecorator;
+use Arokettu\Json5\Values\CompactList;
+use Arokettu\Json5\Values\CompactObject;
+use Arokettu\Json5\Values\InlineList;
+use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
+// phpcs:disable Generic.Files.LineLength.TooLong
 class CommentDecoratorTest extends TestCase
 {
     public function testCommentAfterShouldNotBeMultiline(): void
@@ -188,5 +193,65 @@ class CommentDecoratorTest extends TestCase
                 'c' => 345
             ]),
         );
+    }
+
+    public function testInlineListComments(): void
+    {
+        $list = [
+            'key1' => new CommentDecorator('value1', commentBefore: 'c1'),
+            'key2' => new CommentDecorator('value2', 'c2-1', 'c2-2'),
+            'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
+        ];
+
+        self::assertEquals(<<<JSON5
+            [/* c1 */ "value1", /* c2-1 */ "value2" /* c2-2 */, "value3" /* c3 */]
+
+            JSON5, Json5Encoder::encode(new InlineList($list)));
+    }
+
+    public function testCompactListComments(): void
+    {
+        $list = [
+            'key1' => new CommentDecorator('value1', commentBefore: 'c1'),
+            'key2' => new CommentDecorator('value2', 'c2-1', 'c2-2'),
+            'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
+        ];
+
+        self::assertEquals(<<<JSON5
+            [
+                /* c1 */ "value1", /* c2-1 */ "value2" /* c2-2 */, "value3" /* c3 */,
+            ]
+
+            JSON5, Json5Encoder::encode(new CompactList($list)));
+    }
+
+    public function testInlineObjectComments(): void
+    {
+        $list = [
+            'key1' => new CommentDecorator('value1', commentBefore: 'c1'),
+            'key2' => new CommentDecorator('value2', 'c2-1', 'c2-2'),
+            'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
+        ];
+
+        self::assertEquals(<<<JSON5
+            { /* c1 */ key1: "value1", /* c2-1 */ key2: "value2" /* c2-2 */, key3: "value3" /* c3 */ }
+
+            JSON5, Json5Encoder::encode(new InlineObject($list)));
+    }
+
+    public function testCompactObjectComments(): void
+    {
+        $list = [
+            'key1' => new CommentDecorator('value1', commentBefore: 'c1'),
+            'key2' => new CommentDecorator('value2', 'c2-1', 'c2-2'),
+            'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
+        ];
+
+        self::assertEquals(<<<JSON5
+            {
+                /* c1 */ key1: "value1", /* c2-1 */ key2: "value2" /* c2-2 */, key3: "value3" /* c3 */,
+            }
+
+            JSON5, Json5Encoder::encode(new CompactObject($list)));
     }
 }
