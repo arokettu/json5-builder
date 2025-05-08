@@ -308,7 +308,7 @@ final class Encoder
             }
 
             if ($state === self::STATE_AFTER_VALUE || $state === self::STATE_AFTER_COMMENT) {
-                fwrite($this->resource, " ");
+                fwrite($this->resource, ' ');
             }
 
             if ($value instanceof Comment) {
@@ -322,7 +322,7 @@ final class Encoder
             }
             if ($object) {
                 $this->encodeKey((string)$key);
-                fwrite($this->resource, ": ");
+                fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent2);
             if ($value instanceof CommentDecorator) {
@@ -337,7 +337,7 @@ final class Encoder
                 fwrite($this->resource, ",\n");
                 fwrite($this->resource, $indent);
             } elseif ($object) {
-                fwrite($this->resource, " ");
+                fwrite($this->resource, ' ');
             }
         }
         fwrite($this->resource, $object ? '}' : ']');

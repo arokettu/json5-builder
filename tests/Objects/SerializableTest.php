@@ -26,7 +26,7 @@ class SerializableTest extends TestCase
         };
 
         self::assertEquals("5426\n", Json5Encoder::encode($obj(5426)));
-        self::assertEquals("\"5426\"\n", Json5Encoder::encode($obj("5426")));
+        self::assertEquals("\"5426\"\n", Json5Encoder::encode($obj('5426')));
     }
 
     public function testJson5Serializable(): void
@@ -43,7 +43,7 @@ class SerializableTest extends TestCase
         };
 
         self::assertEquals("5426\n", Json5Encoder::encode($obj(5426)));
-        self::assertEquals("\"5426\"\n", Json5Encoder::encode($obj("5426")));
+        self::assertEquals("\"5426\"\n", Json5Encoder::encode($obj('5426')));
     }
 
     public function testRawJson5Serializable(): void
@@ -60,7 +60,7 @@ class SerializableTest extends TestCase
         };
 
         self::assertEquals("5426\n", Json5Encoder::encode($obj(5426)));
-        self::assertEquals("5426\n", Json5Encoder::encode($obj("5426")));
+        self::assertEquals("5426\n", Json5Encoder::encode($obj('5426')));
     }
 
     public function testInterfacePrecedence(): void
