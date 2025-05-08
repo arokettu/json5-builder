@@ -2,6 +2,17 @@
 
 ## 1.x
 
+### next
+
+* Custom lists and objects:
+  * `ListValue` converts any iterable into a list
+  * `ObjectValue` converts any iterable into an object
+  * `InlineList`, `InlineObject`, `CompactList`, `CompactObject` render compact representations
+* Formatting objects:
+  * `EndOfLine` forces a newline
+  * `Comment` a comment object not tied to a value
+* `HexInteger` now has `$padding` parameter to specify a minimal render length
+
 ### 1.0.1
 
 *Apr 27, 2025*
