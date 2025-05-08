@@ -11,9 +11,18 @@ use Arokettu\Json5\Values\EndOfLine;
 use Arokettu\Json5\Values\InlineList;
 use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 class EolTest extends TestCase
 {
+    public function testNotAllowedAsRoot(): void
+    {
+        self::expectException(TypeError::class);
+        self::expectExceptionMessage('Unsupported type: Arokettu\Json5\Values\EndOfLine');
+
+        Json5Encoder::encode(new EndOfLine());
+    }
+
     public function testList(): void
     {
         $list = [ // must still be a list
