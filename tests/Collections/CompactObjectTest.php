@@ -102,4 +102,66 @@ class CompactObjectTest extends TestCase
 
             JSON5, Json5Encoder::encode(new CompactObject($class)));
     }
+
+    public function testInlineObjectOfLists(): void
+    {
+        $obj = new CompactObject([
+            'list1' => [1,2,3],
+            'list2' => ['a', 'b', 'c'],
+            'list3' => [[1,2], ['a' => 'b']],
+        ]);
+
+        self::assertEquals(<<<JSON5
+            {
+                list1: [
+                    1,
+                    2,
+                    3,
+                ], list2: [
+                    "a",
+                    "b",
+                    "c",
+                ], list3: [
+                    [
+                        1,
+                        2,
+                    ],
+                    {
+                        a: "b",
+                    },
+                ],
+            }
+
+            JSON5, Json5Encoder::encode($obj));
+    }
+
+    public function testListOfInlineObjects(): void
+    {
+        $list = [
+            new CompactObject([1,2,3]),
+            new CompactObject(['a' => 'b', 'c' => 'd']),
+            new CompactObject(['list' => [1,2], 'obj' => ['a' => 123, 'b' => 456]]),
+        ];
+
+        self::assertEquals(<<<JSON5
+            [
+                {
+                    '0': 1, '1': 2, '2': 3,
+                },
+                {
+                    a: "b", c: "d",
+                },
+                {
+                    list: [
+                        1,
+                        2,
+                    ], obj: {
+                        a: 123,
+                        b: 456,
+                    },
+                },
+            ]
+
+            JSON5, Json5Encoder::encode($list));
+    }
 }
