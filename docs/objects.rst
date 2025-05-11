@@ -12,6 +12,8 @@ This compatibility may be broken by some planned objects.
 ``HexInteger``
 ==============
 
+.. versionadded:: 1.1 ``$padding``
+
 Renders an integer in a hexadecimal form::
 
     <?php
@@ -20,7 +22,9 @@ Renders an integer in a hexadecimal form::
     use Arokettu\Json5\Values\HexInteger;
 
     $value = [
-        'hex' => new HexInteger(0xdeadbeef),
+        'hex1' => new HexInteger(0xdeadbeef),
+        'hex2' => new HexInteger(0xbeef),
+        'hex3' => new HexInteger(0xbeef, 8), // optional padding
     ];
 
     echo Json5Encoder::encode($value);
@@ -30,11 +34,15 @@ Renders an integer in a hexadecimal form::
 
     // JSON5
     {
-        hex: 0xDEADBEEF,
+        hex1: 0xDEADBEEF,
+        hex2: 0xBEEF,
+        hex3: 0x0000BEEF,
     }
     // JSON
     {
-        "hex": 3735928559
+        "hex1": 3735928559,
+        "hex2": 48879,
+        "hex3": 48879
     }
 
 .. error:: Known issue: ``PHP_INT_MIN`` value is not handled correctly

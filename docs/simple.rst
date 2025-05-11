@@ -37,10 +37,11 @@ The main differences:
 
 Use :ref:`json5_options` and :ref:`json5_objects` to customize your output.
 
-How to prettify JSON
-====================
+How to prettify JSON/JSON5
+==========================
 
-You also need a parser, I will use `colinodell/json5 <colinodell_json5_>`_.
+For JSON5 you also need a parser, I will use `colinodell/json5 <colinodell_json5_>`_.
+For JSON use a built-in ``json_decode``.
 Just parse and dump it::
 
     <?php
