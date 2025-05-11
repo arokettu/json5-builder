@@ -9,8 +9,11 @@ The helper objects allow you control how specific values are rendered.
 They are also designed to be JSON-transparent so you can get an equivalent JSON file by using ``json_encode()``.
 This compatibility may be broken by some planned objects.
 
+Scalar Decorators
+=================
+
 ``HexInteger``
-==============
+--------------
 
 .. versionadded:: 1.1 ``$padding``
 
@@ -47,8 +50,91 @@ Renders an integer in a hexadecimal form::
 
 .. error:: Known issue: ``PHP_INT_MIN`` value is not handled correctly
 
-``CommentDecorator``
+Container Decorators
 ====================
+
+For lists and objects.
+
+``ListValue`` and ``ObjectValue``
+---------------------------------
+
+.. versionadded:: 1.1
+
+``\Arokettu\Json5\Values\ListValue``
+
+``\Arokettu\Json5\Values\ObjectValue``
+
+These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to render as either a list or a dictionary::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Values\ListValue;
+    use Arokettu\Json5\Values\ObjectValue;
+
+    require __DIR__ . '/../vendor/autoload.php';
+
+    $generator = (fn () => yield from range(0, 3));
+    $value = [
+        'list' => new ListValue([1 => 2, 3 => 4]), // no need for consecutive keys
+        'object' => new ObjectValue([1, 2, 3, 4]), // list becomes object
+        'iterable' => new ListValue($generator()), // try a generator
+    ];
+
+    echo Json5Encoder::encode($value);
+    $value['iterable'] = $generator(); // can't traverse a generator twice
+    echo json_encode($value, JSON_PRETTY_PRINT);
+
+.. code-block:: json5
+
+    // JSON5
+    {
+        list: [
+            2,
+            4,
+        ],
+        object: {
+            '0': 1,
+            '1': 2,
+            '2': 3,
+            '3': 4,
+        },
+        iterable: [
+            0,
+            1,
+            2,
+            3,
+        ],
+    }
+    // JSON
+    {
+        "list": [
+            2,
+            4
+        ],
+        "object": {
+            "0": 1,
+            "1": 2,
+            "2": 3,
+            "3": 4
+        },
+        "iterable": [
+            0,
+            1,
+            2,
+            3
+        ]
+    }
+
+.. note::
+    If an iterable wrapped by an instance of ``ObjectValue`` (and similar object wrappers) has duplicate keys,
+    your JSON5 file will have duplicate keys too.
+
+Common Decorators
+=================
+
+``CommentDecorator``
+--------------------
 
 Renders a value with comments. The ``commentBefore`` may be multiline, the ``commentAfter`` must be a single line::
 
@@ -83,15 +169,18 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
         "g": 6.6743e-11
     }
 
+Interfaces
+==========
+
 ``JsonSerializable``
-====================
+--------------------
 
 .. note:: https://www.php.net/manual/en/class.jsonserializable.php
 
 ``ext-json``'s ``JsonSerializable`` works with this builder just like it works with ``json_encode``.
 
 ``Json5Serializable``
-=====================
+---------------------
 
 ``\Arokettu\Json5\Values\Json5Serializable``.
 
