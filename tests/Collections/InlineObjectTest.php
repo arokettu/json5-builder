@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\InlineObject;
 use Arokettu\Json5\Values\Json5Serializable;
 use JsonSerializable;
@@ -145,5 +146,15 @@ class InlineObjectTest extends TestCase
             ]
 
             JSON5, Json5Encoder::encode($list));
+    }
+
+    public function testNoExtraSpaces(): void
+    {
+        $list = new InlineObject([1, 2, 3, 4]); // even if list
+
+        self::assertEquals(<<<JSON5
+            {'0': 1, '1': 2, '2': 3, '3': 4}
+
+            JSON5, Json5Encoder::encode($list, new Options(inlineObjectPadding: false)));
     }
 }

@@ -268,6 +268,7 @@ final class Encoder
     private function encodeInlineContainer(Traversable $list, bool $object, string $indent, bool $extraIndent): void
     {
         $indent2 = $extraIndent ? $indent . $this->options->indent : $indent;
+        $extraPadding = $object ? $this->options->inlineObjectPadding : $this->options->inlineListPadding;
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
@@ -295,7 +296,7 @@ final class Encoder
                 case self::STATE_START:
                     if ($extraIndent) {
                         fwrite($this->resource, $indent2);
-                    } elseif ($object) {
+                    } elseif ($extraPadding) {
                         fwrite($this->resource, ' ');
                     }
                     break;
@@ -338,7 +339,7 @@ final class Encoder
                 if ($extraIndent) {
                     fwrite($this->resource, ",\n");
                     fwrite($this->resource, $indent);
-                } elseif ($object) {
+                } elseif ($extraPadding) {
                     fwrite($this->resource, ' ');
                 }
                 break;
@@ -352,7 +353,7 @@ final class Encoder
             case self::STATE_AFTER_COMMENT:
                 if ($extraIndent) {
                     fwrite($this->resource, "\n");
-                } elseif ($object) {
+                } elseif ($extraPadding) {
                     fwrite($this->resource, ' ');
                 }
                 break;
