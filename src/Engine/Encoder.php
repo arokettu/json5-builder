@@ -17,7 +17,6 @@ use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
 use Arokettu\Json5\Values\ObjectValue;
 use ArrayObject;
-use Error;
 use JsonException;
 use JsonSerializable;
 use stdClass;
@@ -347,6 +346,14 @@ final class Encoder
             case self::STATE_AFTER_EOL:
                 if ($extraIndent) {
                     fwrite($this->resource, "\n");
+                }
+                break;
+
+            case self::STATE_AFTER_COMMENT:
+                if ($extraIndent) {
+                    fwrite($this->resource, "\n");
+                } elseif ($object) {
+                    fwrite($this->resource, ' ');
                 }
                 break;
         }
