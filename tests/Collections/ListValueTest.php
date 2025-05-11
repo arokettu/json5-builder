@@ -75,13 +75,14 @@ class ListValueTest extends TestCase
 
     public function testSupportJsonSerializable(): void
     {
-        $arr = new SplFixedArray(4);
-        $arr[0] = 1;
-        $arr[1] = 2;
-        $arr[2] = 3;
-        $arr[3] = 4;
+        $class = new class implements JsonSerializable {
+            public function jsonSerialize(): array
+            {
+                return [1,2,3,4];
+            }
+        };
 
-        $list = new ListValue($arr);
+        $list = new ListValue($class);
 
         self::assertEquals(<<<JSON5
             [
