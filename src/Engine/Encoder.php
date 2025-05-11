@@ -382,10 +382,7 @@ final class Encoder
             return;
         }
 
-        if (str_contains($comment, '*/')) {
-            $comment = str_replace('*/', '* /', $comment);
-            trigger_error("Multiline comment can't contain '*/' sequence, replacing with '* /'");
-        }
+        $comment = str_replace('*/', "*\u{200b}/", $comment);
 
         fwrite($this->resource, $prefix);
         fwrite($this->resource, '/* ');
