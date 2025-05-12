@@ -6,14 +6,11 @@ namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\Comment;
-use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\CompactList;
 use Arokettu\Json5\Values\CompactObject;
 use Arokettu\Json5\Values\EndOfLine;
 use Arokettu\Json5\Values\InlineList;
 use Arokettu\Json5\Values\InlineObject;
-use Arokettu\Json5\Values\Internal\RawJson5Serializable;
-use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
 use Arokettu\Json5\Values\ObjectValue;
 use ArrayObject;
@@ -28,24 +25,6 @@ use ValueError;
  */
 final class JsonEngine
 {
-    // IdentifierName patterns
-    // UnicodeEscapeSequence is also allowed but ignore it for simplicity
-    private const UNICODE_LETTER = '\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}';
-    private const UNICODE_COMBINING_MARK = '\p{Mn}\p{Mc}';
-    private const UNICODE_DIGIT = '\p{Nd}';
-    private const UNICODE_CONNECTOR_PUNCTUATION = '\p{Pc}';
-    private const ZWNJ = '\x{200c}';
-    private const ZWJ = '\x{200d}';
-    private const UNICODE_IDENTIFIER_START = '$_' . self::UNICODE_LETTER;
-    private const UNICODE_IDENTIFIER_PART = self::UNICODE_IDENTIFIER_START . self::UNICODE_COMBINING_MARK .
-        self::UNICODE_DIGIT . self::UNICODE_CONNECTOR_PUNCTUATION . self::ZWNJ . self::ZWJ;
-    private const UNICODE_PATTERN =
-        '/^[' . self::UNICODE_IDENTIFIER_START . '][' . self::UNICODE_IDENTIFIER_PART . ']*$/u';
-    private const ASCII_IDENTIFIER_START = '$_' . 'a-zA-Z';
-    private const ASCII_IDENTIFIER_PART = self::ASCII_IDENTIFIER_START . '0-9';
-    private const ASCII_PATTERN =
-        '/^[' . self::ASCII_IDENTIFIER_START . '][' . self::ASCII_IDENTIFIER_PART . ']*$/';
-
     private const STATE_START = 0;
     private const STATE_AFTER_EOL = 1;
     private const STATE_AFTER_VALUE = 2;
@@ -63,15 +42,7 @@ final class JsonEngine
 
     public function encode(): void
     {
-        $value = $this->value;
-
-        if ($value instanceof CommentDecorator) {
-            $this->renderComment($value->commentBefore, '');
-        }
-        $this->encodeValue($value, '');
-        if ($value instanceof CommentDecorator) {
-            $this->renderCommentLine($value->commentAfter, ' ');
-        }
+        $this->encodeValue($this->value, '');
         fwrite($this->resource, "\n");
     }
 
@@ -97,19 +68,15 @@ final class JsonEngine
         }
 
         if (\is_float($value)) {
-            fwrite($this->resource, match (true) {
-                is_nan($value) => 'NaN',
-                is_infinite($value) => $value > 0 ? 'Infinity' : '-Infinity',
-                default => self::jsonEncode(
-                    $value,
-                    $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0
-                ),
-            });
+            fwrite($this->resource, self::jsonEncode(
+                $value,
+                $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0
+            ));
             return;
         }
 
         if (\is_string($value)) {
-            $this->encodeString($value, $this->options->valueQuotes, $this->options->multilineStrings);
+            $this->encodeString($value);
             return;
         }
 
@@ -123,9 +90,6 @@ final class JsonEngine
         // objects & unknown values
 
         match (true) {
-            // very special serializable
-            $value instanceof RawJson5Serializable,
-                => fwrite($this->resource, $value->json5SerializeRaw()),
             // special objects
             $value instanceof ListValue,
                 => $this->encodeContainer($value, false, $indent),
@@ -140,8 +104,6 @@ final class JsonEngine
             $value instanceof CompactObject,
                 => $this->encodeCompactContainer($value, true, $indent),
             // serializables
-            $value instanceof Json5Serializable,
-                => $this->encodeValue($value->json5Serialize(), $indent),
             $value instanceof JsonSerializable,
                 => $this->encodeValue($value->jsonSerialize(), $indent),
             // other objects
@@ -153,64 +115,9 @@ final class JsonEngine
         };
     }
 
-    private function encodeKey(string $key): void
+    private function encodeString(string $string): void
     {
-        $pattern = match ($this->options->bareKeys) {
-            Options\BareKeys::None => false,
-            Options\BareKeys::Ascii => self::ASCII_PATTERN,
-            Options\BareKeys::Unicode => self::UNICODE_PATTERN,
-        };
-
-        if ($pattern && preg_match($pattern, $key)) {
-            fwrite($this->resource, $key);
-            return;
-        }
-
-        $this->encodeString($key, $this->options->keyQuotes, false);
-    }
-
-    private function encodeString(string $string, Options\Quotes $quotes, bool $multilineStrings): void
-    {
-        // check if changing quotes may result in unescaped quotes
-        if ($this->options->tryOtherQuotes) {
-            $hasSingleQuotes = str_contains($string, "'");
-            $hasDoubleQuotes = str_contains($string, '"');
-            $preferrableQuotes = ($hasSingleQuotes xor $hasDoubleQuotes);
-
-            if ($preferrableQuotes) {
-                if ($hasSingleQuotes && $quotes === Options\Quotes::Single) {
-                    $quotes = Options\Quotes::Double;
-                } elseif ($hasDoubleQuotes && $quotes === Options\Quotes::Double) {
-                    $quotes = Options\Quotes::Single;
-                }
-            }
-        }
-
-        $encoded = self::jsonEncode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-
-        if ($multilineStrings) {
-            $hasLineEndings = str_contains($string, "\n");
-            $hasOnlyLineEndings = $hasLineEndings && preg_match('/^\n*$/', $string);
-
-            if ($hasLineEndings && !$hasOnlyLineEndings) {
-                $encoded = str_replace("\\n", "\\n\\\n", $encoded);
-                $encoded = "\"\\\n" . substr($encoded, 1);
-
-                // do not output a newline for a final newline
-                if (str_ends_with($string, "\n")) {
-                    $encoded = substr($encoded, 0, -3);
-                    $encoded .= '"';
-                }
-            }
-        }
-
-        if ($quotes === Options\Quotes::Single) {
-            $encoded = substr($encoded, 1, -1); // remove quotes
-            $encoded = str_replace(['\\"', "'"], ['"', "\\'"], $encoded); // unescape " and escape '
-            $encoded = "'{$encoded}'"; // add single quotes
-        }
-
-        fwrite($this->resource, $encoded);
+        fwrite($this->resource, self::jsonEncode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     private function encodeContainer(iterable $list, bool $object, string $indent): void
@@ -221,7 +128,15 @@ final class JsonEngine
         $state = self::STATE_START;
 
         foreach ($list as $key => $value) {
+            if ($value instanceof Comment) {
+                continue;
+            }
+
             if ($state === self::STATE_START) {
+                fwrite($this->resource, "\n");
+            }
+            if ($state === self::STATE_AFTER_VALUE) {
+                fwrite($this->resource, ',');
                 fwrite($this->resource, "\n");
             }
 
@@ -231,30 +146,19 @@ final class JsonEngine
                 continue;
             }
 
-            if ($value instanceof Comment) {
-                $this->renderComment($value->comment, $indent2);
-                $state = self::STATE_AFTER_COMMENT;
-                continue;
-            }
-
-            if ($value instanceof CommentDecorator) {
-                    $this->renderComment($value->commentBefore, $indent2);
-            }
             fwrite($this->resource, $indent2);
             if ($object) {
-                $this->encodeKey((string)$key);
+                $this->encodeString((string)$key);
                 fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent2);
-            fwrite($this->resource, ',');
-            if ($value instanceof CommentDecorator) {
-                $this->renderCommentLine($value->commentAfter, ' ');
-            }
-            fwrite($this->resource, "\n");
 
             $state = self::STATE_AFTER_VALUE;
         }
 
+        if ($state === self::STATE_AFTER_VALUE) {
+            fwrite($this->resource, "\n");
+        }
         if ($state !== self::STATE_START) {
             fwrite($this->resource, $indent);
         }
@@ -286,10 +190,10 @@ final class JsonEngine
             }
 
             if ($value instanceof Comment) {
+                // render empty line
                 if ($state !== self::STATE_START && $state !== self::STATE_AFTER_COMMENT) {
                     fwrite($this->resource, "\n");
                 }
-                $this->renderComment($value->comment, $indent2);
                 $state = self::STATE_AFTER_COMMENT;
                 continue;
             }
@@ -306,24 +210,15 @@ final class JsonEngine
                     break;
             }
 
-            if ($value instanceof CommentDecorator) {
-                $this->renderInlineComment($value->commentBefore, '', ' ');
-            }
             if ($object) {
-                $this->encodeKey((string)$key);
+                $this->encodeString((string)$key);
                 fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent2);
-            if ($value instanceof CommentDecorator) {
-                $this->renderInlineComment($value->commentAfter, ' ', '');
-            }
 
             $state = self::STATE_AFTER_VALUE;
         }
 
-        if ($state === self::STATE_AFTER_VALUE) {
-            fwrite($this->resource, ',');
-        }
         // start means empty; comment already has \n
         if ($state !== self::STATE_START && $state !== self::STATE_AFTER_COMMENT) {
             fwrite($this->resource, "\n");
@@ -342,6 +237,11 @@ final class JsonEngine
         $state = self::STATE_START;
 
         foreach ($list as $key => $value) {
+            if ($value instanceof Comment) {
+                $state = self::STATE_AFTER_COMMENT;
+                continue;
+            }
+
             if ($state === self::STATE_AFTER_VALUE) {
                 fwrite($this->resource, ',');
             }
@@ -360,7 +260,6 @@ final class JsonEngine
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                case self::STATE_AFTER_COMMENT:
                     fwrite($this->resource, ' ');
                     break;
 
@@ -370,23 +269,11 @@ final class JsonEngine
                     break;
             }
 
-            if ($value instanceof Comment) {
-                $this->renderInlineComment($value->comment, '', '');
-                $state = self::STATE_AFTER_COMMENT;
-                continue;
-            }
-
-            if ($value instanceof CommentDecorator) {
-                $this->renderInlineComment($value->commentBefore, '', ' ');
-            }
             if ($object) {
-                $this->encodeKey((string)$key);
+                $this->encodeString((string)$key);
                 fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent);
-            if ($value instanceof CommentDecorator) {
-                $this->renderInlineComment($value->commentAfter, ' ', '');
-            }
 
             $state = self::STATE_AFTER_VALUE;
         }
@@ -395,49 +282,6 @@ final class JsonEngine
             fwrite($this->resource, ' ');
         }
         fwrite($this->resource, $object ? '}' : ']');
-    }
-
-    private function renderComment(string|null $comment, string $indent): void
-    {
-        if ($comment === null) {
-            return;
-        }
-
-        $lines = explode("\n", $comment);
-
-        foreach ($lines as $line) {
-            $this->renderCommentLine($line, $indent);
-            fwrite($this->resource, "\n");
-        }
-    }
-
-    private function renderInlineComment(string|null $comment, string $prefix, string $postfix): void
-    {
-        if ($comment === null) {
-            return;
-        }
-
-        $comment = str_replace('*/', "*\u{200b}/", $comment);
-
-        fwrite($this->resource, $prefix);
-        fwrite($this->resource, '/* ');
-        fwrite($this->resource, $comment);
-        fwrite($this->resource, ' */');
-        fwrite($this->resource, $postfix);
-    }
-
-    private function renderCommentLine(string|null $commentLine, string $indent): void
-    {
-        if ($commentLine === null) {
-            return;
-        }
-
-        fwrite($this->resource, $indent);
-        fwrite($this->resource, '//');
-        if ($commentLine !== '') {
-            fwrite($this->resource, ' ');
-            fwrite($this->resource, $commentLine);
-        }
     }
 
     private function jsonEncode(mixed $value, int $options = 0): string
