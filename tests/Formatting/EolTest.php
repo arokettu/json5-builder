@@ -162,4 +162,42 @@ class EolTest extends TestCase
 
             JSON5, Json5Encoder::encode(new InlineObject($list)));
     }
+
+    public function testTwoEols(): void
+    {
+        $list = [
+            'key1' => 'value1',
+            'key2' => 'value2',
+            new EndOfLine(),
+            new EndOfLine(),
+            'key3' => 'value3',
+            'key4' => 'value4',
+        ];
+
+        self::assertEquals(<<<JSON5
+            {
+                key1: "value1",
+                key2: "value2",
+
+
+                key3: "value3",
+                key4: "value4",
+            }
+
+            JSON5, Json5Encoder::encode($list));
+        self::assertEquals(<<<JSON5
+            {
+                key1: "value1", key2: "value2",
+
+                key3: "value3", key4: "value4",
+            }
+
+            JSON5, Json5Encoder::encode(new CompactObject($list)));
+        self::assertEquals(<<<JSON5
+            { key1: "value1", key2: "value2",
+
+                key3: "value3", key4: "value4" }
+
+            JSON5, Json5Encoder::encode(new InlineObject($list)));
+    }
 }
