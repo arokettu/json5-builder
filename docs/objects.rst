@@ -46,11 +46,15 @@ Renders an integer in a hexadecimal form::
             hex3: 0x0000BEEF,
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        {
+            "hex1": 3735928559,
+            "hex2": 48879,
+            "hex3": 48879
+        }
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         {
             "hex1": 3735928559,
@@ -91,9 +95,9 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     ];
 
     echo Json5Encoder::encode($value);
-    $value['iterable'] = $generator(); // can't traverse a generator twice
+    $value['iterable'] = new ListValue($generator()); // can't traverse a generator twice
     echo JsonEncoder::encode($value);
-    $value['iterable'] = $generator(); // can't traverse a generator twice
+    $value['iterable'] = new ListValue($generator()); // can't traverse a generator twice
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 .. tabs::
@@ -119,11 +123,28 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
             ],
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        {
+            "list": [
+                2,
+                4
+            ],
+            "object": {
+                "0": 1,
+                "1": 2,
+                "2": 3,
+                "3": 4
+            },
+            "iterable": [
+                0,
+                1,
+                2,
+                3
+            ]
+        }
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         {
             "list": [
@@ -184,11 +205,15 @@ that can be written in a single line::
             tinyObject: { key: "value" },
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        // Compact and nice too
+        {
+            "tinyList": [1, 2, 3, 4],
+            "tinyObject": { "key": "value" }
+        }
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         // Quite wasteful
         {
@@ -227,7 +252,6 @@ Nesting container structures is also fine::
     echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-
 .. tabs::
 
     .. code-tab:: json5
@@ -248,11 +272,25 @@ Nesting container structures is also fine::
             ],
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        {
+            "authors": [{
+                "name": "Andy Gutmans",
+                "email": "example@example.com",
+                "role": "co-founder"
+            }, {
+                "name": "Zeev Suraski",
+                "email": "example@example.com",
+                "role": "co-founder"
+            }],
+            "repositories": [
+                { "type": "vcs", "url": "http://localhost/php.git" },
+                { "type": "vcs", "url": "http://localhost/zend.git" }
+            ]
+        }
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         {
             "authors": [
@@ -330,11 +368,22 @@ also notice various comment types behavior::
             ],
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        {
+            "tinyList": [
+                1, 2,
+                3, 4
+            ],
+            "tinyObject": {
+                "key1": "value1", "key2": "value2"
+            },
+            "comments": [
+                "become"
+            ]
+        }
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         {
             "tinyList": [
@@ -381,7 +430,6 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
     echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
-
 .. tabs::
 
     .. code-tab:: json5
@@ -393,11 +441,13 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
             g: 6.6743e-11, // Universe is safe
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        {
+            "g": 6.6743e-11
+        }
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         {
             "g": 6.6743e-11
@@ -426,11 +476,11 @@ Comments will be rendered as inline comments in compact and inline modes::
 
         [/* inline before */ "value" /* inline after */]
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        ["value"]
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         [
             "value"
@@ -475,14 +525,18 @@ A standalone comment. Rendered as a line comment in regular and compact modes an
     use Arokettu\Json5\Values\CompactList;
     use Arokettu\Json5\Values\InlineList;
 
+    require __DIR__ . '/../vendor/autoload.php';
+
     $value = [
-        'normal' => [new Comment('Normal mode'), 'value1', 'value2'],
+        'normal' => [new Comment('Normal mode'), 'value1', 'value2', 'value3'],
         'compact' => new CompactList([
             new Comment('Unlike decorator, standalone comment is rendered on its own line here'),
             'value1',
             'value2',
+            new Comment('JsonEncoder will leave EOL here'),
+            'value3',
         ]),
-        'inline' => new InlineList([new Comment('Inline mode'), 'value1', 'value2']),
+        'inline' => new InlineList([new Comment('Inline mode'), 'value1', 'value2', 'value3']),
     ];
 
     echo Json5Encoder::encode($value);
@@ -498,19 +552,33 @@ A standalone comment. Rendered as a line comment in regular and compact modes an
                 // Normal mode
                 "value1",
                 "value2",
+                "value3",
             ],
             compact: [
                 // Unlike decorator, standalone comment is rendered on its own line here
                 "value1", "value2",
+                // JsonEncoder will leave EOL here
+                "value3",
             ],
-            inline: [/* Inline mode */ "value1", "value2"],
+            inline: [/* Inline mode */ "value1", "value2", "value3"],
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        {
+            "normal": [
+                "value1",
+                "value2",
+                "value3"
+            ],
+            "compact": [
+                "value1", "value2",
+                "value3"
+            ],
+            "inline": ["value1", "value2", "value3"]
+        }
 
-    .. code-tab:: json JSON (``json_encode``)
+    .. code-tab:: json JSON (json_encode)
 
         {
             "normal": [
@@ -518,21 +586,27 @@ A standalone comment. Rendered as a line comment in regular and compact modes an
                     "comment": "Normal mode"
                 },
                 "value1",
-                "value2"
+                "value2",
+                "value3"
             ],
             "compact": [
                 {
                     "comment": "Unlike decorator, standalone comment is rendered on its own line here"
                 },
                 "value1",
-                "value2"
+                "value2",
+                {
+                    "comment": "JsonEncoder will leave EOL here"
+                },
+                "value3"
             ],
             "inline": [
                 {
                     "comment": "Inline mode"
                 },
                 "value1",
-                "value2"
+                "value2",
+                "value3"
             ]
         }
 
@@ -583,11 +657,25 @@ Inserts a newline character::
             ],
         }
 
-    .. code-tab:: json
+    .. code-tab:: json JSON (JsonEncoder)
 
-        {}
+        {
+            "regular": [
+                1,
+                2,
 
-    .. code-tab:: json JSON (``json_encode``)
+                3,
+                4
+            ],
+            "inline": [1, 2,
+                3, 4],
+            "compact": [
+                1, 2,
+                3, 4
+            ]
+        }
+
+    .. code-tab:: json JSON (json_encode)
 
         {
             "regular": [
