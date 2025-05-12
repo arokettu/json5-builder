@@ -63,7 +63,11 @@ class CommentTest extends TestCase
 
         self::assertEquals(<<<JSON5
             [
-                /* begin */ "value1", "value2", /* middle */ "value3", "value4", /* end */
+                // begin
+                "value1", "value2",
+                // middle
+                "value3", "value4",
+                // end
             ]
 
             JSON5, Json5Encoder::encode(new CompactList($list)));
@@ -127,7 +131,11 @@ class CommentTest extends TestCase
 
         self::assertEquals(<<<JSON5
             {
-                /* begin */ key1: "value1", key2: "value2", /* middle */ key3: "value3", key4: "value4", /* end */
+                // begin
+                key1: "value1", key2: "value2",
+                // middle
+                key3: "value3", key4: "value4",
+                // end
             }
 
             JSON5, Json5Encoder::encode(new CompactObject($list)));
@@ -175,7 +183,10 @@ class CommentTest extends TestCase
             JSON5, Json5Encoder::encode($list));
         self::assertEquals(<<<JSON5
             {
-                key1: "value1", key2: "value2", /* comment1 */ /* comment2 */ key3: "value3", key4: "value4",
+                key1: "value1", key2: "value2",
+                // comment1
+                // comment2
+                key3: "value3", key4: "value4",
             }
 
             JSON5, Json5Encoder::encode(new CompactObject($list)));

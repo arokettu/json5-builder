@@ -283,22 +283,25 @@ final class Encoder
                 continue;
             }
 
+            if ($value instanceof Comment) {
+                if ($state !== self::STATE_START && $state !== self::STATE_AFTER_COMMENT) {
+                    fwrite($this->resource, "\n");
+                }
+                $this->renderComment($value->comment, $indent2);
+                $state = self::STATE_AFTER_COMMENT;
+                continue;
+            }
+
             switch ($state) {
                 case self::STATE_START:
                 case self::STATE_AFTER_EOL:
+                case self::STATE_AFTER_COMMENT:
                     fwrite($this->resource, $indent2);
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                case self::STATE_AFTER_COMMENT:
                     fwrite($this->resource, ' ');
                     break;
-            }
-
-            if ($value instanceof Comment) {
-                $this->renderInlineComment($value->comment, '', '');
-                $state = self::STATE_AFTER_COMMENT;
-                continue;
             }
 
             if ($value instanceof CommentDecorator) {
@@ -319,8 +322,11 @@ final class Encoder
         if ($state === self::STATE_AFTER_VALUE) {
             fwrite($this->resource, ',');
         }
-        if ($state !== self::STATE_START) {
+        // start means empty; comment already has \n
+        if ($state !== self::STATE_START && $state !== self::STATE_AFTER_COMMENT) {
             fwrite($this->resource, "\n");
+        }
+        if ($state !== self::STATE_START) {
             fwrite($this->resource, $indent);
         }
         fwrite($this->resource, $object ? '}' : ']');
