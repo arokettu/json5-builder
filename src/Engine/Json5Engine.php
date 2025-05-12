@@ -26,7 +26,7 @@ use ValueError;
 /**
  * @internal
  */
-final class Encoder
+final class Json5Engine
 {
     // IdentifierName patterns
     // UnicodeEscapeSequence is also allowed but ignore it for simplicity
