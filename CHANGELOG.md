@@ -2,7 +2,9 @@
 
 ## 1.x
 
-### next
+### 1.1.0
+
+*May 12, 2025*
 
 * Custom lists and objects:
   * `ListValue` converts any iterable into a list
