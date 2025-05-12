@@ -238,6 +238,54 @@ Nesting container structures is also fine::
         ]
     }
 
+``CompactList`` and ``CompactObject``
+-------------------------------------
+
+``\Arokettu\Json5\Values\CompactList``
+
+``\Arokettu\Json5\Values\CompactObject``
+
+A middle ground between normal and inline structures best used with a manual newline::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Values\CompactList;
+    use Arokettu\Json5\Values\CompactObject;
+
+    $value = [
+        'tinyList' => new CompactList([1, 2, 3, 4]),
+        'tinyObject' => new CompactObject(['key1' =>  'value1', 'key2' =>  'value2']),
+    ];
+
+    echo Json5Encoder::encode($value);
+    echo json_encode($value, JSON_PRETTY_PRINT);
+
+.. code-block:: json5
+
+    // JSON5
+    {
+        tinyList: [
+            1, 2, 3, 4,
+        ],
+        tinyObject: {
+            key1: "value1", key2: "value2",
+        },
+    }
+    // JSON
+    {
+        "tinyList": [
+            1,
+            2,
+            3,
+            4
+        ],
+        "tinyObject": {
+            "key1": "value1",
+            "key2": "value2"
+        }
+    }
+
 Common Decorators
 =================
 
