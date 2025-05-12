@@ -20,3 +20,4 @@
 # docs
 /docs/build
 /docs/__pycache__
+/venv

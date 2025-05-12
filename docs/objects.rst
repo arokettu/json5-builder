@@ -33,20 +33,24 @@ Renders an integer in a hexadecimal form::
     echo Json5Encoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
-.. code-block:: json5
 
-    // JSON5
-    {
-        hex1: 0xDEADBEEF,
-        hex2: 0xBEEF,
-        hex3: 0x0000BEEF,
-    }
-    // JSON
-    {
-        "hex1": 3735928559,
-        "hex2": 48879,
-        "hex3": 48879
-    }
+.. tabs::
+
+    .. code-tab:: json5
+
+        {
+            hex1: 0xDEADBEEF,
+            hex2: 0xBEEF,
+            hex3: 0x0000BEEF,
+        }
+
+    .. code-tab:: json
+
+        {
+            "hex1": 3735928559,
+            "hex2": 48879,
+            "hex3": 48879
+        }
 
 .. error:: Known issue: ``PHP_INT_MIN`` value is not handled correctly
 
@@ -83,46 +87,49 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     $value['iterable'] = $generator(); // can't traverse a generator twice
     echo json_encode($value, JSON_PRETTY_PRINT);
 
-.. code-block:: json5
+.. tabs::
 
-    // JSON5
-    {
-        list: [
-            2,
-            4,
-        ],
-        object: {
-            '0': 1,
-            '1': 2,
-            '2': 3,
-            '3': 4,
-        },
-        iterable: [
-            0,
-            1,
-            2,
-            3,
-        ],
-    }
-    // JSON
-    {
-        "list": [
-            2,
-            4
-        ],
-        "object": {
-            "0": 1,
-            "1": 2,
-            "2": 3,
-            "3": 4
-        },
-        "iterable": [
-            0,
-            1,
-            2,
-            3
-        ]
-    }
+    .. code-tab:: json5
+
+        {
+            list: [
+                2,
+                4,
+            ],
+            object: {
+                '0': 1,
+                '1': 2,
+                '2': 3,
+                '3': 4,
+            },
+            iterable: [
+                0,
+                1,
+                2,
+                3,
+            ],
+        }
+
+    .. code-tab:: json
+
+        {
+            "list": [
+                2,
+                4
+            ],
+            "object": {
+                "0": 1,
+                "1": 2,
+                "2": 3,
+                "3": 4
+            },
+            "iterable": [
+                0,
+                1,
+                2,
+                3
+            ]
+        }
 
 .. note::
     If an iterable wrapped by an instance of ``ObjectValue`` (and similar object wrappers) has duplicate keys,
@@ -152,25 +159,30 @@ that can be written in a single line::
     echo Json5Encoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
-.. code-block:: json5
+.. tabs::
 
-    // JSON5. Compact and nice
-    {
-        tinyList: [1, 2, 3, 4],
-        tinyObject: { key: "value" },
-    }
-    // JSON. Quite wasteful
-    {
-        "tinyList": [
-            1,
-            2,
-            3,
-            4
-        ],
-        "tinyObject": {
-            "key": "value"
+    .. code-tab:: json5
+
+        // Compact and nice
+        {
+            tinyList: [1, 2, 3, 4],
+            tinyObject: { key: "value" },
         }
-    }
+
+    .. code-tab:: json
+
+        // Quite wasteful
+        {
+            "tinyList": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "tinyObject": {
+                "key": "value"
+            }
+        }
 
 Nesting container structures is also fine::
 
@@ -194,49 +206,53 @@ Nesting container structures is also fine::
     echo Json5Encoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-.. code-block:: json5
 
-    // JSON5
-    {
-        authors: [{
-            name: "Andy Gutmans",
-            email: "example@example.com",
-            role: "co-founder",
-        }, {
-            name: "Zeev Suraski",
-            email: "example@example.com",
-            role: "co-founder",
-        }],
-        repositories: [
-            { type: "vcs", url: "http://localhost/php.git" },
-            { type: "vcs", url: "http://localhost/zend.git" },
-        ],
-    }
-    // JSON
-    {
-        "authors": [
-            {
-                "name": "Andy Gutmans",
-                "email": "example@example.com",
-                "role": "co-founder"
-            },
-            {
-                "name": "Zeev Suraski",
-                "email": "example@example.com",
-                "role": "co-founder"
-            }
-        ],
-        "repositories": [
-            {
-                "type": "vcs",
-                "url": "http://localhost/php.git"
-            },
-            {
-                "type": "vcs",
-                "url": "http://localhost/zend.git"
-            }
-        ]
-    }
+.. tabs::
+
+    .. code-tab:: json5
+
+        {
+            authors: [{
+                name: "Andy Gutmans",
+                email: "example@example.com",
+                role: "co-founder",
+            }, {
+                name: "Zeev Suraski",
+                email: "example@example.com",
+                role: "co-founder",
+            }],
+            repositories: [
+                { type: "vcs", url: "http://localhost/php.git" },
+                { type: "vcs", url: "http://localhost/zend.git" },
+            ],
+        }
+
+    .. code-tab:: json
+
+        {
+            "authors": [
+                {
+                    "name": "Andy Gutmans",
+                    "email": "example@example.com",
+                    "role": "co-founder"
+                },
+                {
+                    "name": "Zeev Suraski",
+                    "email": "example@example.com",
+                    "role": "co-founder"
+                }
+            ],
+            "repositories": [
+                {
+                    "type": "vcs",
+                    "url": "http://localhost/php.git"
+                },
+                {
+                    "type": "vcs",
+                    "url": "http://localhost/zend.git"
+                }
+            ]
+        }
 
 ``CompactList`` and ``CompactObject``
 -------------------------------------
@@ -261,30 +277,33 @@ A middle ground between normal and inline structures best used with a manual new
     echo Json5Encoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
-.. code-block:: json5
+.. tabs::
 
-    // JSON5
-    {
-        tinyList: [
-            1, 2, 3, 4,
-        ],
-        tinyObject: {
-            key1: "value1", key2: "value2",
-        },
-    }
-    // JSON
-    {
-        "tinyList": [
-            1,
-            2,
-            3,
-            4
-        ],
-        "tinyObject": {
-            "key1": "value1",
-            "key2": "value2"
+    .. code-tab:: json5
+
+        {
+            tinyList: [
+                1, 2, 3, 4,
+            ],
+            tinyObject: {
+                key1: "value1", key2: "value2",
+            },
         }
-    }
+
+    .. code-tab:: json
+
+        {
+            "tinyList": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "tinyObject": {
+                "key1": "value1",
+                "key2": "value2"
+            }
+        }
 
 Common Decorators
 =================
@@ -304,24 +323,28 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
             This is the Gravitational constant
             Changing it may collapse the Universe
             TEXT, commentAfter: 'Universe is safe'),
-    ], commentBefore: 'JSON5. This time this comment is really rendered by the lib');
+    ], commentBefore: 'This time this comment is really rendered by the lib');
 
     echo Json5Encoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 
-.. code-block:: json5
+.. tabs::
 
-    // JSON5. This time this comment is really rendered by the lib
-    {
-        // This is the Gravitational constant
-        // Changing it may collapse the Universe
-        g: 6.6743e-11, // Universe is safe
-    }
-    // JSON
-    {
-        "g": 6.6743e-11
-    }
+    .. code-tab:: json5
+
+        // This time this comment is really rendered by the lib
+        {
+            // This is the Gravitational constant
+            // Changing it may collapse the Universe
+            g: 6.6743e-11, // Universe is safe
+        }
+
+    .. code-tab:: json
+
+        {
+            "g": 6.6743e-11
+        }
 
 Interfaces
 ==========
@@ -373,45 +396,48 @@ Inserts a newline character::
     echo Json5Encoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
-.. code-block:: json5
+.. tabs::
 
-    // JSON5
-    {
-        regular: [
-            1,
-            2,
+    .. code-tab:: json5
 
-            3,
-            4,
-        ],
-        inline: [1, 2,
-            3, 4],
-        compact: [
-            1, 2,
-            3, 4,
-        ],
-    }
-    // JSON
-    {
-        "regular": [
-            1,
-            2,
-            {}, // not transparent
-            3,
-            4
-        ],
-        "inline": [
-            1,
-            2,
-            {}, // not transparent
-            3,
-            4
-        ],
-        "compact": [
-            1,
-            2,
-            {}, // not transparent
-            3,
-            4
-        ]
-    }
+        {
+            regular: [
+                1,
+                2,
+
+                3,
+                4,
+            ],
+            inline: [1, 2,
+                3, 4],
+            compact: [
+                1, 2,
+                3, 4,
+            ],
+        }
+
+    .. code-tab:: json
+
+        {
+            "regular": [
+                1,
+                2,
+                {}, // not transparent
+                3,
+                4
+            ],
+            "inline": [
+                1,
+                2,
+                {}, // not transparent
+                3,
+                4
+            ],
+            "compact": [
+                1,
+                2,
+                {}, // not transparent
+                3,
+                4
+            ]
+        }
