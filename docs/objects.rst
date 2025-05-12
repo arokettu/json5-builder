@@ -22,6 +22,7 @@ Renders an integer in a hexadecimal form::
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\HexInteger;
 
     $value = [
@@ -31,6 +32,7 @@ Renders an integer in a hexadecimal form::
     ];
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 
@@ -45,6 +47,10 @@ Renders an integer in a hexadecimal form::
         }
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         {
             "hex1": 3735928559,
@@ -73,6 +79,7 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\ListValue;
     use Arokettu\Json5\Values\ObjectValue;
 
@@ -84,6 +91,8 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     ];
 
     echo Json5Encoder::encode($value);
+    $value['iterable'] = $generator(); // can't traverse a generator twice
+    echo JsonEncoder::encode($value);
     $value['iterable'] = $generator(); // can't traverse a generator twice
     echo json_encode($value, JSON_PRETTY_PRINT);
 
@@ -111,6 +120,10 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
         }
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         {
             "list": [
@@ -148,6 +161,7 @@ that can be written in a single line::
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\InlineList;
     use Arokettu\Json5\Values\InlineObject;
 
@@ -157,6 +171,7 @@ that can be written in a single line::
     ];
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 .. tabs::
@@ -170,6 +185,10 @@ that can be written in a single line::
         }
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         // Quite wasteful
         {
@@ -189,6 +208,7 @@ Nesting container structures is also fine::
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\InlineList;
     use Arokettu\Json5\Values\InlineObject;
 
@@ -204,6 +224,7 @@ Nesting container structures is also fine::
     ];
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
 
@@ -228,6 +249,10 @@ Nesting container structures is also fine::
         }
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         {
             "authors": [
@@ -267,6 +292,7 @@ also notice various comment types behavior::
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\Comment;
     use Arokettu\Json5\Values\CommentDecorator;
     use Arokettu\Json5\Values\CompactList;
@@ -283,6 +309,7 @@ also notice various comment types behavior::
     ];
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 .. tabs::
@@ -304,6 +331,10 @@ also notice various comment types behavior::
         }
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         {
             "tinyList": [
@@ -336,6 +367,7 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\CommentDecorator;
 
     $value = new CommentDecorator([ // root level supported too
@@ -346,6 +378,7 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
     ], commentBefore: 'This time this comment is really rendered by the lib');
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 
@@ -362,6 +395,10 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
 
     .. code-tab:: json
 
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
+
         {
             "g": 6.6743e-11
         }
@@ -371,6 +408,7 @@ Comments will be rendered as inline comments in compact and inline modes::
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\CommentDecorator;
     use Arokettu\Json5\Values\InlineList;
 
@@ -379,6 +417,7 @@ Comments will be rendered as inline comments in compact and inline modes::
     ]);
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 .. tabs::
@@ -388,6 +427,10 @@ Comments will be rendered as inline comments in compact and inline modes::
         [/* inline before */ "value" /* inline after */]
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         [
             "value"
@@ -427,6 +470,7 @@ A standalone comment. Rendered as a line comment in regular and compact modes an
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\Comment;
     use Arokettu\Json5\Values\CompactList;
     use Arokettu\Json5\Values\InlineList;
@@ -442,6 +486,7 @@ A standalone comment. Rendered as a line comment in regular and compact modes an
     ];
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 .. tabs::
@@ -462,6 +507,10 @@ A standalone comment. Rendered as a line comment in regular and compact modes an
         }
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         {
             "normal": [
@@ -499,6 +548,7 @@ Inserts a newline character::
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\CompactList;
     use Arokettu\Json5\Values\EndOfLine;
     use Arokettu\Json5\Values\InlineList;
@@ -510,6 +560,7 @@ Inserts a newline character::
     ];
 
     echo Json5Encoder::encode($value);
+    echo JsonEncoder::encode($value);
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 .. tabs::
@@ -533,6 +584,10 @@ Inserts a newline character::
         }
 
     .. code-tab:: json
+
+        {}
+
+    .. code-tab:: json JSON (``json_encode``)
 
         {
             "regular": [
