@@ -366,6 +366,33 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
             "g": 6.6743e-11
         }
 
+Comments will be rendered as inline comments in compact and inline modes::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Values\CommentDecorator;
+    use Arokettu\Json5\Values\InlineList;
+
+    $value = new InlineList([
+        new CommentDecorator('value', 'inline before', 'inline after'),
+    ]);
+
+    echo Json5Encoder::encode($value);
+    echo json_encode($value, JSON_PRETTY_PRINT);
+
+.. tabs::
+
+    .. code-tab:: json5
+
+        [/* inline before */ "value" /* inline after */]
+
+    .. code-tab:: json
+
+        [
+            "value"
+        ]
+
 Interfaces
 ==========
 
@@ -388,8 +415,77 @@ Formatting Objects
 
 .. note:: Formatting Objects are not transparent for the ``json_encode`` and will be encoded as regular objects, see examples.
 
+.. note:: Formatting Objects cannot be encoded as root objects and cannot be returned in ``json5Serialize()`` and ``jsonSerialize()`` methods.
+
 ``Comment``
 -----------
+
+``\Arokettu\Json5\Values\Comment``
+
+A standalone comment. Rendered as a line comment in regular and compact modes and as an inline comment in inline mode::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Values\Comment;
+    use Arokettu\Json5\Values\CompactList;
+    use Arokettu\Json5\Values\InlineList;
+
+    $value = [
+        'normal' => [new Comment('Normal mode'), 'value1', 'value2'],
+        'compact' => new CompactList([
+            new Comment('Unlike decorator, standalone comment is rendered on its own line here'),
+            'value1',
+            'value2',
+        ]),
+        'inline' => new InlineList([new Comment('Inline mode'), 'value1', 'value2']),
+    ];
+
+    echo Json5Encoder::encode($value);
+    echo json_encode($value, JSON_PRETTY_PRINT);
+
+.. tabs::
+
+    .. code-tab:: json5
+
+        {
+            normal: [
+                // Normal mode
+                "value1",
+                "value2",
+            ],
+            compact: [
+                // Unlike decorator, standalone comment is rendered on its own line here
+                "value1", "value2",
+            ],
+            inline: [/* Inline mode */ "value1", "value2"],
+        }
+
+    .. code-tab:: json
+
+        {
+            "normal": [
+                {
+                    "comment": "Normal mode"
+                },
+                "value1",
+                "value2"
+            ],
+            "compact": [
+                {
+                    "comment": "Unlike decorator, standalone comment is rendered on its own line here"
+                },
+                "value1",
+                "value2"
+            ],
+            "inline": [
+                {
+                    "comment": "Inline mode"
+                },
+                "value1",
+                "value2"
+            ]
+        }
 
 .. _json5_objects_eol:
 
