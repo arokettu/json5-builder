@@ -261,17 +261,25 @@ Nesting container structures is also fine::
 
 ``\Arokettu\Json5\Values\CompactObject``
 
-A middle ground between normal and inline structures best used with a manual newline using :ref:`json5_objects_eol`::
+A middle ground between normal and inline structures best used with a manual newline using :ref:`json5_objects_eol`,
+also notice various comment types behavior::
 
     <?php
 
     use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Values\Comment;
+    use Arokettu\Json5\Values\CommentDecorator;
     use Arokettu\Json5\Values\CompactList;
     use Arokettu\Json5\Values\CompactObject;
+    use Arokettu\Json5\Values\EndOfLine;
 
     $value = [
-        'tinyList' => new CompactList([1, 2, 3, 4]),
+        'tinyList' => new CompactList([1, 2, new EndOfLine(), 3, 4]),
         'tinyObject' => new CompactObject(['key1' =>  'value1', 'key2' =>  'value2']),
+        'comments' => new CompactList([
+            new Comment('Standalone comment is a line comment'),
+            new CommentDecorator('become', 'Decorator comments', 'inline comments'),
+        ]),
     ];
 
     echo Json5Encoder::encode($value);
@@ -283,11 +291,16 @@ A middle ground between normal and inline structures best used with a manual new
 
         {
             tinyList: [
-                1, 2, 3, 4,
+                1, 2,
+                3, 4,
             ],
             tinyObject: {
                 key1: "value1", key2: "value2",
             },
+            comments: [
+                // Standalone comment is a line comment
+                /* Decorator comments */ "become" /* inline comments */,
+            ],
         }
 
     .. code-tab:: json
@@ -296,13 +309,20 @@ A middle ground between normal and inline structures best used with a manual new
             "tinyList": [
                 1,
                 2,
+                {},
                 3,
                 4
             ],
             "tinyObject": {
                 "key1": "value1",
                 "key2": "value2"
-            }
+            },
+            "comments": [
+                {
+                    "comment": "Standalone comment is a line comment"
+                },
+                "become"
+            ]
         }
 
 Common Decorators
