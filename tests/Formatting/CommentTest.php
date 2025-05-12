@@ -150,4 +150,38 @@ class CommentTest extends TestCase
 
             JSON5, Json5Encoder::encode(new InlineObject($list)));
     }
+
+    public function testTwoComments(): void
+    {
+        $list = [
+            'key1' => 'value1',
+            'key2' => 'value2',
+            new Comment('comment1'),
+            new Comment('comment2'),
+            'key3' => 'value3',
+            'key4' => 'value4',
+        ];
+
+        self::assertEquals(<<<JSON5
+            {
+                key1: "value1",
+                key2: "value2",
+                // comment1
+                // comment2
+                key3: "value3",
+                key4: "value4",
+            }
+
+            JSON5, Json5Encoder::encode($list));
+        self::assertEquals(<<<JSON5
+            {
+                key1: "value1", key2: "value2", /* comment1 */ /* comment2 */ key3: "value3", key4: "value4",
+            }
+
+            JSON5, Json5Encoder::encode(new CompactObject($list)));
+        self::assertEquals(<<<JSON5
+            { key1: "value1", key2: "value2", /* comment1 */ /* comment2 */ key3: "value3", key4: "value4" }
+
+            JSON5, Json5Encoder::encode(new InlineObject($list)));
+    }
 }
