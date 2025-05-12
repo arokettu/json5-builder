@@ -245,7 +245,7 @@ Nesting container structures is also fine::
 
 ``\Arokettu\Json5\Values\CompactObject``
 
-A middle ground between normal and inline structures best used with a manual newline::
+A middle ground between normal and inline structures best used with a manual newline using :ref:`json5_objects_eol`::
 
     <?php
 
@@ -299,8 +299,6 @@ Renders a value with comments. The ``commentBefore`` may be multiline, the ``com
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\Values\CommentDecorator;
 
-    require __DIR__ . '/../vendor/autoload.php';
-
     $value = new CommentDecorator([ // root level supported too
         'g' => new CommentDecorator(6.6743e-11, commentBefore: <<<TEXT
             This is the Gravitational constant
@@ -342,9 +340,78 @@ Interfaces
 
 Like ``JsonSerializable`` but it's specific to this library.
 
-Planned
-=======
+Formatting Objects
+==================
 
-* Compact objects and lists
-* Force newline
-* Standalone comments
+.. note:: Formatting Objects are not transparent for the ``json_encode`` and will be encoded as regular objects, see examples.
+
+``Comment``
+-----------
+
+.. _json5_objects_eol:
+
+``EndOfLine``
+-------------
+
+``\Arokettu\Json5\Values\EndOfLine``
+
+Inserts a newline character::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Values\CompactList;
+    use Arokettu\Json5\Values\EndOfLine;
+    use Arokettu\Json5\Values\InlineList;
+
+    $value = [
+        'regular' => [1, 2, new EndOfLine(), 3, 4],
+        'inline'  => new InlineList([1, 2, new EndOfLine(), 3, 4]),
+        'compact' => new CompactList([1, 2, new EndOfLine(), 3, 4]),
+    ];
+
+    echo Json5Encoder::encode($value);
+    echo json_encode($value, JSON_PRETTY_PRINT);
+
+.. code-block:: json5
+
+    // JSON5
+    {
+        regular: [
+            1,
+            2,
+
+            3,
+            4,
+        ],
+        inline: [1, 2,
+            3, 4],
+        compact: [
+            1, 2,
+            3, 4,
+        ],
+    }
+    // JSON
+    {
+        "regular": [
+            1,
+            2,
+            {}, // not transparent
+            3,
+            4
+        ],
+        "inline": [
+            1,
+            2,
+            {}, // not transparent
+            3,
+            4
+        ],
+        "compact": [
+            1,
+            2,
+            {}, // not transparent
+            3,
+            4
+        ]
+    }
