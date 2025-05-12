@@ -164,4 +164,15 @@ class CompactObjectTest extends TestCase
 
             JSON5, Json5Encoder::encode($list));
     }
+
+    public function testJsonTransparency(): void
+    {
+        // array that is not a list
+        $list1 = [1, 2, 3];
+        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($list1)));
+
+        // iterable
+        $list2 = fn () => yield from $list1;
+        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($list2())));
+    }
 }

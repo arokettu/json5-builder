@@ -119,11 +119,14 @@ class ObjectValueTest extends TestCase
             JSON5, Json5Encoder::encode(new ObjectValue($class)));
     }
 
-    // for other objects too
     public function testJsonTransparency(): void
     {
-        $obj = new ObjectValue([1,2,3]);
+        // array that is not a list
+        $list1 = [1, 2, 3];
+        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new ObjectValue($list1)));
 
-        self::assertEquals('{"0":1,"1":2,"2":3}', Json::encode($obj));
+        // iterable
+        $list2 = fn () => yield from $list1;
+        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new ObjectValue($list2())));
     }
 }

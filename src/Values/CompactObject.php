@@ -7,5 +7,5 @@ namespace Arokettu\Json5\Values;
 final class CompactObject implements Internal\IterableValueInterface
 {
     use Internal\IterableValueTrait;
-    use Internal\IterableValueListTrait;
+    use Internal\IterableValueObjectTrait;
 }

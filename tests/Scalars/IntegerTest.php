@@ -24,9 +24,6 @@ class IntegerTest extends TestCase
         self::assertEquals("0x00123ACD\n", Json5Encoder::encode(new HexInteger(0x123acd, 8)));
         self::assertEquals("-0x00123ACD\n", Json5Encoder::encode(new HexInteger(-0x123acd, 8)));
 
-        // JSON is supported too
-        self::assertEquals('1194701', json_encode(new HexInteger(0x123acd)));
-
         // 0
         self::assertEquals("0x0\n", Json5Encoder::encode(new HexInteger(0)));
         self::assertEquals("0x00000000\n", Json5Encoder::encode(new HexInteger(0, 8)));
@@ -45,5 +42,10 @@ class IntegerTest extends TestCase
         self::expectExceptionMessage('Padding must be a non-negative integer');
 
         new HexInteger(0, -4);
+    }
+
+    public function testJsonTransparency(): void
+    {
+        self::assertEquals('1194701', json_encode(new HexInteger(0x123acd)));
     }
 }

@@ -119,11 +119,14 @@ class ListValueTest extends TestCase
             JSON5, Json5Encoder::encode(new ListValue($class)));
     }
 
-    // for other lists too
     public function testJsonTransparency(): void
     {
-        $list = new ListValue(['a' => 1, 'b' => 2, 'c' => 3]);
+        // array that is not a list
+        $list1 = ['a' => 1, 'b' => 2, 'c' => 3];
+        self::assertEquals('[1,2,3]', json_encode(new ListValue($list1)));
 
-        self::assertEquals('[1,2,3]', Json::encode($list));
+        // iterable
+        $list2 = fn () => yield from $list1;
+        self::assertEquals('[1,2,3]', json_encode(new ListValue($list2())));
     }
 }
