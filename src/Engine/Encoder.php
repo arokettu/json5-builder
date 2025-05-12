@@ -66,7 +66,7 @@ final class Encoder
         $value = $this->value;
 
         if ($value instanceof CommentDecorator) {
-            $this->renderComment($value->commentBefore, '', "\n");
+            $this->renderComment($value->commentBefore, '');
         }
         $this->encodeValue($value, '');
         if ($value instanceof CommentDecorator) {
@@ -255,10 +255,15 @@ final class Encoder
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                case self::STATE_AFTER_COMMENT:
-                    if ($type === ContainerType::Regular) {
-                        fwrite($this->resource, "\n");
+                    if ($type === ContainerType::Compact || $type === ContainerType::Inline) {
+                        fwrite($this->resource, ' ');
                     } else {
+                        fwrite($this->resource, "\n");
+                    }
+                    break;
+
+                case self::STATE_AFTER_COMMENT:
+                    if ($type === ContainerType::Compact || $type === ContainerType::Inline) {
                         fwrite($this->resource, ' ');
                     }
                     break;
@@ -276,7 +281,7 @@ final class Encoder
 
             if ($value instanceof Comment) {
                 $type === ContainerType::Regular ?
-                    $this->renderComment($value->comment, $indent2, '') :
+                    $this->renderComment($value->comment, $indent2) :
                     $this->renderInlineComment($value->comment, '', '');
                 $state = self::STATE_AFTER_COMMENT;
                 continue;
@@ -284,7 +289,7 @@ final class Encoder
 
             if ($value instanceof CommentDecorator) {
                 $type === ContainerType::Regular ?
-                    $this->renderComment($value->commentBefore, $indent2, "\n") :
+                    $this->renderComment($value->commentBefore, $indent2) :
                     $this->renderInlineComment($value->commentBefore, '', ' ');
             }
             if ($type === ContainerType::Regular) {
@@ -300,7 +305,7 @@ final class Encoder
             }
             if ($value instanceof CommentDecorator) {
                 $type === ContainerType::Regular ?
-                    $this->renderComment($value->commentAfter, ' ', '') :
+                    $this->renderCommentLine($value->commentAfter, ' ') :
                     $this->renderInlineComment($value->commentAfter, ' ', '');
             }
 
@@ -329,9 +334,9 @@ final class Encoder
                 break;
 
             case self::STATE_AFTER_COMMENT:
-                if ($type === ContainerType::Compact || $type === ContainerType::Regular) {
+                if ($type === ContainerType::Compact) {
                     fwrite($this->resource, "\n");
-                } elseif ($extraPadding) {
+                } elseif ($type === ContainerType::Inline && $extraPadding) {
                     fwrite($this->resource, ' ');
                 }
                 break;
@@ -340,7 +345,7 @@ final class Encoder
         fwrite($this->resource, $object ? '}' : ']');
     }
 
-    private function renderComment(string|null $comment, string $indent, string $postfix): void
+    private function renderComment(string|null $comment, string $indent): void
     {
         if ($comment === null) {
             return;
@@ -348,16 +353,10 @@ final class Encoder
 
         $lines = explode("\n", $comment);
 
-        $first = true;
         foreach ($lines as $line) {
-            if ($first) {
-                $first = false;
-            } else {
-                fwrite($this->resource, "\n");
-            }
             $this->renderCommentLine($line, $indent);
+            fwrite($this->resource, "\n");
         }
-        fwrite($this->resource, $postfix);
     }
 
     private function renderInlineComment(string|null $comment, string $prefix, string $postfix): void
