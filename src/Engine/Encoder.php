@@ -116,7 +116,7 @@ final class Encoder
         // arrays
 
         if (\is_array($value)) {
-            $this->encodeContainer($value, !array_is_list($value), $indent, ContainerType::Regular);
+            $this->encodeContainer($value, !array_is_list($value), $indent);
             return;
         }
 
@@ -128,17 +128,17 @@ final class Encoder
                 => fwrite($this->resource, $value->json5SerializeRaw()),
             // special objects
             $value instanceof ListValue,
-                => $this->encodeContainer($value, false, $indent, ContainerType::Regular),
+                => $this->encodeContainer($value, false, $indent),
             $value instanceof InlineList,
-                => $this->encodeContainer($value, false, $indent, ContainerType::Inline),
+                => $this->encodeInlineContainer($value, false, $indent),
             $value instanceof CompactList,
-                => $this->encodeContainer($value, false, $indent, ContainerType::Compact),
+                => $this->encodeCompactContainer($value, false, $indent),
             $value instanceof ObjectValue,
-                => $this->encodeContainer($value, true, $indent, ContainerType::Regular),
+                => $this->encodeContainer($value, true, $indent),
             $value instanceof InlineObject,
-                => $this->encodeContainer($value, true, $indent, ContainerType::Inline),
+                => $this->encodeInlineContainer($value, true, $indent),
             $value instanceof CompactObject,
-                => $this->encodeContainer($value, true, $indent, ContainerType::Compact),
+                => $this->encodeCompactContainer($value, true, $indent),
             // serializables
             $value instanceof Json5Serializable,
                 => $this->encodeValue($value->json5Serialize(), $indent),
@@ -147,7 +147,7 @@ final class Encoder
             // other objects
             $value instanceof stdClass,
             $value instanceof ArrayObject,
-                => $this->encodeContainer((array)$value, true, $indent, ContainerType::Regular),
+                => $this->encodeContainer((array)$value, true, $indent),
             default
                 => throw new TypeError('Unsupported type: ' . get_debug_type($value)),
         };
@@ -213,10 +213,55 @@ final class Encoder
         fwrite($this->resource, $encoded);
     }
 
-    private function encodeContainer(iterable $list, bool $object, string $indent, ContainerType $type): void
+    private function encodeContainer(iterable $list, bool $object, string $indent): void
     {
-        $indent2 = $type === ContainerType::Inline ? $indent : $indent . $this->options->indent;
-        $extraPadding = $object ? $this->options->inlineObjectPadding : $this->options->inlineListPadding;
+        $indent2 = $indent . $this->options->indent;
+
+        fwrite($this->resource, $object ? '{' : '[');
+        $state = self::STATE_START;
+
+        foreach ($list as $key => $value) {
+            if ($state == self::STATE_START) {
+                fwrite($this->resource, "\n");
+            }
+
+            if ($value instanceof EndOfLine) {
+                fwrite($this->resource, "\n");
+                $state = self::STATE_AFTER_EOL;
+                continue;
+            }
+
+            if ($value instanceof Comment) {
+                $this->renderComment($value->comment, $indent2);
+                $state = self::STATE_AFTER_COMMENT;
+                continue;
+            }
+
+            if ($value instanceof CommentDecorator) {
+                    $this->renderComment($value->commentBefore, $indent2);
+            }
+            fwrite($this->resource, $indent2);
+            if ($object) {
+                $this->encodeKey((string)$key);
+                fwrite($this->resource, ': ');
+            }
+            $this->encodeValue($value, $indent2);
+            fwrite($this->resource, ',');
+            if ($value instanceof CommentDecorator) {
+                $this->renderCommentLine($value->commentAfter, ' ');
+            }
+            fwrite($this->resource, "\n");
+
+            $state = self::STATE_AFTER_VALUE;
+        }
+
+        fwrite($this->resource, $indent);
+        fwrite($this->resource, $object ? '}' : ']');
+    }
+
+    private function encodeCompactContainer(iterable $list, bool $object, string $indent): void
+    {
+        $indent2 = $indent . $this->options->indent;
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
@@ -224,124 +269,123 @@ final class Encoder
         foreach ($list as $key => $value) {
             switch ($state) {
                 case self::STATE_START:
-                    if ($type === ContainerType::Compact || $type === ContainerType::Regular) {
-                        fwrite($this->resource, "\n");
-                    }
+                    fwrite($this->resource, "\n");
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                    if ($type === ContainerType::Compact || $type === ContainerType::Inline) {
-                        fwrite($this->resource, ',');
-                    }
+                    fwrite($this->resource, ',');
                     break;
             }
 
             if ($value instanceof EndOfLine) {
-                // regular does not need extra \n in the beginning
-                if ($state !== self::STATE_START || $type !== ContainerType::Regular) {
-                    fwrite($this->resource, "\n");
-                }
+                fwrite($this->resource, "\n");
                 $state = self::STATE_AFTER_EOL;
                 continue;
             }
 
             switch ($state) {
                 case self::STATE_START:
-                    if ($type === ContainerType::Compact) {
-                        fwrite($this->resource, $indent2);
-                    } elseif ($type === ContainerType::Inline && $extraPadding) {
-                        fwrite($this->resource, ' ');
-                    }
+                case self::STATE_AFTER_EOL:
+                    fwrite($this->resource, $indent2);
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                    if ($type === ContainerType::Compact || $type === ContainerType::Inline) {
-                        fwrite($this->resource, ' ');
-                    } else {
-                        fwrite($this->resource, "\n");
-                    }
-                    break;
-
                 case self::STATE_AFTER_COMMENT:
-                    if ($type === ContainerType::Compact || $type === ContainerType::Inline) {
-                        fwrite($this->resource, ' ');
-                    }
-                    break;
-
-                case self::STATE_AFTER_EOL:
-                    if ($type === ContainerType::Regular) {
-                        fwrite($this->resource, "\n");
-                    } else {
-                        // extended indent for both lists
-                        fwrite($this->resource, $indent);
-                        fwrite($this->resource, $this->options->indent);
-                    }
+                    fwrite($this->resource, ' ');
                     break;
             }
 
             if ($value instanceof Comment) {
-                $type === ContainerType::Regular ?
-                    $this->renderComment($value->comment, $indent2) :
-                    $this->renderInlineComment($value->comment, '', '');
+                $this->renderInlineComment($value->comment, '', '');
                 $state = self::STATE_AFTER_COMMENT;
                 continue;
             }
 
             if ($value instanceof CommentDecorator) {
-                $type === ContainerType::Regular ?
-                    $this->renderComment($value->commentBefore, $indent2) :
-                    $this->renderInlineComment($value->commentBefore, '', ' ');
-            }
-            if ($type === ContainerType::Regular) {
-                fwrite($this->resource, $indent2);
+                $this->renderInlineComment($value->commentBefore, '', ' ');
             }
             if ($object) {
                 $this->encodeKey((string)$key);
                 fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent2);
-            if ($type === ContainerType::Regular) {
-                fwrite($this->resource, ',');
-            }
             if ($value instanceof CommentDecorator) {
-                $type === ContainerType::Regular ?
-                    $this->renderCommentLine($value->commentAfter, ' ') :
-                    $this->renderInlineComment($value->commentAfter, ' ', '');
+                $this->renderInlineComment($value->commentAfter, ' ', '');
             }
 
             $state = self::STATE_AFTER_VALUE;
         }
 
-        switch ($state) {
-            case self::STATE_AFTER_VALUE:
-                if ($type === ContainerType::Compact) {
-                    fwrite($this->resource, ",\n");
-                    fwrite($this->resource, $indent);
-                } elseif ($type === ContainerType::Regular) {
-                    fwrite($this->resource, "\n");
-                    fwrite($this->resource, $indent);
-                } elseif ($extraPadding) {
-                    fwrite($this->resource, ' ');
-                }
-                break;
+        if ($state === self::STATE_AFTER_VALUE) {
+            fwrite($this->resource, ',');
+        }
+        if ($state !== self::STATE_START) {
+            fwrite($this->resource, "\n");
+            fwrite($this->resource, $indent);
+        }
+        fwrite($this->resource, $object ? '}' : ']');
+    }
 
-            case self::STATE_AFTER_EOL:
-                if ($type === ContainerType::Regular) {
-                    fwrite($this->resource, "\n");
-                } elseif ($type === ContainerType::Compact) {
-                    fwrite($this->resource, "\n");
-                }
-                break;
+    private function encodeInlineContainer(iterable $list, bool $object, string $indent): void
+    {
+        $extraPadding = $object ? $this->options->inlineObjectPadding : $this->options->inlineListPadding;
 
-            case self::STATE_AFTER_COMMENT:
-                if ($type === ContainerType::Compact) {
-                    fwrite($this->resource, "\n");
-                } elseif ($type === ContainerType::Inline && $extraPadding) {
+        fwrite($this->resource, $object ? '{' : '[');
+        $state = self::STATE_START;
+
+        foreach ($list as $key => $value) {
+            if ($state == self::STATE_AFTER_VALUE) {
+                fwrite($this->resource, ',');
+            }
+
+            if ($value instanceof EndOfLine) {
+                fwrite($this->resource, "\n");
+                $state = self::STATE_AFTER_EOL;
+                continue;
+            }
+
+            switch ($state) {
+                case self::STATE_START:
+                    if ($extraPadding) {
+                        fwrite($this->resource, ' ');
+                    }
+                    break;
+
+                case self::STATE_AFTER_VALUE:
+                case self::STATE_AFTER_COMMENT:
                     fwrite($this->resource, ' ');
-                }
-                break;
+                    break;
+
+                case self::STATE_AFTER_EOL:
+                    fwrite($this->resource, $indent);
+                    fwrite($this->resource, $this->options->indent);
+                    break;
+            }
+
+            if ($value instanceof Comment) {
+                $this->renderInlineComment($value->comment, '', '');
+                $state = self::STATE_AFTER_COMMENT;
+                continue;
+            }
+
+            if ($value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentBefore, '', ' ');
+            }
+            if ($object) {
+                $this->encodeKey((string)$key);
+                fwrite($this->resource, ': ');
+            }
+            $this->encodeValue($value, $indent);
+            if ($value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentAfter, ' ', '');
+            }
+
+            $state = self::STATE_AFTER_VALUE;
         }
 
+        if ($extraPadding && $state !== self::STATE_START && $state !== self::STATE_AFTER_EOL) {
+            fwrite($this->resource, ' ');
+        }
         fwrite($this->resource, $object ? '}' : ']');
     }
 
