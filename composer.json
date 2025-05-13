@@ -35,7 +35,8 @@
     },
     "require": {
         "php": "^8.1",
-        "ext-json": "*"
+        "ext-json": "*",
+        "arokettu/is-resource": "^1.0"
     },
     "require-dev": {
         "arokettu/json": "^2.1",
