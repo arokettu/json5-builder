@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Strings;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 
@@ -23,71 +24,21 @@ class MultilineStringsTest extends TestCase
         $textnl = $text . "\n";
 
         // not enabled by default
-        self::assertEquals(
-            <<<'JSON5'
-            {
-                text: "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.\nFusce enim augue, vestibulum\nquis odio vitae, vulputate\neuismod magna.",
-            }
-
-            JSON5,
-            Json5Encoder::encode(['text' => $text])
-        );
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline_off.json5', Json5Encoder::encode(['text' => $text]));
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline.json', JsonEncoder::encode(['text' => $text])); // ignored for json
 
         $options = new Options(multilineStrings: true);
 
-        self::assertEquals(
-            <<<'JSON5'
-            {
-                text: "\
-            Lorem ipsum dolor sit amet,\n\
-            consectetur adipiscing elit.\n\
-            Fusce enim augue, vestibulum\n\
-            quis odio vitae, vulputate\n\
-            euismod magna.",
-            }
-
-            JSON5,
-            Json5Encoder::encode(['text' => $text], $options)
-        );
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline.json5', Json5Encoder::encode(['text' => $text], $options));
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline.json', JsonEncoder::encode(['text' => $text], $options)); // ignored
         // last nl should not create a newline
-        self::assertEquals(
-            <<<'JSON5'
-            {
-                text: "\
-            Lorem ipsum dolor sit amet,\n\
-            consectetur adipiscing elit.\n\
-            Fusce enim augue, vestibulum\n\
-            quis odio vitae, vulputate\n\
-            euismod magna.\n",
-            }
-
-            JSON5,
-            Json5Encoder::encode(['text' => $textnl], $options)
-        );
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline_nl.json5', Json5Encoder::encode(['text' => $textnl], $options));
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline_nl.json', JsonEncoder::encode(['text' => $textnl], $options)); // ignored
         // skip this for newline-only strings
-        self::assertEquals(
-            <<<'JSON5'
-            {
-                text: "\n\n\n\n\n",
-            }
-
-            JSON5,
-            Json5Encoder::encode(['text' => "\n\n\n\n\n"], $options)
-        );
+        self::assertStringEqualsFile(__DIR__ . '/data/newline.json5', Json5Encoder::encode(['text' => "\n\n\n\n\n"], $options));
+        self::assertStringEqualsFile(__DIR__ . '/data/newline.json', JsonEncoder::encode(['text' => "\n\n\n\n\n"], $options));
         // do not apply the mode to keys
-        self::assertEquals(
-            <<<'JSON5'
-            {
-                'Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.\nFusce enim augue, vestibulum\nquis odio vitae, vulputate\neuismod magna.': "\
-            Lorem ipsum dolor sit amet,\n\
-            consectetur adipiscing elit.\n\
-            Fusce enim augue, vestibulum\n\
-            quis odio vitae, vulputate\n\
-            euismod magna.\n",
-            }
-
-            JSON5,
-            Json5Encoder::encode([$text => $textnl], $options)
-        );
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline_key.json5', Json5Encoder::encode([$text => $textnl], $options));
+        self::assertStringEqualsFile(__DIR__ . '/data/multiline_key.json', JsonEncoder::encode([$text => $textnl], $options));
     }
 }

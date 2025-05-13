@@ -1,0 +1,7 @@
+{
+    simple: 1,
+    'not so simple': 2,
+    "that's a quote here": 3,
+    'a so called "quote"': 4,
+    'both \' and " here': 5,
+}

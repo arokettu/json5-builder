@@ -1,0 +1,14 @@
+{
+    simple: 1,
+    '2digit': 2,
+    digit3: 3,
+    'with"quote': 4,
+    "with'quote": 5,
+    _ok_: 6,
+    $ok$: 7,
+    ключ: 8,
+    鍵: 9,
+    cmárk⁀123: 10,
+    Auf‌lage﹎क्‍ष: 11,
+    'com,ma': 12,
+}

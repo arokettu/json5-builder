@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Strings;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 
+// phpcs:disable Generic.Files.LineLength.TooLong
 class StringValuesTest extends TestCase
 {
     public function testStrings(): void
@@ -18,10 +20,16 @@ class StringValuesTest extends TestCase
         self::assertEquals("'abcd'\n", Json5Encoder::encode('abcd', $singleQuotes));
         self::assertEquals("\"abcd\"\n", Json5Encoder::encode('abcd', $doubleQuotes));
 
+        self::assertEquals("\"abcd\"\n", JsonEncoder::encode('abcd', $singleQuotes));
+        self::assertEquals("\"abcd\"\n", JsonEncoder::encode('abcd', $doubleQuotes));
+
         // special characters
 
         self::assertEquals("'\u0000\u0001\\r'\n", Json5Encoder::encode("\0\1\r", $singleQuotes));
         self::assertEquals("\"\u0000\u0001\\r\"\n", Json5Encoder::encode("\0\1\r", $doubleQuotes));
+
+        self::assertEquals("\"\u0000\u0001\\r\"\n", JsonEncoder::encode("\0\1\r", $singleQuotes));
+        self::assertEquals("\"\u0000\u0001\\r\"\n", JsonEncoder::encode("\0\1\r", $doubleQuotes));
     }
 
     public function testAutodetectQuotes(): void
@@ -38,41 +46,15 @@ class StringValuesTest extends TestCase
             'both \' and " here',
         ];
 
-        self::assertEquals(<<<JSON5
-            [
-                'simple',
-                'that\'s a quote here',
-                'a so called "quote"',
-                'both \' and " here',
-            ]
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes_single_noauto.json5', Json5Encoder::encode($strings, $singleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes_single_auto.json5', Json5Encoder::encode($strings, $singleQuotesDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes_double_noauto.json5', Json5Encoder::encode($strings, $doubleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes_double_auto.json5', Json5Encoder::encode($strings, $doubleQuotesDetect));
 
-            JSON5, Json5Encoder::encode($strings, $singleQuotesNoDetect));
-        self::assertEquals(<<<JSON5
-            [
-                'simple',
-                "that's a quote here",
-                'a so called "quote"',
-                'both \' and " here',
-            ]
-
-            JSON5, Json5Encoder::encode($strings, $singleQuotesDetect));
-        self::assertEquals(<<<JSON5
-            [
-                "simple",
-                "that's a quote here",
-                "a so called \"quote\"",
-                "both ' and \" here",
-            ]
-
-            JSON5, Json5Encoder::encode($strings, $doubleQuotesNoDetect));
-        self::assertEquals(<<<JSON5
-            [
-                "simple",
-                "that's a quote here",
-                'a so called "quote"',
-                "both ' and \" here",
-            ]
-
-            JSON5, Json5Encoder::encode($strings, $doubleQuotesDetect));
+        // json ignores that all
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonEncoder::encode($strings, $singleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonEncoder::encode($strings, $singleQuotesDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonEncoder::encode($strings, $doubleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonEncoder::encode($strings, $doubleQuotesDetect));
     }
 }

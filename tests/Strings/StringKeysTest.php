@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Strings;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 
+// phpcs:disable Generic.Files.LineLength.TooLong
 class StringKeysTest extends TestCase
 {
     public function testStrings(): void
@@ -18,10 +20,16 @@ class StringKeysTest extends TestCase
         self::assertEquals("{\n'abcd': null,\n}\n", Json5Encoder::encode(['abcd' => null], $singleQuotes));
         self::assertEquals("{\n\"abcd\": null,\n}\n", Json5Encoder::encode(['abcd' => null], $doubleQuotes));
 
+        self::assertEquals("{\n\"abcd\": null\n}\n", JsonEncoder::encode(['abcd' => null], $singleQuotes)); // ignore
+        self::assertEquals("{\n\"abcd\": null\n}\n", JsonEncoder::encode(['abcd' => null], $doubleQuotes)); // ignore
+
         // special characters
 
         self::assertEquals("{\n'\u0000\u0001\\r': 1,\n}\n", Json5Encoder::encode(["\0\1\r" => 1], $singleQuotes));
         self::assertEquals("{\n\"\u0000\u0001\\r\": 1,\n}\n", Json5Encoder::encode(["\0\1\r" => 1], $doubleQuotes));
+
+        self::assertEquals("{\n\"\u0000\u0001\\r\": 1\n}\n", JsonEncoder::encode(["\0\1\r" => 1], $singleQuotes)); // ignore
+        self::assertEquals("{\n\"\u0000\u0001\\r\": 1\n}\n", JsonEncoder::encode(["\0\1\r" => 1], $doubleQuotes)); // ignore
     }
 
     public function testAutodetectQuotes(): void
@@ -39,49 +47,19 @@ class StringKeysTest extends TestCase
             'both \' and " here' => 5,
         ];
 
-        self::assertEquals(<<<JSON5
-            {
-                simple: 1,
-                'not so simple': 2,
-                'that\'s a quote here': 3,
-                'a so called "quote"': 4,
-                'both \' and " here': 5,
-            }
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes_single_noauto.json5', Json5Encoder::encode($strings, $singleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes_single_auto.json5', Json5Encoder::encode($strings, $singleQuotesDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes_double_noauto.json5', Json5Encoder::encode($strings, $doubleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes_double_auto.json5', Json5Encoder::encode($strings, $doubleQuotesDetect));
 
-            JSON5, Json5Encoder::encode($strings, $singleQuotesNoDetect));
-        self::assertEquals(<<<JSON5
-            {
-                simple: 1,
-                'not so simple': 2,
-                "that's a quote here": 3,
-                'a so called "quote"': 4,
-                'both \' and " here': 5,
-            }
-
-            JSON5, Json5Encoder::encode($strings, $singleQuotesDetect));
-        self::assertEquals(<<<JSON5
-            {
-                simple: 1,
-                "not so simple": 2,
-                "that's a quote here": 3,
-                "a so called \"quote\"": 4,
-                "both ' and \" here": 5,
-            }
-
-            JSON5, Json5Encoder::encode($strings, $doubleQuotesNoDetect));
-        self::assertEquals(<<<JSON5
-            {
-                simple: 1,
-                "not so simple": 2,
-                "that's a quote here": 3,
-                'a so called "quote"': 4,
-                "both ' and \" here": 5,
-            }
-
-            JSON5, Json5Encoder::encode($strings, $doubleQuotesDetect));
+        // json should ignore all options
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes.json', JsonEncoder::encode($strings, $singleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes.json', JsonEncoder::encode($strings, $singleQuotesDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes.json', JsonEncoder::encode($strings, $doubleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_quotes.json', JsonEncoder::encode($strings, $doubleQuotesDetect));
     }
 
-    public function testQuotelessKeys(): void
+    public function testBareKeys(): void
     {
         $i = 0;
         $data = [
@@ -99,40 +77,13 @@ class StringKeysTest extends TestCase
             'com,ma' => ++$i,
         ];
 
-        self::assertEquals(<<<'JSON5'
-            {
-                simple: 1,
-                '2digit': 2,
-                digit3: 3,
-                'with"quote': 4,
-                "with'quote": 5,
-                _ok_: 6,
-                $ok$: 7,
-                'ключ': 8,
-                '鍵': 9,
-                'cmárk⁀123': 10,
-                'Auf‌lage﹎क्‍ष': 11,
-                'com,ma': 12,
-            }
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_ascii.json5', Json5Encoder::encode($data, new Options()));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_unicode.json5', Json5Encoder::encode($data, new Options(bareKeys: Options\BareKeys::Unicode)));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_none.json5', Json5Encoder::encode($data, new Options(bareKeys: Options\BareKeys::None)));
 
-            JSON5, Json5Encoder::encode($data, new Options()));
-
-        self::assertEquals(<<<'JSON5'
-            {
-                simple: 1,
-                '2digit': 2,
-                digit3: 3,
-                'with"quote': 4,
-                "with'quote": 5,
-                _ok_: 6,
-                $ok$: 7,
-                ключ: 8,
-                鍵: 9,
-                cmárk⁀123: 10,
-                Auf‌lage﹎क्‍ष: 11,
-                'com,ma': 12,
-            }
-
-            JSON5, Json5Encoder::encode($data, new Options(bareKeys: Options\BareKeys::Unicode)));
+        // json ignores it all
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare.json', JsonEncoder::encode($data, new Options()));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare.json', JsonEncoder::encode($data, new Options(bareKeys: Options\BareKeys::Unicode)));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare.json', JsonEncoder::encode($data, new Options(bareKeys: Options\BareKeys::None)));
     }
 }
