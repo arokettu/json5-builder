@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Arokettu\Json5\Tests\Collections;
 
-use Arokettu\Json\Json;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
 use JsonSerializable;
 use PHPUnit\Framework\TestCase;
-use SplFixedArray;
 use stdClass;
 
 class ListValueTest extends TestCase
