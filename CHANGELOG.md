@@ -2,7 +2,9 @@
 
 ## 1.x
 
-### next
+### 1.1.1
+
+*May 13, 2025*
 
 * Fixed indent being written to an empty structure
 
