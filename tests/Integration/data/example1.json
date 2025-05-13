@@ -1,0 +1,67 @@
+{
+    "test": [
+        "ab",
+        "c",
+        "d"
+    ],
+    "floats": [
+        1.0,
+        2,
+        3
+    ],
+    "other": {
+        "true": true,
+        "false": false,
+        "null": null
+    },
+    "commented": 123,
+
+    "list": [
+        1,
+        2,
+        3
+    ],
+    "list2": [
+        "abc",
+        "def",
+
+        "ghi"
+    ],
+    "inlineList": [1, 2, 3],
+    "inlineList2": [1, 2, 3, 4, 5, 6, 7,
+        8, 9, 1011, 12],
+    "inlineListOfObjects": [{
+        "a": "b"
+    }, {
+        "c": "d"
+    }],
+    "inlineListWithComment": [1, 2, 3],
+    "listOfInlineObjects": [
+        { "a": "b", "c": "d" },
+        { "a": "b", "c": "d" },
+        { "a": "b", "c": "d", "ee": "ff" },
+        { "a": "b",
+            "c": "d", "f": "g", "h": "i" }
+    ],
+    "compactList": [
+        1, 2, 3
+    ],
+    "compactList2": [
+        1, 2, 3, 4, 5, 6, 7,
+        8, 9, 10, 11, 12
+    ],
+    "compactListOfObjects": [
+        {
+            "a": "b"
+        }, {
+            "c": "d"
+        }
+    ],
+    "compactListWithComment": [
+        1, 2, 3
+    ],
+    "compactObject": {
+        "a": "b",
+        "c": "d", "f": "g", "h": "i"
+    }
+}

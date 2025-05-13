@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Integration;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\Comment;
 use Arokettu\Json5\Values\CommentDecorator;
@@ -20,7 +21,7 @@ class ExamplesTest extends TestCase
 {
     public function testExample1(): void
     {
-        $data = new CommentDecorator([
+        $data = new CommentDecorator($innerData = [
             'test' => ['ab', 'c', 'd'],
             'floats' => [
                 1.0, 2, 3, INF, NAN,
@@ -66,6 +67,15 @@ class ExamplesTest extends TestCase
         ], 'Body comment 1', 'Body comment 2');
 
         self::assertStringEqualsFile(__DIR__ . '/data/example1.json5', Json5Encoder::encode($data, new Options(
+            preserveZeroFraction: true,
+        )));
+
+        unset($innerData['floats'][3]); // inf
+        unset($innerData['floats'][4]); // nan
+
+        $data2 = new CommentDecorator($innerData, '123', '456');
+
+        self::assertStringEqualsFile(__DIR__ . '/data/example1.json', JsonEncoder::encode($data2, new Options(
             preserveZeroFraction: true,
         )));
     }
