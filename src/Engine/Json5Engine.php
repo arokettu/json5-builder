@@ -255,7 +255,9 @@ final class Json5Engine
             $state = self::STATE_AFTER_VALUE;
         }
 
-        fwrite($this->resource, $indent);
+        if ($state !== self::STATE_START) {
+            fwrite($this->resource, $indent);
+        }
         fwrite($this->resource, $object ? '}' : ']');
     }
 
