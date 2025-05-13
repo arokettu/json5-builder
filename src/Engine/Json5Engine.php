@@ -17,11 +17,9 @@ use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ListValue;
 use Arokettu\Json5\Values\ObjectValue;
 use ArrayObject;
-use JsonException;
 use JsonSerializable;
 use stdClass;
 use TypeError;
-use ValueError;
 
 /**
  * @internal
@@ -92,7 +90,7 @@ final class Json5Engine
         }
 
         if (\is_int($value)) {
-            fwrite($this->resource, self::jsonEncode($value));
+            fwrite($this->resource, Helpers\JsonHelper::encode($value, 0));
             return;
         }
 
@@ -100,7 +98,7 @@ final class Json5Engine
             fwrite($this->resource, match (true) {
                 is_nan($value) => 'NaN',
                 is_infinite($value) => $value > 0 ? 'Infinity' : '-Infinity',
-                default => self::jsonEncode(
+                default => Helpers\JsonHelper::encode(
                     $value,
                     $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0
                 ),
@@ -186,7 +184,7 @@ final class Json5Engine
             }
         }
 
-        $encoded = self::jsonEncode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $encoded = Helpers\JsonHelper::encode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         if ($multilineStrings) {
             $hasLineEndings = str_contains($string, "\n");
@@ -437,15 +435,6 @@ final class Json5Engine
         if ($commentLine !== '') {
             fwrite($this->resource, ' ');
             fwrite($this->resource, $commentLine);
-        }
-    }
-
-    private function jsonEncode(mixed $value, int $options = 0): string
-    {
-        try {
-            return json_encode($value, $options | JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new ValueError('Unable to encode value: ' . $e->getMessage(), previous: $e);
         }
     }
 }

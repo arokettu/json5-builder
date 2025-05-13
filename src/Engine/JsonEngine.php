@@ -14,11 +14,9 @@ use Arokettu\Json5\Values\InlineObject;
 use Arokettu\Json5\Values\ListValue;
 use Arokettu\Json5\Values\ObjectValue;
 use ArrayObject;
-use JsonException;
 use JsonSerializable;
 use stdClass;
 use TypeError;
-use ValueError;
 
 /**
  * @internal
@@ -63,12 +61,12 @@ final class JsonEngine
         }
 
         if (\is_int($value)) {
-            fwrite($this->resource, self::jsonEncode($value));
+            fwrite($this->resource, Helpers\JsonHelper::encode($value, 0));
             return;
         }
 
         if (\is_float($value)) {
-            fwrite($this->resource, self::jsonEncode(
+            fwrite($this->resource, Helpers\JsonHelper::encode(
                 $value,
                 $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0
             ));
@@ -117,7 +115,7 @@ final class JsonEngine
 
     private function encodeString(string $string): void
     {
-        fwrite($this->resource, self::jsonEncode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        fwrite($this->resource, Helpers\JsonHelper::encode($string, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     private function encodeContainer(iterable $list, bool $object, string $indent): void
@@ -282,14 +280,5 @@ final class JsonEngine
             fwrite($this->resource, ' ');
         }
         fwrite($this->resource, $object ? '}' : ']');
-    }
-
-    private function jsonEncode(mixed $value, int $options = 0): string
-    {
-        try {
-            return json_encode($value, $options | JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new ValueError('Unable to encode value: ' . $e->getMessage(), previous: $e);
-        }
     }
 }
