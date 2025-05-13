@@ -221,7 +221,7 @@ final class Json5Engine
         $state = self::STATE_START;
 
         foreach ($list as $key => $value) {
-            if ($state == self::STATE_START) {
+            if ($state === self::STATE_START) {
                 fwrite($this->resource, "\n");
             }
 
@@ -342,7 +342,7 @@ final class Json5Engine
         $state = self::STATE_START;
 
         foreach ($list as $key => $value) {
-            if ($state == self::STATE_AFTER_VALUE) {
+            if ($state === self::STATE_AFTER_VALUE) {
                 fwrite($this->resource, ',');
             }
 
