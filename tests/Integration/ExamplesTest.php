@@ -15,8 +15,10 @@ use Arokettu\Json5\Values\EndOfLine;
 use Arokettu\Json5\Values\InlineList;
 use Arokettu\Json5\Values\InlineObject;
 use ArrayObject;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
+#[CoversNothing] // unreliable
 class ExamplesTest extends TestCase
 {
     public function testExample1(): void
