@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Arrays;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use PHPUnit\Framework\TestCase;
 
 class AsObjectTest extends TestCase
@@ -17,13 +18,9 @@ class AsObjectTest extends TestCase
             'other_key' => 'other value',
         ];
 
-        self::assertEquals(<<<JSON5
-            {
-                key: "value",
-                other_key: "other value",
-            }
+        self::assertStringEqualsFile(__DIR__ . '/data/object_string.json5', Json5Encoder::encode($obj));
 
-            JSON5, Json5Encoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/object_string.json', JsonEncoder::encode($obj));
     }
 
     public function testInt(): void
@@ -31,12 +28,8 @@ class AsObjectTest extends TestCase
         // non-sequential arrays become objects too
         $obj = [1 => 'a', 2 => 'b'];
 
-        self::assertEquals(<<<JSON5
-            {
-                '1': "a",
-                '2': "b",
-            }
+        self::assertStringEqualsFile(__DIR__ . '/data/object_int.json5', Json5Encoder::encode($obj));
 
-            JSON5, Json5Encoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/object_int.json', JsonEncoder::encode($obj));
     }
 }
