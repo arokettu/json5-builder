@@ -62,8 +62,6 @@ Renders an integer in a hexadecimal form::
             "hex3": 48879
         }
 
-.. error:: Known issue: ``PHP_INT_MIN`` value is not handled correctly
-
 Container Decorators
 ====================
 

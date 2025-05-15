@@ -49,8 +49,13 @@ class IntegerTest extends TestCase
 
         self::assertEquals("{$expectInt}\n", JsonEncoder::encode(new HexInteger(PHP_INT_MAX)));
         self::assertEquals("-{$expectInt}\n", JsonEncoder::encode(new HexInteger(-PHP_INT_MAX)));
+    }
 
-        // todo: handle PHP_INT_MIN
+    public function testPhpIntMinHex(): void
+    {
+        $intMinHex = '-0x80' . str_repeat('00', PHP_INT_SIZE - 1);
+        self::assertEquals($intMinHex . "\n", Json5Encoder::encode(new HexInteger(PHP_INT_MIN)));
+        self::assertEquals(PHP_INT_MIN . "\n", JsonEncoder::encode(new HexInteger(PHP_INT_MIN)));
     }
 
     public function testNegativePadding(): void

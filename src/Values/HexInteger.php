@@ -22,7 +22,12 @@ final class HexInteger implements Internal\RawJson5Serializable, JsonSerializabl
     {
         $sign = '';
         $value = $this->value;
-        if ($value < 0) {
+
+        if ($value === PHP_INT_MIN) {
+            $sign = '-';
+            // negating PHP_INT_MIN makes it float,
+            // but signed and unsigned values of PHP_INT_MIN are equal in absolute value
+        } elseif ($value < 0) {
             $sign = '-';
             $value = -$value;
         }
