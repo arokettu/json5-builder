@@ -23,13 +23,6 @@ adding its own of course:
 .. [1] A feature not supported by `symfony/yaml <symfony_yaml_>`_ by the way.
 .. _symfony_yaml: https://symfony.com/doc/current/components/yaml.html
 
-.. note::
-    This library and this documentation refer to JSON5 arrays as "lists" to separate them from PHP arrays
-    and to align it to PHP terminology (@see |array_is_list|_)
-
-.. _array_is_list: https://www.php.net/manual/en/function.array-is-list.php
-.. |array_is_list| replace:: ``array_is_list``
-
 Project Goal
 ============
 

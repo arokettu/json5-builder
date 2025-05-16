@@ -251,7 +251,7 @@ Must contain only JSON5 ignorable whitespace, usually spaces and tabs::
 
     $value = [
         'key' => 'value',
-        'list' => ['item1', 'item2'],
+        'array' => ['item1', 'item2'],
     ];
 
     echo Json5Encoder::encode($value, new Options(indent: "\t"));
@@ -261,7 +261,7 @@ Must contain only JSON5 ignorable whitespace, usually spaces and tabs::
 
     {
             key: "value",
-            list: [
+            array: [
                     "item1",
                     "item2",
             ],

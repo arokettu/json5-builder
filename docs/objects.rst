@@ -65,37 +65,37 @@ Renders an integer in a hexadecimal form::
 Container Decorators
 ====================
 
-For lists and objects.
+For arrays and objects.
 
-``ListValue`` and ``ObjectValue``
+``ArrayValue`` and ``ObjectValue``
 ---------------------------------
 
 .. versionadded:: 1.1
 
-``\Arokettu\Json5\Values\ListValue``
+``\Arokettu\Json5\Values\ArrayValue``
 
 ``\Arokettu\Json5\Values\ObjectValue``
 
-These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to render as either a list or a dictionary::
+These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to render as either a array or an object::
 
     <?php
 
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\JsonEncoder;
-    use Arokettu\Json5\Values\ListValue;
+    use Arokettu\Json5\Values\ArrayValue;
     use Arokettu\Json5\Values\ObjectValue;
 
     $generator = (fn () => yield from range(0, 3));
     $value = [
-        'list' => new ListValue([1 => 2, 3 => 4]), // no need for consecutive keys
+        'array' => new ArrayValue([1 => 2, 3 => 4]), // no need for consecutive keys
         'object' => new ObjectValue([1, 2, 3, 4]), // list becomes object
-        'iterable' => new ListValue($generator()), // try a generator
+        'iterable' => new ArrayValue($generator()), // try a generator
     ];
 
     echo Json5Encoder::encode($value);
-    $value['iterable'] = new ListValue($generator()); // can't traverse a generator twice
+    $value['iterable'] = new ArrayValue($generator()); // can't traverse a generator twice
     echo JsonEncoder::encode($value);
-    $value['iterable'] = new ListValue($generator()); // can't traverse a generator twice
+    $value['iterable'] = new ArrayValue($generator()); // can't traverse a generator twice
     echo json_encode($value, JSON_PRETTY_PRINT);
 
 .. tabs::
@@ -103,7 +103,7 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     .. code-tab:: json5
 
         {
-            list: [
+            array: [
                 2,
                 4,
             ],
@@ -124,7 +124,7 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     .. code-tab:: json JSON (JsonEncoder)
 
         {
-            "list": [
+            "array": [
                 2,
                 4
             ],
@@ -145,7 +145,7 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     .. code-tab:: json JSON (json_encode)
 
         {
-            "list": [
+            "array": [
                 2,
                 4
             ],
@@ -167,25 +167,25 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     If an iterable wrapped by an instance of ``ObjectValue`` (and similar object wrappers) has duplicate keys,
     your JSON5 file will have duplicate keys too.
 
-``InlineList`` and ``InlineObject``
+``InlineArray`` and ``InlineObject``
 -----------------------------------
 
-``\Arokettu\Json5\Values\InlineList``
+``\Arokettu\Json5\Values\InlineArray``
 
 ``\Arokettu\Json5\Values\InlineObject``
 
-These wrappers act similar to ``ListValue`` and ``ObjectValue`` but intended for small lists and objects
+These wrappers act similar to ``ArrayValue`` and ``ObjectValue`` but intended for small arrays and objects
 that can be written in a single line::
 
     <?php
 
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\JsonEncoder;
-    use Arokettu\Json5\Values\InlineList;
+    use Arokettu\Json5\Values\InlineArray;
     use Arokettu\Json5\Values\InlineObject;
 
     $value = [
-        'tinyList' => new InlineList([1, 2, 3, 4]),
+        'tinyArray' => new InlineArray([1, 2, 3, 4]),
         'tinyObject' => new InlineObject(['key' =>  'value']),
     ];
 
@@ -199,7 +199,7 @@ that can be written in a single line::
 
         // Compact and nice
         {
-            tinyList: [1, 2, 3, 4],
+            tinyArray: [1, 2, 3, 4],
             tinyObject: { key: "value" },
         }
 
@@ -207,7 +207,7 @@ that can be written in a single line::
 
         // Compact and nice too
         {
-            "tinyList": [1, 2, 3, 4],
+            "tinyArray": [1, 2, 3, 4],
             "tinyObject": { "key": "value" }
         }
 
@@ -215,7 +215,7 @@ that can be written in a single line::
 
         // Quite wasteful
         {
-            "tinyList": [
+            "tinyArray": [
                 1,
                 2,
                 3,
@@ -232,11 +232,11 @@ Nesting container structures is also fine::
 
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\JsonEncoder;
-    use Arokettu\Json5\Values\InlineList;
+    use Arokettu\Json5\Values\InlineArray;
     use Arokettu\Json5\Values\InlineObject;
 
     $value = [
-        'authors' => new InlineList([
+        'authors' => new InlineArray([
             ['name' => 'Andy Gutmans', 'email' => 'example@example.com', 'role' => 'co-founder'],
             ['name' => 'Zeev Suraski', 'email' => 'example@example.com', 'role' => 'co-founder'],
         ]),
@@ -315,10 +315,10 @@ Nesting container structures is also fine::
             ]
         }
 
-``CompactList`` and ``CompactObject``
+``CompactArray`` and ``CompactObject``
 -------------------------------------
 
-``\Arokettu\Json5\Values\CompactList``
+``\Arokettu\Json5\Values\CompactArray``
 
 ``\Arokettu\Json5\Values\CompactObject``
 
@@ -331,14 +331,14 @@ also notice various comment types behavior::
     use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\Comment;
     use Arokettu\Json5\Values\CommentDecorator;
-    use Arokettu\Json5\Values\CompactList;
+    use Arokettu\Json5\Values\CompactArray;
     use Arokettu\Json5\Values\CompactObject;
     use Arokettu\Json5\Values\EndOfLine;
 
     $value = [
-        'tinyList' => new CompactList([1, 2, new EndOfLine(), 3, 4]),
+        'tinyArray' => new CompactArray([1, 2, new EndOfLine(), 3, 4]),
         'tinyObject' => new CompactObject(['key1' =>  'value1', 'key2' =>  'value2']),
-        'comments' => new CompactList([
+        'comments' => new CompactArray([
             new Comment('Standalone comment is a line comment'),
             new CommentDecorator('become', 'Decorator comments', 'inline comments'),
         ]),
@@ -353,7 +353,7 @@ also notice various comment types behavior::
     .. code-tab:: json5
 
         {
-            tinyList: [
+            tinyArray: [
                 1, 2,
                 3, 4,
             ],
@@ -369,7 +369,7 @@ also notice various comment types behavior::
     .. code-tab:: json JSON (JsonEncoder)
 
         {
-            "tinyList": [
+            "tinyArray": [
                 1, 2,
                 3, 4
             ],
@@ -384,7 +384,7 @@ also notice various comment types behavior::
     .. code-tab:: json JSON (json_encode)
 
         {
-            "tinyList": [
+            "tinyArray": [
                 1,
                 2,
                 {},
@@ -458,9 +458,9 @@ Comments will be rendered as inline comments in compact and inline modes::
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\CommentDecorator;
-    use Arokettu\Json5\Values\InlineList;
+    use Arokettu\Json5\Values\InlineArray;
 
-    $value = new InlineList([
+    $value = new InlineArray([
         new CommentDecorator('value', 'inline before', 'inline after'),
     ]);
 
@@ -520,21 +520,21 @@ A standalone comment. Rendered as a line comment in regular and compact modes an
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\JsonEncoder;
     use Arokettu\Json5\Values\Comment;
-    use Arokettu\Json5\Values\CompactList;
-    use Arokettu\Json5\Values\InlineList;
+    use Arokettu\Json5\Values\CompactArray;
+    use Arokettu\Json5\Values\InlineArray;
 
     require __DIR__ . '/../vendor/autoload.php';
 
     $value = [
         'normal' => [new Comment('Normal mode'), 'value1', 'value2', 'value3'],
-        'compact' => new CompactList([
+        'compact' => new CompactArray([
             new Comment('Unlike decorator, standalone comment is rendered on its own line here'),
             'value1',
             'value2',
             new Comment('JsonEncoder will leave EOL here'),
             'value3',
         ]),
-        'inline' => new InlineList([new Comment('Inline mode'), 'value1', 'value2', 'value3']),
+        'inline' => new InlineArray([new Comment('Inline mode'), 'value1', 'value2', 'value3']),
     ];
 
     echo Json5Encoder::encode($value);
@@ -621,14 +621,14 @@ Inserts a newline character::
 
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\JsonEncoder;
-    use Arokettu\Json5\Values\CompactList;
+    use Arokettu\Json5\Values\CompactArray;
     use Arokettu\Json5\Values\EndOfLine;
-    use Arokettu\Json5\Values\InlineList;
+    use Arokettu\Json5\Values\InlineArray;
 
     $value = [
         'regular' => [1, 2, new EndOfLine(), 3, 4],
-        'inline'  => new InlineList([1, 2, new EndOfLine(), 3, 4]),
-        'compact' => new CompactList([1, 2, new EndOfLine(), 3, 4]),
+        'inline'  => new InlineArray([1, 2, new EndOfLine(), 3, 4]),
+        'compact' => new CompactArray([1, 2, new EndOfLine(), 3, 4]),
     ];
 
     echo Json5Encoder::encode($value);
