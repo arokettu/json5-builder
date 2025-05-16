@@ -7,9 +7,9 @@ namespace Arokettu\Json5\Tests\Formatting;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\CommentDecorator;
-use Arokettu\Json5\Values\CompactList;
+use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\CompactObject;
-use Arokettu\Json5\Values\InlineList;
+use Arokettu\Json5\Values\InlineArray;
 use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use ValueError;
@@ -112,7 +112,7 @@ class CommentDecoratorTest extends TestCase
 
     public function testInlineListComments(): void
     {
-        $list = new InlineList([
+        $list = new InlineArray([
             'key1' => new CommentDecorator('value1', commentBefore: 'c1'),
             'key2' => new CommentDecorator('value2', 'c2-1', 'c2-2'),
             'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
@@ -124,7 +124,7 @@ class CommentDecoratorTest extends TestCase
 
     public function testCompactListComments(): void
     {
-        $list = new CompactList([
+        $list = new CompactArray([
             'key1' => new CommentDecorator('value1', commentBefore: 'c1'),
             'key2' => new CommentDecorator('value2', 'c2-1', 'c2-2'),
             'key3' => new CommentDecorator('value3', commentAfter: 'c3'),

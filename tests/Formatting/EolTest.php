@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
-use Arokettu\Json5\Values\CompactList;
+use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\CompactObject;
 use Arokettu\Json5\Values\EndOfLine;
-use Arokettu\Json5\Values\InlineList;
+use Arokettu\Json5\Values\InlineArray;
 use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -69,7 +69,7 @@ class EolTest extends TestCase
 
             ]
 
-            JSON5, Json5Encoder::encode(new CompactList($list)));
+            JSON5, Json5Encoder::encode(new CompactArray($list)));
     }
 
     public function testInlineList(): void
@@ -90,7 +90,7 @@ class EolTest extends TestCase
                 "value3", "value4",
             ]
 
-            JSON5, Json5Encoder::encode(new InlineList($list)));
+            JSON5, Json5Encoder::encode(new InlineArray($list)));
     }
 
     public function testObject(): void

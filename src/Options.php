@@ -25,7 +25,7 @@ final class Options
         public bool $preserveZeroFraction = false,
         // formatting
         string $indent = '    ', // todo: property hook in PHP 8.4+
-        public bool $inlineListPadding = false,
+        public bool $inlineArrayPadding = false,
         public bool $inlineObjectPadding = true,
     ) {
         $this->setIndent($indent);

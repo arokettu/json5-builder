@@ -6,9 +6,9 @@ namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\Values\Comment;
-use Arokettu\Json5\Values\CompactList;
+use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\CompactObject;
-use Arokettu\Json5\Values\InlineList;
+use Arokettu\Json5\Values\InlineArray;
 use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -70,7 +70,7 @@ class CommentTest extends TestCase
                 // end
             ]
 
-            JSON5, Json5Encoder::encode(new CompactList($list)));
+            JSON5, Json5Encoder::encode(new CompactArray($list)));
     }
 
     public function testInlineList(): void
@@ -88,7 +88,7 @@ class CommentTest extends TestCase
         self::assertEquals(<<<JSON5
             [/* begin */ "value1", "value2", /* middle */ "value3", "value4", /* end */]
 
-            JSON5, Json5Encoder::encode(new InlineList($list)));
+            JSON5, Json5Encoder::encode(new InlineArray($list)));
     }
 
     public function testObject(): void

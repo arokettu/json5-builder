@@ -9,7 +9,7 @@ use Traversable;
 /**
  * @internal
  */
-trait IterableValueListTrait
+trait IterableValueArrayTrait
 {
     private readonly Traversable $traversable;
 

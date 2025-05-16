@@ -6,7 +6,7 @@ namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\Values\Json5Serializable;
-use Arokettu\Json5\Values\ListValue;
+use Arokettu\Json5\Values\ArrayValue;
 use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -15,7 +15,7 @@ class ListValueTest extends TestCase
 {
     public function testArrayAccepted(): void
     {
-        $list = new ListValue(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
+        $list = new ArrayValue(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
 
         self::assertEquals(<<<JSON5
             [
@@ -36,7 +36,7 @@ class ListValueTest extends TestCase
         $object->x = 3;
         $object->{'4'} = 4;
 
-        $list = new ListValue($object);
+        $list = new ArrayValue($object);
 
         self::assertEquals(<<<JSON5
             [
@@ -58,7 +58,7 @@ class ListValueTest extends TestCase
             yield 4;
         };
 
-        $list = new ListValue($i());
+        $list = new ArrayValue($i());
 
         self::assertEquals(<<<JSON5
             [
@@ -80,7 +80,7 @@ class ListValueTest extends TestCase
             }
         };
 
-        $list = new ListValue($class);
+        $list = new ArrayValue($class);
 
         self::assertEquals(<<<JSON5
             [
@@ -114,17 +114,17 @@ class ListValueTest extends TestCase
                 3,
             ]
 
-            JSON5, Json5Encoder::encode(new ListValue($class)));
+            JSON5, Json5Encoder::encode(new ArrayValue($class)));
     }
 
     public function testJsonTransparency(): void
     {
         // array that is not a list
         $list1 = ['a' => 1, 'b' => 2, 'c' => 3];
-        self::assertEquals('[1,2,3]', json_encode(new ListValue($list1)));
+        self::assertEquals('[1,2,3]', json_encode(new ArrayValue($list1)));
 
         // iterable
         $list2 = fn () => yield from $list1;
-        self::assertEquals('[1,2,3]', json_encode(new ListValue($list2())));
+        self::assertEquals('[1,2,3]', json_encode(new ArrayValue($list2())));
     }
 }

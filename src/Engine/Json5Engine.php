@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Engine;
 
 use Arokettu\Json5\Options;
+use Arokettu\Json5\Values\ArrayValue;
 use Arokettu\Json5\Values\Comment;
 use Arokettu\Json5\Values\CommentDecorator;
-use Arokettu\Json5\Values\CompactList;
+use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\CompactObject;
 use Arokettu\Json5\Values\EndOfLine;
-use Arokettu\Json5\Values\InlineList;
+use Arokettu\Json5\Values\InlineArray;
 use Arokettu\Json5\Values\InlineObject;
 use Arokettu\Json5\Values\Internal\RawJson5Serializable;
 use Arokettu\Json5\Values\Json5Serializable;
-use Arokettu\Json5\Values\ListValue;
 use Arokettu\Json5\Values\ObjectValue;
 use ArrayObject;
 use JsonSerializable;
@@ -125,11 +125,11 @@ final class Json5Engine
             $value instanceof RawJson5Serializable,
                 => fwrite($this->resource, $value->json5SerializeRaw()),
             // special objects
-            $value instanceof ListValue,
+            $value instanceof ArrayValue,
                 => $this->encodeContainer($value, false, $indent),
-            $value instanceof InlineList,
+            $value instanceof InlineArray,
                 => $this->encodeInlineContainer($value, false, $indent),
-            $value instanceof CompactList,
+            $value instanceof CompactArray,
                 => $this->encodeCompactContainer($value, false, $indent),
             $value instanceof ObjectValue,
                 => $this->encodeContainer($value, true, $indent),
@@ -211,14 +211,14 @@ final class Json5Engine
         fwrite($this->resource, $encoded);
     }
 
-    private function encodeContainer(iterable $list, bool $object, string $indent): void
+    private function encodeContainer(iterable $container, bool $object, string $indent): void
     {
         $indent2 = $indent . $this->options->indent;
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
 
-        foreach ($list as $key => $value) {
+        foreach ($container as $key => $value) {
             if ($state === self::STATE_START) {
                 fwrite($this->resource, "\n");
             }
@@ -259,14 +259,14 @@ final class Json5Engine
         fwrite($this->resource, $object ? '}' : ']');
     }
 
-    private function encodeCompactContainer(iterable $list, bool $object, string $indent): void
+    private function encodeCompactContainer(iterable $container, bool $object, string $indent): void
     {
         $indent2 = $indent . $this->options->indent;
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
 
-        foreach ($list as $key => $value) {
+        foreach ($container as $key => $value) {
             switch ($state) {
                 case self::STATE_START:
                     fwrite($this->resource, "\n");
@@ -332,14 +332,14 @@ final class Json5Engine
         fwrite($this->resource, $object ? '}' : ']');
     }
 
-    private function encodeInlineContainer(iterable $list, bool $object, string $indent): void
+    private function encodeInlineContainer(iterable $container, bool $object, string $indent): void
     {
-        $extraPadding = $object ? $this->options->inlineObjectPadding : $this->options->inlineListPadding;
+        $extraPadding = $object ? $this->options->inlineObjectPadding : $this->options->inlineArrayPadding;
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
 
-        foreach ($list as $key => $value) {
+        foreach ($container as $key => $value) {
             if ($state === self::STATE_AFTER_VALUE) {
                 fwrite($this->resource, ',');
             }
