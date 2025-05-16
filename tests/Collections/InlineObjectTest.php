@@ -94,7 +94,7 @@ class InlineObjectTest extends TestCase
             JSON5, Json5Encoder::encode(new InlineObject($class)));
     }
 
-    public function testInlineObjectOfLists(): void
+    public function testInlineObjectOfArrays(): void
     {
         $obj = new InlineObject([
             'list1' => [1,2,3],
@@ -124,7 +124,7 @@ class InlineObjectTest extends TestCase
             JSON5, Json5Encoder::encode($obj));
     }
 
-    public function testListOfInlineObjects(): void
+    public function testArrayOfInlineObjects(): void
     {
         $list = [
             new InlineObject([1,2,3]),

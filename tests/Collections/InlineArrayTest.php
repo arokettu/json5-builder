@@ -5,23 +5,22 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
-use Arokettu\Json5\Values\CompactArray;
+use Arokettu\Json5\Options;
+use Arokettu\Json5\Values\InlineArray;
 use Arokettu\Json5\Values\Json5Serializable;
 use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use SplFixedArray;
 use stdClass;
 
-class CompactListTest extends TestCase
+class InlineArrayTest extends TestCase
 {
     public function testArrayAccepted(): void
     {
-        $list = new CompactArray(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
+        $list = new InlineArray(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
 
         self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
+            [1, 2, 3, 4]
 
             JSON5, Json5Encoder::encode($list));
     }
@@ -34,12 +33,10 @@ class CompactListTest extends TestCase
         $object->x = 3;
         $object->{'4'} = 4;
 
-        $list = new CompactArray($object);
+        $list = new InlineArray($object);
 
         self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
+            [1, 2, 3, 4]
 
             JSON5, Json5Encoder::encode($list));
     }
@@ -53,12 +50,10 @@ class CompactListTest extends TestCase
             yield 4;
         };
 
-        $list = new CompactArray($i());
+        $list = new InlineArray($i());
 
         self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
+            [1, 2, 3, 4]
 
             JSON5, Json5Encoder::encode($list));
     }
@@ -71,12 +66,10 @@ class CompactListTest extends TestCase
         $arr[2] = 3;
         $arr[3] = 4;
 
-        $list = new CompactArray($arr);
+        $list = new InlineArray($arr);
 
         self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
+            [1, 2, 3, 4]
 
             JSON5, Json5Encoder::encode($list));
     }
@@ -96,16 +89,14 @@ class CompactListTest extends TestCase
         };
 
         self::assertEquals(<<<JSON5
-            [
-                1, 2, 3,
-            ]
+            [1, 2, 3]
 
-            JSON5, Json5Encoder::encode(new CompactArray($class)));
+            JSON5, Json5Encoder::encode(new InlineArray($class)));
     }
 
-    public function testCompactListOfObjects(): void
+    public function testInlineArrayOfObjects(): void
     {
-        $list = new CompactArray([
+        $list = new InlineArray([
             ['a' => 1, 'b' => 2],
             ['abc' => '123', 'xyz' => '456'],
             ['key1' => 'value1', 'key2' => 'value2'],
@@ -113,67 +104,69 @@ class CompactListTest extends TestCase
         ]);
 
         self::assertEquals(<<<JSON5
-            [
-                {
-                    a: 1,
-                    b: 2,
-                }, {
-                    abc: "123",
-                    xyz: "456",
-                }, {
-                    key1: "value1",
-                    key2: "value2",
-                }, {
-                    list: [
-                        1,
-                    ],
-                    obj: {
-                        k: "v",
-                    },
+            [{
+                a: 1,
+                b: 2,
+            }, {
+                abc: "123",
+                xyz: "456",
+            }, {
+                key1: "value1",
+                key2: "value2",
+            }, {
+                list: [
+                    1,
+                ],
+                obj: {
+                    k: "v",
                 },
-            ]
+            }]
 
             JSON5, Json5Encoder::encode($list));
     }
 
-    public function testObjectOfCompactLists(): void
+    public function testObjectOfInlineArrays(): void
     {
         $obj = [
-            'list1' => new CompactArray([1,2,3]),
-            'list2' => new CompactArray(['a', 'b', 'c']),
-            'list3' => new CompactArray([[1,2], ['a' => 'b', 'c' => 'd']]),
+            'list1' => new InlineArray([1,2,3]),
+            'list2' => new InlineArray(['a', 'b', 'c']),
+            'list3' => new InlineArray([[1,2], ['a' => 'b', 'c' => 'd']]),
         ];
 
         self::assertEquals(<<<JSON5
             {
-                list1: [
-                    1, 2, 3,
-                ],
-                list2: [
-                    "a", "b", "c",
-                ],
-                list3: [
-                    [
-                        1,
-                        2,
-                    ], {
-                        a: "b",
-                        c: "d",
-                    },
-                ],
+                list1: [1, 2, 3],
+                list2: ["a", "b", "c"],
+                list3: [[
+                    1,
+                    2,
+                ], {
+                    a: "b",
+                    c: "d",
+                }],
             }
 
             JSON5, Json5Encoder::encode($obj));
+    }
+
+    public function testExtraSpaces(): void
+    {
+        $list = new InlineArray(['a' => 1, 2, 8 => 3, 4]);
+
+        self::assertEquals(<<<JSON5
+            [ 1, 2, 3, 4 ]
+
+            JSON5, Json5Encoder::encode($list, new Options(inlineArrayPadding: true)));
     }
 
     public function testJsonTransparency(): void
     {
         // array that is not a list
         $list1 = ['a' => 1, 'b' => 2, 'c' => 3];
-        self::assertEquals('[1,2,3]', json_encode(new CompactArray($list1)));
+        self::assertEquals('[1,2,3]', json_encode(new InlineArray($list1)));
 
         // iterable
         $list2 = fn () => yield from $list1;
-        self::assertEquals('[1,2,3]', json_encode(new CompactArray($list2())));
+        self::assertEquals('[1,2,3]', json_encode(new InlineArray($list2())));
     }
 }

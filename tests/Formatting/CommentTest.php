@@ -23,7 +23,7 @@ class CommentTest extends TestCase
         Json5Encoder::encode(new Comment(''));
     }
 
-    public function testList(): void
+    public function testArray(): void
     {
         $list = [ // must still be a list
             new Comment('begin'),
@@ -49,7 +49,7 @@ class CommentTest extends TestCase
             JSON5, Json5Encoder::encode($list));
     }
 
-    public function testCompactList(): void
+    public function testCompactArray(): void
     {
         $list = [
             new Comment('begin'),
@@ -73,7 +73,7 @@ class CommentTest extends TestCase
             JSON5, Json5Encoder::encode(new CompactArray($list)));
     }
 
-    public function testInlineList(): void
+    public function testInlineArray(): void
     {
         $list = [
             new Comment('begin'),

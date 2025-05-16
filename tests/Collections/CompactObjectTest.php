@@ -16,14 +16,14 @@ class CompactObjectTest extends TestCase
 {
     public function testArrayAccepted(): void
     {
-        $list = new CompactObject([1, 2, 3, 4]); // even if list
+        $obj = new CompactObject([1, 2, 3, 4]); // even if list
 
         self::assertEquals(<<<JSON5
             {
                 '0': 1, '1': 2, '2': 3, '3': 4,
             }
 
-            JSON5, Json5Encoder::encode($list));
+            JSON5, Json5Encoder::encode($obj));
     }
 
     public function testStdClassAccepted(): void
@@ -34,14 +34,14 @@ class CompactObjectTest extends TestCase
         $object->x = 3;
         $object->{'4'} = 4;
 
-        $list = new CompactObject($object);
+        $objobj = new CompactObject($object);
 
         self::assertEquals(<<<JSON5
             {
                 a: 1, z: 2, x: 3, '4': 4,
             }
 
-            JSON5, Json5Encoder::encode($list));
+            JSON5, Json5Encoder::encode($objobj));
     }
 
     public function testIterableAccepted(): void
@@ -53,14 +53,14 @@ class CompactObjectTest extends TestCase
             yield 'b' => 4; // this is allowed but discouraged
         };
 
-        $list = new CompactObject($i());
+        $obj = new CompactObject($i());
 
         self::assertEquals(<<<JSON5
             {
                 a: 1, b: 2, c: 3, b: 4,
             }
 
-            JSON5, Json5Encoder::encode($list));
+            JSON5, Json5Encoder::encode($obj));
     }
 
     public function testSupportJsonSerializable(): void
@@ -71,14 +71,14 @@ class CompactObjectTest extends TestCase
         $arr[2] = 3;
         $arr[3] = 4;
 
-        $list = new CompactObject($arr);
+        $obj = new CompactObject($arr);
 
         self::assertEquals(<<<JSON5
             {
                 '0': 1, '1': 2, '2': 3, '3': 4,
             }
 
-            JSON5, Json5Encoder::encode($list));
+            JSON5, Json5Encoder::encode($obj));
     }
 
     public function testSupportJson5Serializable(): void
@@ -103,7 +103,7 @@ class CompactObjectTest extends TestCase
             JSON5, Json5Encoder::encode(new CompactObject($class)));
     }
 
-    public function testInlineObjectOfLists(): void
+    public function testInlineObjectOfArrays(): void
     {
         $obj = new CompactObject([
             'list1' => [1,2,3],
@@ -135,7 +135,7 @@ class CompactObjectTest extends TestCase
             JSON5, Json5Encoder::encode($obj));
     }
 
-    public function testListOfInlineObjects(): void
+    public function testArrayOfInlineObjects(): void
     {
         $list = [
             new CompactObject([1,2,3]),
@@ -168,11 +168,11 @@ class CompactObjectTest extends TestCase
     public function testJsonTransparency(): void
     {
         // array that is not a list
-        $list1 = [1, 2, 3];
-        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($list1)));
+        $obj1 = [1, 2, 3];
+        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($obj1)));
 
         // iterable
-        $list2 = fn () => yield from $list1;
-        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($list2())));
+        $obj2 = fn () => yield from $obj1;
+        self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($obj2())));
     }
 }

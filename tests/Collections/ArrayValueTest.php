@@ -11,7 +11,7 @@ use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class ListValueTest extends TestCase
+class ArrayValueTest extends TestCase
 {
     public function testArrayAccepted(): void
     {

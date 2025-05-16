@@ -15,7 +15,7 @@ use stdClass;
 
 class EmptyTest extends TestCase
 {
-    public function testEmptyList(): void
+    public function testEmptyArray(): void
     {
         self::assertEquals("[]\n", Json5Encoder::encode([]));
         self::assertEquals("[]\n", Json5Encoder::encode(new InlineArray([])));
@@ -29,7 +29,7 @@ class EmptyTest extends TestCase
         self::assertEquals("{}\n", Json5Encoder::encode(new CompactObject([])));
     }
 
-    public function testSecondLevelEmptyList(): void
+    public function testSecondLevelEmptyArray(): void
     {
         self::assertEquals("[\n    [],\n]\n", Json5Encoder::encode([[]]));
         self::assertEquals("[\n    [],\n]\n", Json5Encoder::encode([new InlineArray([])]));
