@@ -1,0 +1,6 @@
+[
+    123,
+    // Comment before
+    234, // Comment after
+    345,
+]
