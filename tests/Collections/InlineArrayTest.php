@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\InlineArray;
 use Arokettu\Json5\Values\Json5Serializable;
@@ -19,10 +20,8 @@ class InlineArrayTest extends TestCase
     {
         $list = new InlineArray(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
 
-        self::assertEquals(<<<JSON5
-            [1, 2, 3, 4]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json', JsonEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -35,10 +34,8 @@ class InlineArrayTest extends TestCase
 
         $list = new InlineArray($object);
 
-        self::assertEquals(<<<JSON5
-            [1, 2, 3, 4]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json', JsonEncoder::encode($list));
     }
 
     public function testIterableAccepted(): void
@@ -51,11 +48,10 @@ class InlineArrayTest extends TestCase
         };
 
         $list = new InlineArray($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json5', Json5Encoder::encode($list));
 
-        self::assertEquals(<<<JSON5
-            [1, 2, 3, 4]
-
-            JSON5, Json5Encoder::encode($list));
+        $list = new InlineArray($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJsonSerializable(): void
@@ -68,10 +64,8 @@ class InlineArrayTest extends TestCase
 
         $list = new InlineArray($arr);
 
-        self::assertEquals(<<<JSON5
-            [1, 2, 3, 4]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJson5Serializable(): void
@@ -88,10 +82,14 @@ class InlineArrayTest extends TestCase
             }
         };
 
-        self::assertEquals(<<<JSON5
-            [1, 2, 3]
-
-            JSON5, Json5Encoder::encode(new InlineArray($class)));
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/inline_array_serializable.json5',
+            Json5Encoder::encode(new InlineArray($class)),
+        );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/inline_array_serializable.json',
+            JsonEncoder::encode(new InlineArray($class)),
+        );
     }
 
     public function testInlineArrayOfObjects(): void
@@ -103,26 +101,8 @@ class InlineArrayTest extends TestCase
             ['list' => [1], 'obj' => ['k' => 'v']],
         ]);
 
-        self::assertEquals(<<<JSON5
-            [{
-                a: 1,
-                b: 2,
-            }, {
-                abc: "123",
-                xyz: "456",
-            }, {
-                key1: "value1",
-                key2: "value2",
-            }, {
-                list: [
-                    1,
-                ],
-                obj: {
-                    k: "v",
-                },
-            }]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array_of_objects.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array_of_objects.json', JsonEncoder::encode($list));
     }
 
     public function testObjectOfInlineArrays(): void
@@ -133,30 +113,22 @@ class InlineArrayTest extends TestCase
             'list3' => new InlineArray([[1,2], ['a' => 'b', 'c' => 'd']]),
         ];
 
-        self::assertEquals(<<<JSON5
-            {
-                list1: [1, 2, 3],
-                list2: ["a", "b", "c"],
-                list3: [[
-                    1,
-                    2,
-                ], {
-                    a: "b",
-                    c: "d",
-                }],
-            }
-
-            JSON5, Json5Encoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/object_of_inline_arrays.json5', Json5Encoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/object_of_inline_arrays.json', JsonEncoder::encode($obj));
     }
 
     public function testExtraSpaces(): void
     {
         $list = new InlineArray(['a' => 1, 2, 8 => 3, 4]);
 
-        self::assertEquals(<<<JSON5
-            [ 1, 2, 3, 4 ]
-
-            JSON5, Json5Encoder::encode($list, new Options(inlineArrayPadding: true)));
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/inline_array_pad.json5',
+            Json5Encoder::encode($list, new Options(inlineArrayPadding: true)),
+        );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/inline_array_pad.json',
+            JsonEncoder::encode($list, new Options(inlineArrayPadding: true)),
+        );
     }
 
     public function testJsonTransparency(): void

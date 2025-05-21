@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
-use Arokettu\Json5\Values\Json5Serializable;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\ArrayValue;
+use Arokettu\Json5\Values\Json5Serializable;
 use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -17,15 +18,8 @@ class ArrayValueTest extends TestCase
     {
         $list = new ArrayValue(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
 
-        self::assertEquals(<<<JSON5
-            [
-                1,
-                2,
-                3,
-                4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -38,15 +32,8 @@ class ArrayValueTest extends TestCase
 
         $list = new ArrayValue($object);
 
-        self::assertEquals(<<<JSON5
-            [
-                1,
-                2,
-                3,
-                4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testIterableAccepted(): void
@@ -59,16 +46,10 @@ class ArrayValueTest extends TestCase
         };
 
         $list = new ArrayValue($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
 
-        self::assertEquals(<<<JSON5
-            [
-                1,
-                2,
-                3,
-                4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        $list = new ArrayValue($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJsonSerializable(): void
@@ -82,15 +63,8 @@ class ArrayValueTest extends TestCase
 
         $list = new ArrayValue($class);
 
-        self::assertEquals(<<<JSON5
-            [
-                1,
-                2,
-                3,
-                4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJson5Serializable(): void
@@ -107,14 +81,16 @@ class ArrayValueTest extends TestCase
             }
         };
 
-        self::assertEquals(<<<JSON5
-            [
-                1,
-                2,
-                3,
-            ]
-
-            JSON5, Json5Encoder::encode(new ArrayValue($class)));
+        // supported in JSON5
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/array_value_serializable.json5',
+            Json5Encoder::encode(new ArrayValue($class))
+        );
+        // not supported in JSON
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/array_value_serializable.json',
+            JsonEncoder::encode(new ArrayValue($class))
+        );
     }
 
     public function testJsonTransparency(): void

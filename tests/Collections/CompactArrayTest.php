@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\Json5Serializable;
 use JsonSerializable;
@@ -18,12 +19,8 @@ class CompactArrayTest extends TestCase
     {
         $list = new CompactArray(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
 
-        self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json', JsonEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -36,12 +33,8 @@ class CompactArrayTest extends TestCase
 
         $list = new CompactArray($object);
 
-        self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json', JsonEncoder::encode($list));
     }
 
     public function testIterableAccepted(): void
@@ -54,13 +47,10 @@ class CompactArrayTest extends TestCase
         };
 
         $list = new CompactArray($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json5', Json5Encoder::encode($list));
 
-        self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        $list = new CompactArray($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJsonSerializable(): void
@@ -73,12 +63,8 @@ class CompactArrayTest extends TestCase
 
         $list = new CompactArray($arr);
 
-        self::assertEquals(<<<JSON5
-            [
-                1, 2, 3, 4,
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJson5Serializable(): void
@@ -95,12 +81,14 @@ class CompactArrayTest extends TestCase
             }
         };
 
-        self::assertEquals(<<<JSON5
-            [
-                1, 2, 3,
-            ]
-
-            JSON5, Json5Encoder::encode(new CompactArray($class)));
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/compact_array_serializable.json5',
+            Json5Encoder::encode(new CompactArray($class)),
+        );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/compact_array_serializable.json',
+            JsonEncoder::encode(new CompactArray($class)),
+        );
     }
 
     public function testCompactArrayOfObjects(): void
@@ -112,28 +100,8 @@ class CompactArrayTest extends TestCase
             ['list' => [1], 'obj' => ['k' => 'v']],
         ]);
 
-        self::assertEquals(<<<JSON5
-            [
-                {
-                    a: 1,
-                    b: 2,
-                }, {
-                    abc: "123",
-                    xyz: "456",
-                }, {
-                    key1: "value1",
-                    key2: "value2",
-                }, {
-                    list: [
-                        1,
-                    ],
-                    obj: {
-                        k: "v",
-                    },
-                },
-            ]
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array_of_objects.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array_of_objects.json', JsonEncoder::encode($list));
     }
 
     public function testObjectOfCompactArrays(): void
@@ -144,26 +112,8 @@ class CompactArrayTest extends TestCase
             'list3' => new CompactArray([[1,2], ['a' => 'b', 'c' => 'd']]),
         ];
 
-        self::assertEquals(<<<JSON5
-            {
-                list1: [
-                    1, 2, 3,
-                ],
-                list2: [
-                    "a", "b", "c",
-                ],
-                list3: [
-                    [
-                        1,
-                        2,
-                    ], {
-                        a: "b",
-                        c: "d",
-                    },
-                ],
-            }
-
-            JSON5, Json5Encoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/object_of_compact_arrays.json5', Json5Encoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/object_of_compact_arrays.json', JsonEncoder::encode($obj));
     }
 
     public function testJsonTransparency(): void
