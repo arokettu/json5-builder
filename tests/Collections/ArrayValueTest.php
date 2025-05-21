@@ -18,8 +18,8 @@ class ArrayValueTest extends TestCase
     {
         $list = new ArrayValue(['a' => 1, 2, 8 => 3, 4]); // keys are ignored
 
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -32,8 +32,8 @@ class ArrayValueTest extends TestCase
 
         $list = new ArrayValue($object);
 
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testIterableAccepted(): void
@@ -46,10 +46,10 @@ class ArrayValueTest extends TestCase
         };
 
         $list = new ArrayValue($i());
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json5', Json5Encoder::encode($list));
 
         $list = new ArrayValue($i());
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJsonSerializable(): void
@@ -63,8 +63,8 @@ class ArrayValueTest extends TestCase
 
         $list = new ArrayValue($class);
 
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJson5Serializable(): void
@@ -83,12 +83,12 @@ class ArrayValueTest extends TestCase
 
         // supported in JSON5
         self::assertStringEqualsFile(
-            __DIR__ . '/data/array_value_serializable.json5',
+            __DIR__ . '/data/array_value/array_value_serializable.json5',
             Json5Encoder::encode(new ArrayValue($class))
         );
         // not supported in JSON
         self::assertStringEqualsFile(
-            __DIR__ . '/data/array_value_serializable.json',
+            __DIR__ . '/data/array_value/array_value_serializable.json',
             JsonEncoder::encode(new ArrayValue($class))
         );
     }
