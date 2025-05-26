@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\CompactObject;
 use Arokettu\Json5\Values\InlineArray;
@@ -20,6 +21,10 @@ class EmptyTest extends TestCase
         self::assertEquals("[]\n", Json5Encoder::encode([]));
         self::assertEquals("[]\n", Json5Encoder::encode(new InlineArray([])));
         self::assertEquals("[]\n", Json5Encoder::encode(new CompactArray([])));
+
+        self::assertEquals("[]\n", JsonEncoder::encode([]));
+        self::assertEquals("[]\n", JsonEncoder::encode(new InlineArray([])));
+        self::assertEquals("[]\n", JsonEncoder::encode(new CompactArray([])));
     }
 
     public function testEmptyObject(): void
@@ -27,6 +32,10 @@ class EmptyTest extends TestCase
         self::assertEquals("{}\n", Json5Encoder::encode(new ObjectValue([])));
         self::assertEquals("{}\n", Json5Encoder::encode(new InlineObject([])));
         self::assertEquals("{}\n", Json5Encoder::encode(new CompactObject([])));
+
+        self::assertEquals("{}\n", JsonEncoder::encode(new ObjectValue([])));
+        self::assertEquals("{}\n", JsonEncoder::encode(new InlineObject([])));
+        self::assertEquals("{}\n", JsonEncoder::encode(new CompactObject([])));
     }
 
     public function testSecondLevelEmptyArray(): void
@@ -34,6 +43,10 @@ class EmptyTest extends TestCase
         self::assertEquals("[\n    [],\n]\n", Json5Encoder::encode([[]]));
         self::assertEquals("[\n    [],\n]\n", Json5Encoder::encode([new InlineArray([])]));
         self::assertEquals("[\n    [],\n]\n", Json5Encoder::encode([new CompactArray([])]));
+
+        self::assertEquals("[\n    []\n]\n", JsonEncoder::encode([[]]));
+        self::assertEquals("[\n    []\n]\n", JsonEncoder::encode([new InlineArray([])]));
+        self::assertEquals("[\n    []\n]\n", JsonEncoder::encode([new CompactArray([])]));
     }
 
     public function testSecondLevelEmptyObject(): void
@@ -41,5 +54,9 @@ class EmptyTest extends TestCase
         self::assertEquals("[\n    {},\n]\n", Json5Encoder::encode([new stdClass()]));
         self::assertEquals("[\n    {},\n]\n", Json5Encoder::encode([new InlineObject(new stdClass())]));
         self::assertEquals("[\n    {},\n]\n", Json5Encoder::encode([new CompactObject(new stdClass())]));
+
+        self::assertEquals("[\n    {}\n]\n", JsonEncoder::encode([new stdClass()]));
+        self::assertEquals("[\n    {}\n]\n", JsonEncoder::encode([new InlineObject(new stdClass())]));
+        self::assertEquals("[\n    {}\n]\n", JsonEncoder::encode([new CompactObject(new stdClass())]));
     }
 }
