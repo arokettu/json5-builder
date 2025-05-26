@@ -5,10 +5,12 @@ Upgrade
 ==========
 
 * ``*List`` objects were renamed to ``*Array`` to align with JSON terminology.
+
   * ``ListValue`` -> ``ArrayValue``
   * ``InlineList`` -> ``InlineArray``
   * ``CompactList`` -> ``CompactArray``
 * Iterable wrappers (``ArrayValue``, ``ObjectValue``, ``InlineArray``, ``InlineObject``, ``CompactArray``, ``CompactObject``)
   no longer resolve ``JsonSerializable`` and ``Json5Serializable`` automatically.
+
   * ``ArrayValue::fromSerializable`` supports both ``JsonSerializable`` and ``Json5Serializable``.
   * ``ArrayValue::fromJsonSerializable`` supports only ``JsonSerializable``.
