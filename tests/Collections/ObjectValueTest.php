@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\Json5Serializable;
 use Arokettu\Json5\Values\ObjectValue;
 use JsonSerializable;
@@ -13,19 +14,14 @@ use stdClass;
 
 class ObjectValueTest extends TestCase
 {
+    private const DATA_DIR = __DIR__ . '/data/object_value';
+
     public function testArrayAccepted(): void
     {
         $list = new ObjectValue([1, 2, 3, 4]); // even if list
 
-        self::assertEquals(<<<JSON5
-            {
-                '0': 1,
-                '1': 2,
-                '2': 3,
-                '3': 4,
-            }
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -36,17 +32,10 @@ class ObjectValueTest extends TestCase
         $object->x = 3;
         $object->{'4'} = 4;
 
-        $list = new ObjectValue($object);
+        $objobj = new ObjectValue($object);
 
-        self::assertEquals(<<<JSON5
-            {
-                a: 1,
-                z: 2,
-                x: 3,
-                '4': 4,
-            }
-
-            JSON5, Json5Encoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json5', Json5Encoder::encode($objobj));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json', JsonEncoder::encode($objobj));
     }
 
     public function testIterableAccepted(): void
@@ -59,16 +48,10 @@ class ObjectValueTest extends TestCase
         };
 
         $list = new ObjectValue($i());
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_iterable.json5', Json5Encoder::encode($list));
 
-        self::assertEquals(<<<JSON5
-            {
-                a: 1,
-                b: 2,
-                c: 3,
-                b: 4,
-            }
-
-            JSON5, Json5Encoder::encode($list));
+        $list = new ObjectValue($i());
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_iterable.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJsonSerializable(): void
@@ -81,16 +64,10 @@ class ObjectValueTest extends TestCase
         };
 
         $list = new ObjectValue($class);
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json5', Json5Encoder::encode($list));
 
-        self::assertEquals(<<<JSON5
-            {
-                '0': 1,
-                '1': 2,
-                '2': 3,
-                '3': 4,
-            }
-
-            JSON5, Json5Encoder::encode($list));
+        $list = new ObjectValue($class);
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonEncoder::encode($list));
     }
 
     public function testSupportJson5Serializable(): void
@@ -107,14 +84,11 @@ class ObjectValueTest extends TestCase
             }
         };
 
-        self::assertEquals(<<<JSON5
-            {
-                '0': 1,
-                '1': 2,
-                '2': 3,
-            }
+        $list = new ObjectValue($class);
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list_short.json5', Json5Encoder::encode($list));
 
-            JSON5, Json5Encoder::encode(new ObjectValue($class)));
+        $list = new ObjectValue($class);
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list_short.json', JsonEncoder::encode($list));
     }
 
     public function testJsonTransparency(): void

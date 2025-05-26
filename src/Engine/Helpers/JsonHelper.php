@@ -12,7 +12,7 @@ use ValueError;
  */
 final class JsonHelper
 {
-    public static function encode(mixed $value, int $options = 0): string
+    public static function encode(mixed $value, int $options): string
     {
         try {
             return json_encode($value, $options | JSON_THROW_ON_ERROR);
