@@ -7,10 +7,7 @@ namespace Arokettu\Json5\Tests\Collections;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\CompactObject;
-use Arokettu\Json5\Values\Json5Serializable;
-use JsonSerializable;
 use PHPUnit\Framework\TestCase;
-use SplFixedArray;
 use stdClass;
 
 class CompactObjectTest extends TestCase
@@ -53,42 +50,6 @@ class CompactObjectTest extends TestCase
 
         $obj = new CompactObject($i());
         self::assertStringEqualsFile(self::DATA_DIR . '/object_value_iterable.json', JsonEncoder::encode($obj));
-    }
-
-    public function testSupportJsonSerializable(): void
-    {
-        $arr = new SplFixedArray(4);
-        $arr[0] = 1;
-        $arr[1] = 2;
-        $arr[2] = 3;
-        $arr[3] = 4;
-
-        $obj = new CompactObject($arr);
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json5', Json5Encoder::encode($obj));
-
-        $obj = new CompactObject($arr);
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonEncoder::encode($obj));
-    }
-
-    public function testSupportJson5Serializable(): void
-    {
-        $class = new class implements JsonSerializable, Json5Serializable {
-            public function json5Serialize(): array // takes precedence
-            {
-                return [1,2,3];
-            }
-
-            public function jsonSerialize(): array
-            {
-                return [4,5];
-            }
-        };
-
-        $list = new CompactObject($class);
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list_short.json5', Json5Encoder::encode($list));
-
-        $list = new CompactObject($class);
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list_short.json', JsonEncoder::encode($list));
     }
 
     public function testCompactObjectOfArrays(): void

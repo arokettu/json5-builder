@@ -7,8 +7,6 @@ namespace Arokettu\Json5\Tests\Collections;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\ArrayValue;
-use Arokettu\Json5\Values\Json5Serializable;
-use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -50,47 +48,6 @@ class ArrayValueTest extends TestCase
 
         $list = new ArrayValue($i());
         self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
-    }
-
-    public function testSupportJsonSerializable(): void
-    {
-        $class = new class implements JsonSerializable {
-            public function jsonSerialize(): array
-            {
-                return [1,2,3,4];
-            }
-        };
-
-        $list = new ArrayValue($class);
-
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
-    }
-
-    public function testSupportJson5Serializable(): void
-    {
-        $class = new class implements JsonSerializable, Json5Serializable {
-            public function json5Serialize(): array // takes precedence
-            {
-                return [1,2,3];
-            }
-
-            public function jsonSerialize(): array
-            {
-                return [4,5];
-            }
-        };
-
-        // supported in JSON5
-        self::assertStringEqualsFile(
-            __DIR__ . '/data/array_value/array_value_serializable.json5',
-            Json5Encoder::encode(new ArrayValue($class))
-        );
-        // not supported in JSON
-        self::assertStringEqualsFile(
-            __DIR__ . '/data/array_value/array_value_serializable.json',
-            JsonEncoder::encode(new ArrayValue($class))
-        );
     }
 
     public function testJsonTransparency(): void

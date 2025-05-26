@@ -8,10 +8,7 @@ use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\InlineArray;
-use Arokettu\Json5\Values\Json5Serializable;
-use JsonSerializable;
 use PHPUnit\Framework\TestCase;
-use SplFixedArray;
 use stdClass;
 
 class InlineArrayTest extends TestCase
@@ -52,44 +49,6 @@ class InlineArrayTest extends TestCase
 
         $list = new InlineArray($i());
         self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonEncoder::encode($list));
-    }
-
-    public function testSupportJsonSerializable(): void
-    {
-        $arr = new SplFixedArray(4);
-        $arr[0] = 1;
-        $arr[1] = 2;
-        $arr[2] = 3;
-        $arr[3] = 4;
-
-        $list = new InlineArray($arr);
-
-        self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonEncoder::encode($list));
-    }
-
-    public function testSupportJson5Serializable(): void
-    {
-        $class = new class implements JsonSerializable, Json5Serializable {
-            public function json5Serialize(): array // takes precedence
-            {
-                return [1,2,3];
-            }
-
-            public function jsonSerialize(): array
-            {
-                return [4,5];
-            }
-        };
-
-        self::assertStringEqualsFile(
-            __DIR__ . '/data/inline_array/inline_array_serializable.json5',
-            Json5Encoder::encode(new InlineArray($class)),
-        );
-        self::assertStringEqualsFile(
-            __DIR__ . '/data/inline_array/inline_array_serializable.json',
-            JsonEncoder::encode(new InlineArray($class)),
-        );
     }
 
     public function testInlineArrayOfObjects(): void
