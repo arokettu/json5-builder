@@ -1,7 +1,7 @@
 JSON5 Builder
 #############
 
-|Packagist| |GitLab| |GitHub| |Bitbucket| |Gitea|
+|Packagist| |GitLab| |GitHub| |Codeberg| |Gitea|
 
 A tool to generate human-friendly JSON5_ files.
 The tool aims to generate new files, not modifying existing ones.
@@ -23,6 +23,7 @@ Documentation
     simple
     options
     objects
+    upgrade
 
 License
 =======
@@ -39,6 +40,6 @@ The library is available as open source under the terms of the `MIT License`_.
 .. |GitLab|     image:: https://img.shields.io/badge/get%20on-GitLab-informational.svg?style=flat-square&logo=gitlab
    :target:     https://gitlab.com/sandfox/json5-builder
 .. |Codeberg|   image:: https://img.shields.io/badge/get%20on-Codeberg-informational.svg?style=flat-square&logo=codeberg
-   :target:     https://bitbucket.org/sandfox/json5-builder
+   :target:     https://codeberg.org/sandfox/json5-builder
 .. |Gitea|      image:: https://img.shields.io/badge/get%20on-Gitea-informational.svg?style=flat-square&logo=gitea
    :target:     https://sandfox.org/sandfox/json5-builder
