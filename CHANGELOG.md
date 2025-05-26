@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.x
+
+### 2.0.0
+
+*May 27, 2025*
+
+Forked from 1.1.1
+
+* ``JsonEncoder`` to encode plain JSON with the supported subset of formatting options
+* ``Json5Encoder::encodeToStream()`` to write data directly to the stream
+* List classes renamed to Array to properly align them with JSON terminology
+  * ``ListValue`` -> ``ArrayValue``
+  * ``InlineList`` -> ``InlineArray``
+  * ``CompactList`` -> ``CompactArray``
+* Iterable wrappers
+  (``ArrayValue``, ``ObjectValue``, ``InlineArray``, ``InlineObject``, ``CompactArray``, ``CompactObject``)
+  no longer resolve ``JsonSerializable`` and ``Json5Serializable`` automatically.
+  You need to use new named constructors for that:
+  * ``fromSerializable()`` supports both ``JsonSerializable`` and ``Json5Serializable``.
+  * ``fromJsonSerializable()`` supports only ``JsonSerializable``.
+
 ## 1.x
 
 ### 1.1.1
