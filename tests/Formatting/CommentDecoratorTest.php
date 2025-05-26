@@ -14,9 +14,10 @@ use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
-// phpcs:disable Generic.Files.LineLength.TooLong
 class CommentDecoratorTest extends TestCase
 {
+    private const DATA_DIR = __DIR__ . '/data/comment_decorator';
+
     public function testCommentAfterShouldNotBeMultiline(): void
     {
         self::expectException(ValueError::class);
@@ -29,46 +30,46 @@ class CommentDecoratorTest extends TestCase
     {
         // no comments
         $data = new CommentDecorator('abcd');
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root_empty.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root_empty.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root.json', JsonEncoder::encode($data));
 
         // comment before
         $data = new CommentDecorator('abcd', commentBefore: 'Comment before');
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root_before.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root_before.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root.json', JsonEncoder::encode($data));
 
         // comment after
         $data = new CommentDecorator('abcd', commentAfter: 'Comment after');
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root_after.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root_after.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root.json', JsonEncoder::encode($data));
 
         // both
         $data = new CommentDecorator('abcd', 'Comment before', 'Comment after');
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root_both.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/root.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root_both.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/root.json', JsonEncoder::encode($data));
     }
 
     public function testArrayComments(): void
     {
         // no comments
         $data = [123, new CommentDecorator(234), 345];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array_empty.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array_empty.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array.json', JsonEncoder::encode($data));
 
         // comment before
         $data = [123, new CommentDecorator(234, commentBefore: 'Comment before'), 345];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array_before.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array_before.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array.json', JsonEncoder::encode($data));
 
         // comment after
         $data = [123, new CommentDecorator(234, commentAfter: 'Comment after'), 345];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array_after.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array_after.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array.json', JsonEncoder::encode($data));
 
         // both
         $data = [123, new CommentDecorator(234, 'Comment before', 'Comment after'), 345];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array_both.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/array.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array_both.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array.json', JsonEncoder::encode($data));
     }
 
     public function testObjectComments(): void
@@ -79,8 +80,8 @@ class CommentDecoratorTest extends TestCase
             'b' => new CommentDecorator(234),
             'c' => 345
         ];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object_empty.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_empty.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object.json', JsonEncoder::encode($data));
 
         // comment before
         $data = [
@@ -88,8 +89,8 @@ class CommentDecoratorTest extends TestCase
             'b' => new CommentDecorator(234, commentBefore: 'Comment before'),
             'c' => 345
         ];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object_before.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_before.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object.json', JsonEncoder::encode($data));
 
         // comment after
         $data = [
@@ -97,8 +98,8 @@ class CommentDecoratorTest extends TestCase
             'b' => new CommentDecorator(234, commentAfter: 'Comment after'),
             'c' => 345
         ];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object_after.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_after.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object.json', JsonEncoder::encode($data));
 
         // both
         $data = [
@@ -106,8 +107,8 @@ class CommentDecoratorTest extends TestCase
             'b' => new CommentDecorator(234, 'Comment before', 'Comment after'),
             'c' => 345
         ];
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object_both.json5', Json5Encoder::encode($data));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/object.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object_both.json5', Json5Encoder::encode($data));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object.json', JsonEncoder::encode($data));
     }
 
     public function testInlineArrayComments(): void
@@ -118,8 +119,8 @@ class CommentDecoratorTest extends TestCase
             'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
         ]);
 
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/inline_array.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/inline_array.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.json', JsonEncoder::encode($list));
     }
 
     public function testCompactArrayComments(): void
@@ -130,8 +131,8 @@ class CommentDecoratorTest extends TestCase
             'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
         ]);
 
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/compact_array.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/compact_array.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.json', JsonEncoder::encode($list));
     }
 
     public function testInlineObjectComments(): void
@@ -142,8 +143,8 @@ class CommentDecoratorTest extends TestCase
             'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
         ]);
 
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/inline_object.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/inline_object.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.json', JsonEncoder::encode($list));
     }
 
     public function testCompactObjectComments(): void
@@ -154,7 +155,7 @@ class CommentDecoratorTest extends TestCase
             'key3' => new CommentDecorator('value3', commentAfter: 'c3'),
         ]);
 
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/compact_object.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(__DIR__ . '/data/comment_decorator/compact_object.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.json5', Json5Encoder::encode($list));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.json', JsonEncoder::encode($list));
     }
 }

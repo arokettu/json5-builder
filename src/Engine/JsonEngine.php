@@ -121,11 +121,12 @@ final class JsonEngine
     private function encodeContainer(iterable $container, bool $object, string $indent): void
     {
         $indent2 = $indent . $this->options->indent;
+        $container = $this->iterableToKVArray($container);
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
 
-        foreach ($container as $key => $value) {
+        foreach ($container as $index => [$key, $value]) {
             if ($value instanceof Comment) {
                 continue;
             }
@@ -134,7 +135,9 @@ final class JsonEngine
                 fwrite($this->resource, "\n");
             }
             if ($state === self::STATE_AFTER_VALUE) {
-                fwrite($this->resource, ',');
+                if (!$this->skipComma($container, $index)) {
+                    fwrite($this->resource, ',');
+                }
                 fwrite($this->resource, "\n");
             }
 
@@ -166,18 +169,21 @@ final class JsonEngine
     private function encodeCompactContainer(iterable $container, bool $object, string $indent): void
     {
         $indent2 = $indent . $this->options->indent;
+        $container = $this->iterableToKVArray($container);
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
 
-        foreach ($container as $key => $value) {
+        foreach ($container as $index => [$key, $value]) {
             switch ($state) {
                 case self::STATE_START:
                     fwrite($this->resource, "\n");
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                    fwrite($this->resource, ',');
+                    if (!$this->skipComma($container, $index)) {
+                        fwrite($this->resource, ',');
+                    }
                     break;
             }
 
@@ -230,18 +236,21 @@ final class JsonEngine
     private function encodeInlineContainer(iterable $container, bool $object, string $indent): void
     {
         $extraPadding = $object ? $this->options->inlineObjectPadding : $this->options->inlineArrayPadding;
+        $container = $this->iterableToKVArray($container);
 
         fwrite($this->resource, $object ? '{' : '[');
         $state = self::STATE_START;
 
-        foreach ($container as $key => $value) {
+        foreach ($container as $index => [$key, $value]) {
             if ($value instanceof Comment) {
                 $state = self::STATE_AFTER_COMMENT;
                 continue;
             }
 
             if ($state === self::STATE_AFTER_VALUE) {
-                fwrite($this->resource, ',');
+                if (!$this->skipComma($container, $index)) {
+                    fwrite($this->resource, ',');
+                }
             }
 
             if ($value instanceof EndOfLine) {
@@ -280,5 +289,33 @@ final class JsonEngine
             fwrite($this->resource, ' ');
         }
         fwrite($this->resource, $object ? '}' : ']');
+    }
+
+    private function iterableToKVArray(iterable $iterable): array
+    {
+        $result = [];
+        foreach ($iterable as $key => $value) {
+            $result[] = [$key, $value];
+        }
+        return $result;
+    }
+
+    private function skipComma(array $container, int $index): bool
+    {
+        $value = $container[$index][1];
+
+        if (!$value instanceof EndOfLine && !$value instanceof Comment) {
+            return false;
+        }
+
+        // check if all other values are skippable too
+        for ($i = $index + 1; $i < \count($container); ++$i) {
+            $v = $container[$i];
+            if (!$v instanceof EndOfLine && !$v instanceof Comment) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
