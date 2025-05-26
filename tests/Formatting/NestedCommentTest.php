@@ -10,6 +10,9 @@ use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * No need to test it for JSON
+ */
 class NestedCommentTest extends TestCase
 {
     public function testNoReplacementInFullSize(): void

@@ -1,0 +1,75 @@
+// Body comment 1
+{
+    test: [
+        "ab",
+        "c",
+        "d",
+    ],
+    floats: [
+        1.0,
+        2,
+        3,
+    ],
+    other: {
+        true: true,
+        false: false,
+        null: null,
+    },
+    // Comment before
+    //
+    // Second line
+    commented: 123, // Comment after
+
+    // Comment comment comment
+    // Line!
+    list: [
+        1,
+        // list comment 1
+        2, // list comment 2
+        3,
+    ],
+    list2: [
+        "abc",
+        // fed
+        "def",
+
+        "ghi",
+    ],
+    inlineList: [/* /*​/*​/*​/*​/*​/*​/*​/*​/*​/*​/*​/ */ 1, 2, 3],
+    inlineList2: [1, 2, 3, 4, 5, 6, 7,
+        8, 9, 10, /* eleven */ 11, 12],
+    inlineListOfObjects: [{
+        a: "b",
+    }, {
+        c: "d",
+    }],
+    inlineListWithComment: [1, /* abc */ 2 /* efg */, 3],
+    listOfInlineObjects: [
+        { a: "b", c: "d" },
+        { a: "b", c: "d" },
+        { a: "b", /* abc */ c: "d" /* def */, ee: "ff" },
+        { a: "b",
+            c: "d", f: "g", h: "i" },
+    ],
+    compactList: [
+        1, 2, 3,
+    ],
+    compactList2: [
+        1, 2, 3, 4, 5, 6, 7,
+        8, 9, 10, 11, 12,
+    ],
+    compactListOfObjects: [
+        {
+            a: "b",
+        }, {
+            c: "d",
+        },
+    ],
+    compactListWithComment: [
+        1, /* abc */ 2 /* efg */, 3,
+    ],
+    compactObject: {
+        a: "b",
+        c: "d", f: "g", h: "i",
+    },
+} // Body comment 2

@@ -75,10 +75,20 @@ class ExamplesTest extends TestCase
         unset($innerData['floats'][3]); // inf
         unset($innerData['floats'][4]); // nan
 
-        $data2 = new CommentDecorator($innerData, '123', '456');
+        $data2 = new CommentDecorator($innerData, 'Body comment 1', 'Body comment 2');
 
         self::assertStringEqualsFile(__DIR__ . '/data/example1.json', JsonEncoder::encode($data2, new Options(
             preserveZeroFraction: true,
         )));
+        // json5 but with unset values
+        self::assertStringEqualsFile(__DIR__ . '/data/example1.json.json5', Json5Encoder::encode($data2, new Options(
+            preserveZeroFraction: true,
+        )));
+
+        // sanity check
+        self::assertEquals(
+            json5_decode(file_get_contents(__DIR__ . '/data/example1.json.json5')),
+            json_decode(file_get_contents(__DIR__ . '/data/example1.json')),
+        );
     }
 }

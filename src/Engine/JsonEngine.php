@@ -242,10 +242,7 @@ final class JsonEngine
         $state = self::STATE_START;
 
         foreach ($container as $index => [$key, $value]) {
-            if ($value instanceof Comment) {
-                $state = self::STATE_AFTER_COMMENT;
-                continue;
-            }
+            $skipComma = $this->skipComma($container, $index);
 
             if ($state === self::STATE_AFTER_VALUE) {
                 if (!$this->skipComma($container, $index)) {
@@ -267,13 +264,20 @@ final class JsonEngine
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                    fwrite($this->resource, ' ');
+                    if (!$skipComma) { // if we skipped the comma, we should also skip the space
+                        fwrite($this->resource, ' ');
+                    }
                     break;
 
                 case self::STATE_AFTER_EOL:
                     fwrite($this->resource, $indent);
                     fwrite($this->resource, $this->options->indent);
                     break;
+            }
+
+            if ($value instanceof Comment) {
+                $state = self::STATE_AFTER_COMMENT;
+                continue;
             }
 
             if ($object) {
