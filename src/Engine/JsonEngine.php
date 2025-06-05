@@ -327,15 +327,8 @@ final class JsonEngine
 
     private function skipComma(array $container, int $index): bool
     {
-        $value = $container[$index][1];
-
-        if (!$value instanceof EndOfLine && !$value instanceof Comment) {
-            return false;
-        }
-
-        // check if all other values are skippable too
-        for ($i = $index + 1; $i < \count($container); ++$i) {
-            $v = $container[$i];
+        for ($i = $index; $i < \count($container); ++$i) {
+            $v = $container[$i][1];
             if (!$v instanceof EndOfLine && !$v instanceof Comment) {
                 return false;
             }

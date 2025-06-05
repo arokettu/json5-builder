@@ -170,4 +170,28 @@ class EolTest extends TestCase
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline.json', JsonEncoder::encode($inline));
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline.json', JsonCEncoder::encode($inline));
     }
+
+    public function testTwoEolsTrailing(): void
+    {
+        $object = [
+            'key1' => 'value1',
+            'key2' => 'value2',
+            new EndOfLine(),
+            new EndOfLine(),
+        ];
+
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_trailing.json5', Json5Encoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_trailing.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_trailing.json', JsonCEncoder::encode($object));
+
+        $compact = new CompactObject($object);
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_compact_trailing.json5', Json5Encoder::encode($compact));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_compact_trailing.json', JsonEncoder::encode($compact));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_compact_trailing.json', JsonCEncoder::encode($compact));
+
+        $inline = new InlineObject($object);
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline_trailing.json5', Json5Encoder::encode($inline));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline_trailing.json', JsonEncoder::encode($inline));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline_trailing.json', JsonCEncoder::encode($inline));
+    }
 }

@@ -238,7 +238,7 @@ final class Json5Engine
             }
 
             if ($value instanceof CommentDecorator) {
-                    $this->renderComment($value->commentBefore, $indent2);
+                $this->renderComment($value->commentBefore, $indent2);
             }
             fwrite($this->resource, $indent2);
             if ($object) {

@@ -15,6 +15,7 @@ use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
+// phpcs:disable Generic.Files.LineLength.TooLong
 class CommentTest extends TestCase
 {
     private const DATA_DIR = __DIR__ . '/data/comment';
@@ -169,5 +170,29 @@ class CommentTest extends TestCase
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline.json5', Json5Encoder::encode($inline));
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline.json', JsonEncoder::encode($inline));
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline.jsonc', JsonCEncoder::encode($inline));
+    }
+
+    public function testTwoCommentsTrailing(): void
+    {
+        $object = [
+            'key1' => 'value1',
+            'key2' => 'value2',
+            new Comment('comment1'),
+            new Comment('comment2'),
+        ];
+
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_trailing.json5', Json5Encoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_trailing.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_trailing.jsonc', JsonCEncoder::encode($object));
+
+        $compact = new CompactObject($object);
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_compact_trailing.json5', Json5Encoder::encode($compact));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_compact_trailing.json', JsonEncoder::encode($compact));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_compact_trailing.jsonc', JsonCEncoder::encode($compact));
+
+        $inline = new InlineObject($object);
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline_trailing.json5', Json5Encoder::encode($inline));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline_trailing.json', JsonEncoder::encode($inline));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline_trailing.jsonc', JsonCEncoder::encode($inline));
     }
 }
