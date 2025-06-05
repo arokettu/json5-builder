@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Objects;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use ArrayObject;
 use PHPUnit\Framework\TestCase;
@@ -22,12 +23,14 @@ class SimpleObjectsTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/obj.json5', Json5Encoder::encode($obj));
         self::assertStringEqualsFile(__DIR__ . '/data/obj.json', JsonEncoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/obj.json', JsonCEncoder::encode($obj));
 
         // sequential array in stdClass form becomes an object anyway
         $list = (object)[1,2,3,4];
 
         self::assertStringEqualsFile(__DIR__ . '/data/list.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/list.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/list.json', JsonCEncoder::encode($list));
     }
 
     public static function testArrayObject(): void
@@ -40,11 +43,13 @@ class SimpleObjectsTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/obj.json5', Json5Encoder::encode($obj));
         self::assertStringEqualsFile(__DIR__ . '/data/obj.json', JsonEncoder::encode($obj));
+        self::assertStringEqualsFile(__DIR__ . '/data/obj.json', JsonCEncoder::encode($obj));
 
         // sequential array in stdClass form becomes an object anyway
         $list = new ArrayObject([1,2,3,4]);
 
         self::assertStringEqualsFile(__DIR__ . '/data/list.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/list.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/list.json', JsonCEncoder::encode($list));
     }
 }

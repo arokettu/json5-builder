@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\InlineArray;
@@ -19,6 +20,7 @@ class InlineArrayTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonCEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -33,6 +35,7 @@ class InlineArrayTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonCEncoder::encode($list));
     }
 
     public function testIterableAccepted(): void
@@ -49,6 +52,9 @@ class InlineArrayTest extends TestCase
 
         $list = new InlineArray($i());
         self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonEncoder::encode($list));
+
+        $list = new InlineArray($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/inline_array/inline_array.json', JsonCEncoder::encode($list));
     }
 
     public function testInlineArrayOfObjects(): void
@@ -68,6 +74,10 @@ class InlineArrayTest extends TestCase
             __DIR__ . '/data/inline_array/inline_array_of_objects.json',
             JsonEncoder::encode($list),
         );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/inline_array/inline_array_of_objects.json',
+            JsonCEncoder::encode($list),
+        );
     }
 
     public function testObjectOfInlineArrays(): void
@@ -86,6 +96,10 @@ class InlineArrayTest extends TestCase
             __DIR__ . '/data/inline_array/object_of_inline_arrays.json',
             JsonEncoder::encode($obj),
         );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/inline_array/object_of_inline_arrays.json',
+            JsonCEncoder::encode($obj),
+        );
     }
 
     public function testExtraSpaces(): void
@@ -99,6 +113,10 @@ class InlineArrayTest extends TestCase
         self::assertStringEqualsFile(
             __DIR__ . '/data/inline_array/inline_array_pad.json',
             JsonEncoder::encode($list, new Options(inlineArrayPadding: true)),
+        );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/inline_array/inline_array_pad.json',
+            JsonCEncoder::encode($list, new Options(inlineArrayPadding: true)),
         );
     }
 

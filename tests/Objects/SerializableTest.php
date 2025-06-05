@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Objects;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\Internal\RawJson5Serializable;
 use Arokettu\Json5\Values\Json5Serializable;
@@ -32,6 +33,9 @@ class SerializableTest extends TestCase
 
         self::assertEquals("5426\n", JsonEncoder::encode($obj(5426)));
         self::assertEquals("\"5426\"\n", JsonEncoder::encode($obj('5426')));
+
+        self::assertEquals("5426\n", JsonCEncoder::encode($obj(5426)));
+        self::assertEquals("\"5426\"\n", JsonCEncoder::encode($obj('5426')));
     }
 
     public function testJson5Serializable(): void
@@ -99,6 +103,7 @@ class SerializableTest extends TestCase
 
         self::assertEquals("\"raw\"\n", Json5Encoder::encode($raw));
         self::assertEquals("\"json\"\n", JsonEncoder::encode($raw)); // only JsonSerializable is supported
+        self::assertEquals("\"json\"\n", JsonCEncoder::encode($raw)); // only JsonSerializable is supported
 
         $json5 = new class implements JsonSerializable, Json5Serializable {
             public function jsonSerialize(): mixed
@@ -114,5 +119,6 @@ class SerializableTest extends TestCase
 
         self::assertEquals("\"json5\"\n", Json5Encoder::encode($json5));
         self::assertEquals("\"json\"\n", JsonEncoder::encode($json5)); // only JsonSerializable is supported
+        self::assertEquals("\"json\"\n", JsonCEncoder::encode($json5)); // only JsonSerializable is supported
     }
 }

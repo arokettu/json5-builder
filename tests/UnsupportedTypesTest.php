@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -32,6 +33,16 @@ class UnsupportedTypesTest extends TestCase
         JsonEncoder::encode($resource);
     }
 
+    public function testResourceJsonC(): void
+    {
+        $resource = fopen('php://temp', 'r+');
+
+        self::expectException(TypeError::class);
+        self::expectExceptionMessage('Unsupported type: resource (stream)');
+
+        JsonCEncoder::encode($resource);
+    }
+
     public function testUnknownObjectJson5(): void
     {
         self::expectException(TypeError::class);
@@ -46,5 +57,13 @@ class UnsupportedTypesTest extends TestCase
         self::expectExceptionMessage('Unsupported type: Exception');
 
         JsonEncoder::encode(new Exception());
+    }
+
+    public function testUnknownObjectJsonC(): void
+    {
+        self::expectException(TypeError::class);
+        self::expectExceptionMessage('Unsupported type: Exception');
+
+        JsonCEncoder::encode(new Exception());
     }
 }

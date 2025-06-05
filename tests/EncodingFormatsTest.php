@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -27,6 +28,12 @@ class EncodingFormatsTest extends TestCase
         rewind($resource);
         self::assertEquals("{\n    \"a\": \"b\"\n}\n", stream_get_contents($resource));
         fclose($resource);
+
+        $resource = tmpfile();
+        JsonCEncoder::encodeToStream($resource, $data);
+        rewind($resource);
+        self::assertEquals("{\n    \"a\": \"b\"\n}\n", stream_get_contents($resource));
+        fclose($resource);
     }
 
     public function testNotResourceJson5(): void
@@ -41,5 +48,12 @@ class EncodingFormatsTest extends TestCase
         self::expectException(TypeError::class);
         self::expectExceptionMessage('$stream must be a writable stream');
         JsonEncoder::encodeToStream(new stdClass(), null);
+    }
+
+    public function testNotResourceJsonC(): void
+    {
+        self::expectException(TypeError::class);
+        self::expectExceptionMessage('$stream must be a writable stream');
+        JsonCEncoder::encodeToStream(new stdClass(), null);
     }
 }

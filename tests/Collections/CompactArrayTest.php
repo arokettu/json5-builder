@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\CompactArray;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ class CompactArrayTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json', JsonCEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -32,6 +34,7 @@ class CompactArrayTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json', JsonCEncoder::encode($list));
     }
 
     public function testIterableAccepted(): void
@@ -48,6 +51,9 @@ class CompactArrayTest extends TestCase
 
         $list = new CompactArray($i());
         self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json', JsonEncoder::encode($list));
+
+        $list = new CompactArray($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/compact_array/compact_array.json', JsonCEncoder::encode($list));
     }
 
     public function testCompactArrayOfObjects(): void
@@ -67,6 +73,10 @@ class CompactArrayTest extends TestCase
             __DIR__ . '/data/compact_array/compact_array_of_objects.json',
             JsonEncoder::encode($list),
         );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/compact_array/compact_array_of_objects.json',
+            JsonCEncoder::encode($list),
+        );
     }
 
     public function testObjectOfCompactArrays(): void
@@ -84,6 +94,10 @@ class CompactArrayTest extends TestCase
         self::assertStringEqualsFile(
             __DIR__ . '/data/compact_array/object_of_compact_arrays.json',
             JsonEncoder::encode($obj),
+        );
+        self::assertStringEqualsFile(
+            __DIR__ . '/data/compact_array/object_of_compact_arrays.json',
+            JsonCEncoder::encode($obj),
         );
     }
 

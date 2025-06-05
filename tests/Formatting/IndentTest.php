@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
@@ -23,18 +24,22 @@ class IndentTest extends TestCase
         // default: 4 spaces
         self::assertStringEqualsFile(__DIR__ . '/data/indent/4spaces.json5', Json5Encoder::encode($data));
         self::assertStringEqualsFile(__DIR__ . '/data/indent/4spaces.json', JsonEncoder::encode($data));
+        self::assertStringEqualsFile(__DIR__ . '/data/indent/4spaces.json', JsonCEncoder::encode($data));
 
         $twoSpaces = new Options(indent: '  ');
         self::assertStringEqualsFile(__DIR__ . '/data/indent/2spaces.json5', Json5Encoder::encode($data, $twoSpaces));
         self::assertStringEqualsFile(__DIR__ . '/data/indent/2spaces.json', JsonEncoder::encode($data, $twoSpaces));
+        self::assertStringEqualsFile(__DIR__ . '/data/indent/2spaces.json', JsonCEncoder::encode($data, $twoSpaces));
 
         $tab = new Options(indent: "\t");
         self::assertStringEqualsFile(__DIR__ . '/data/indent/tabs.json5', Json5Encoder::encode($data, $tab));
         self::assertStringEqualsFile(__DIR__ . '/data/indent/tabs.json', JsonEncoder::encode($data, $tab));
+        self::assertStringEqualsFile(__DIR__ . '/data/indent/tabs.json', JsonCEncoder::encode($data, $tab));
 
         $empty = new Options(indent: '');
         self::assertStringEqualsFile(__DIR__ . '/data/indent/empty.json5', Json5Encoder::encode($data, $empty));
         self::assertStringEqualsFile(__DIR__ . '/data/indent/empty.json', JsonEncoder::encode($data, $empty));
+        self::assertStringEqualsFile(__DIR__ . '/data/indent/empty.json', JsonCEncoder::encode($data, $empty));
 
         // verify all possible characters
         $all = new Options(indent: $chars = "\x20\x09\x0a\x0d");
@@ -64,12 +69,14 @@ class IndentTest extends TestCase
             JSON;
         self::assertEquals($allCharsJson5, Json5Encoder::encode($data, $all));
         self::assertEquals($allCharsJson, JsonEncoder::encode($data, $all));
+        self::assertEquals($allCharsJson, JsonCEncoder::encode($data, $all));
 
         // set by property too
         $all2 = new Options();
         $all2->indent = $chars;
         self::assertEquals($allCharsJson5, Json5Encoder::encode($data, $all2));
         self::assertEquals($allCharsJson, JsonEncoder::encode($data, $all2));
+        self::assertEquals($allCharsJson, JsonCEncoder::encode($data, $all2));
     }
 
     public function testNonWhitespace(): void

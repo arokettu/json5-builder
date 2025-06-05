@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Collections;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\ArrayValue;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ class ArrayValueTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonCEncoder::encode($list));
     }
 
     public function testStdClassAccepted(): void
@@ -32,6 +34,7 @@ class ArrayValueTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json5', Json5Encoder::encode($list));
         self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonCEncoder::encode($list));
     }
 
     public function testIterableAccepted(): void
@@ -48,6 +51,9 @@ class ArrayValueTest extends TestCase
 
         $list = new ArrayValue($i());
         self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonEncoder::encode($list));
+
+        $list = new ArrayValue($i());
+        self::assertStringEqualsFile(__DIR__ . '/data/array_value/array_value.json', JsonCEncoder::encode($list));
     }
 
     public function testJsonTransparency(): void

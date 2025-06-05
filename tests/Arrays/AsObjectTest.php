@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Arrays;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use PHPUnit\Framework\TestCase;
 
@@ -21,6 +22,8 @@ class AsObjectTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/data/object_string.json5', Json5Encoder::encode($obj));
 
         self::assertStringEqualsFile(__DIR__ . '/data/object_string.json', JsonEncoder::encode($obj));
+
+        self::assertStringEqualsFile(__DIR__ . '/data/object_string.json', JsonCEncoder::encode($obj));
     }
 
     public function testInt(): void
@@ -31,5 +34,7 @@ class AsObjectTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/data/object_int.json5', Json5Encoder::encode($obj));
 
         self::assertStringEqualsFile(__DIR__ . '/data/object_int.json', JsonEncoder::encode($obj));
+
+        self::assertStringEqualsFile(__DIR__ . '/data/object_int.json', JsonCEncoder::encode($obj));
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\CompactObject;
@@ -34,6 +35,14 @@ class EolTest extends TestCase
         JsonEncoder::encode(new EndOfLine());
     }
 
+    public function testNotAllowedAsRootJsonC(): void
+    {
+        self::expectException(TypeError::class);
+        self::expectExceptionMessage('Unsupported type: Arokettu\Json5\Values\EndOfLine');
+
+        JsonCEncoder::encode(new EndOfLine());
+    }
+
     public function testArray(): void
     {
         $array = [ // must still be a list
@@ -48,6 +57,7 @@ class EolTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/array.json5', Json5Encoder::encode($array));
         self::assertStringEqualsFile(self::DATA_DIR . '/array.json', JsonEncoder::encode($array));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array.json', JsonCEncoder::encode($array));
     }
 
     public function testCompactArray(): void
@@ -64,6 +74,7 @@ class EolTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.json5', Json5Encoder::encode($array));
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.json', JsonEncoder::encode($array));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.json', JsonCEncoder::encode($array));
     }
 
     public function testInlineArray(): void
@@ -80,6 +91,7 @@ class EolTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.json5', Json5Encoder::encode($array));
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.json', JsonEncoder::encode($array));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.json', JsonCEncoder::encode($array));
     }
 
     public function testObject(): void
@@ -96,6 +108,7 @@ class EolTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/object.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/object.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object.json', JsonCEncoder::encode($object));
     }
 
     public function testCompactObject(): void
@@ -112,6 +125,7 @@ class EolTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.json', JsonCEncoder::encode($object));
     }
 
     public function testInlineObject(): void
@@ -128,6 +142,7 @@ class EolTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.json', JsonCEncoder::encode($object));
     }
 
     public function testTwoEols(): void
@@ -143,13 +158,16 @@ class EolTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols.json', JsonCEncoder::encode($object));
 
         $compact = new CompactObject($object);
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols_compact.json5', Json5Encoder::encode($compact));
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols_compact.json', JsonEncoder::encode($compact));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_compact.json', JsonCEncoder::encode($compact));
 
         $inline = new InlineObject($object);
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline.json5', Json5Encoder::encode($inline));
         self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline.json', JsonEncoder::encode($inline));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2eols_inline.json', JsonCEncoder::encode($inline));
     }
 }

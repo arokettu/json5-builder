@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Scalars;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\HexInteger;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,9 @@ class IntegerTest extends TestCase
 
         self::assertEquals("123\n", JsonEncoder::encode(123));
         self::assertEquals("-123\n", JsonEncoder::encode(-123));
+
+        self::assertEquals("123\n", JsonCEncoder::encode(123));
+        self::assertEquals("-123\n", JsonCEncoder::encode(-123));
     }
 
     public function testHexInt(): void
@@ -33,12 +37,20 @@ class IntegerTest extends TestCase
         self::assertEquals("1194701\n", JsonEncoder::encode(new HexInteger(0x123acd, 8)));
         self::assertEquals("-1194701\n", JsonEncoder::encode(new HexInteger(-0x123acd, 8)));
 
+        self::assertEquals("1194701\n", JsonCEncoder::encode(new HexInteger(0x123acd)));
+        self::assertEquals("-1194701\n", JsonCEncoder::encode(new HexInteger(-0x123acd)));
+        self::assertEquals("1194701\n", JsonCEncoder::encode(new HexInteger(0x123acd, 8)));
+        self::assertEquals("-1194701\n", JsonCEncoder::encode(new HexInteger(-0x123acd, 8)));
+
         // 0
         self::assertEquals("0x0\n", Json5Encoder::encode(new HexInteger(0)));
         self::assertEquals("0x00000000\n", Json5Encoder::encode(new HexInteger(0, 8)));
 
         self::assertEquals("0\n", JsonEncoder::encode(new HexInteger(0)));
         self::assertEquals("0\n", JsonEncoder::encode(new HexInteger(0, 8)));
+
+        self::assertEquals("0\n", JsonCEncoder::encode(new HexInteger(0)));
+        self::assertEquals("0\n", JsonCEncoder::encode(new HexInteger(0, 8)));
 
         // PHP_INT_MAX
         $expectHex = '7F' . str_repeat('FF', PHP_INT_SIZE - 1);
@@ -49,6 +61,9 @@ class IntegerTest extends TestCase
 
         self::assertEquals("{$expectInt}\n", JsonEncoder::encode(new HexInteger(PHP_INT_MAX)));
         self::assertEquals("-{$expectInt}\n", JsonEncoder::encode(new HexInteger(-PHP_INT_MAX)));
+
+        self::assertEquals("{$expectInt}\n", JsonCEncoder::encode(new HexInteger(PHP_INT_MAX)));
+        self::assertEquals("-{$expectInt}\n", JsonCEncoder::encode(new HexInteger(-PHP_INT_MAX)));
     }
 
     public function testPhpIntMinHex(): void
@@ -56,6 +71,7 @@ class IntegerTest extends TestCase
         $intMinHex = '-0x80' . str_repeat('00', PHP_INT_SIZE - 1);
         self::assertEquals($intMinHex . "\n", Json5Encoder::encode(new HexInteger(PHP_INT_MIN)));
         self::assertEquals(PHP_INT_MIN . "\n", JsonEncoder::encode(new HexInteger(PHP_INT_MIN)));
+        self::assertEquals(PHP_INT_MIN . "\n", JsonCEncoder::encode(new HexInteger(PHP_INT_MIN)));
     }
 
     public function testNegativePadding(): void

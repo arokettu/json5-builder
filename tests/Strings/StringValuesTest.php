@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Strings;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +24,9 @@ class StringValuesTest extends TestCase
         self::assertEquals("\"abcd\"\n", JsonEncoder::encode('abcd', $singleQuotes));
         self::assertEquals("\"abcd\"\n", JsonEncoder::encode('abcd', $doubleQuotes));
 
+        self::assertEquals("\"abcd\"\n", JsonCEncoder::encode('abcd', $singleQuotes));
+        self::assertEquals("\"abcd\"\n", JsonCEncoder::encode('abcd', $doubleQuotes));
+
         // special characters
 
         self::assertEquals("'\u0000\u0001\\r'\n", Json5Encoder::encode("\0\1\r", $singleQuotes));
@@ -30,6 +34,9 @@ class StringValuesTest extends TestCase
 
         self::assertEquals("\"\u0000\u0001\\r\"\n", JsonEncoder::encode("\0\1\r", $singleQuotes));
         self::assertEquals("\"\u0000\u0001\\r\"\n", JsonEncoder::encode("\0\1\r", $doubleQuotes));
+
+        self::assertEquals("\"\u0000\u0001\\r\"\n", JsonCEncoder::encode("\0\1\r", $singleQuotes));
+        self::assertEquals("\"\u0000\u0001\\r\"\n", JsonCEncoder::encode("\0\1\r", $doubleQuotes));
     }
 
     public function testAutodetectQuotes(): void
@@ -56,5 +63,11 @@ class StringValuesTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonEncoder::encode($strings, $singleQuotesDetect));
         self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonEncoder::encode($strings, $doubleQuotesNoDetect));
         self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonEncoder::encode($strings, $doubleQuotesDetect));
+
+        // jsonc ignores that all
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonCEncoder::encode($strings, $singleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonCEncoder::encode($strings, $singleQuotesDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonCEncoder::encode($strings, $doubleQuotesNoDetect));
+        self::assertStringEqualsFile(__DIR__ . '/data/values_quotes.json', JsonCEncoder::encode($strings, $doubleQuotesDetect));
     }
 }

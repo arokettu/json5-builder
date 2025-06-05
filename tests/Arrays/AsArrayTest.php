@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Arrays;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use PHPUnit\Framework\TestCase;
 
@@ -21,6 +22,9 @@ class AsArrayTest extends TestCase
 
         self::assertStringEqualsFile(__DIR__ . '/data/array1.json', JsonEncoder::encode($list1));
         self::assertStringEqualsFile(__DIR__ . '/data/array2.json', JsonEncoder::encode($list2));
+
+        self::assertStringEqualsFile(__DIR__ . '/data/array1.json', JsonCEncoder::encode($list1));
+        self::assertStringEqualsFile(__DIR__ . '/data/array2.json', JsonCEncoder::encode($list2));
     }
 
     public function testArrayInArray(): void
@@ -34,5 +38,7 @@ class AsArrayTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/data/array_in_array.json5', Json5Encoder::encode($list));
 
         self::assertStringEqualsFile(__DIR__ . '/data/array_in_array.json', JsonEncoder::encode($list));
+
+        self::assertStringEqualsFile(__DIR__ . '/data/array_in_array.json', JsonCEncoder::encode($list));
     }
 }
