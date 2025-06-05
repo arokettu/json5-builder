@@ -32,7 +32,8 @@ String options
 ``bareKeys``
 ------------
 
-Default: ``BareKeys::Ascii``
+Default: ``BareKeys::Ascii``.
+Supported by encoders: JSON5 only.
 
 Controls rendering of unquoted keys, value is an enum ``\Arokettu\Json5\Options\BareKeys``
 
@@ -91,7 +92,8 @@ Possible values:
 ``keyQuotes``, ``valueQuotes``
 ------------------------------
 
-Default: ``keyQuotes = Quotes::Single``, ``valueQuotes = Quotes::Double``
+Default: ``keyQuotes = Quotes::Single``, ``valueQuotes = Quotes::Double``.
+Supported by encoders: JSON5 only.
 
 Controls rendering of strings and quoted keys. The value is an enum ``\Arokettu\Json5\Options\Quotes``::
 
@@ -120,7 +122,8 @@ Controls rendering of strings and quoted keys. The value is an enum ``\Arokettu\
 ``tryOtherQuotes``
 ------------------
 
-Default: ``true``
+Default: ``true``.
+Supported by encoders: JSON5 only.
 
 Overrides ``keyQuotes`` / ``valueQuotes`` for readability for some strings.
 In case a string contains target quotes but does not contain the other type, the quote type switches::
@@ -160,9 +163,10 @@ In case a string contains target quotes but does not contain the other type, the
 --------------------
 
 Default: ``false``.
+Supported by encoders: JSON5 only.
 
 Renders multiline values on multiple lines.
-Multiline support is poor in both JSON and JSON5.
+Multiline support is poor in both JSON and JSON5 only.
 (It's better in JSON6 but neither JSON6 is widely used nor I like the standard in general)
 This rendering mode tries to make multiline values look somewhat better
 by rendering them in heredoc style by postfixing lines with ``"\n\"``::
@@ -206,6 +210,7 @@ Float options
 ------------------------
 
 Default: ``false``.
+Supported by encoders: JSON5, JSON.
 
 .. note:: https://www.php.net/manual/en/json.constants.php#constant.json-preserve-zero-fraction
 
@@ -232,7 +237,6 @@ Applies ``JSON_PRESERVE_ZERO_FRACTION`` to float values, ensuring that they are 
         surely_float: 1.23,
     }
 
-
 Formatting options
 ==================
 
@@ -240,9 +244,10 @@ Formatting options
 ----------
 
 Default: ``'    '`` (4 spaces).
+Supported by encoders: JSON5, JSON.
 
 A pretty print indentation.
-Must contain only JSON5 ignorable whitespace, usually spaces and tabs::
+Must contain only JSON5/JSON ignorable whitespace, usually spaces and tabs::
 
     <?php
 
@@ -266,3 +271,54 @@ Must contain only JSON5 ignorable whitespace, usually spaces and tabs::
                     "item2",
             ],
     }
+
+``inlineArrayPadding``, ``inlineObjectPadding``
+-----------------------------------------------
+
+.. versionadded:: 1.1
+.. versionchanged:: 2.0 ``inlineListPadding`` renamed to ``inlineArrayPadding``.
+
+Default: ``inlineArrayPadding = false``, ``inlineObjectPadding = true``.
+Supported by encoders: JSON5, JSON.
+
+An option to pad inline container structures with spaces::
+
+    <?php
+
+    use Arokettu\Json5\Json5Encoder;
+    use Arokettu\Json5\Options;
+    use Arokettu\Json5\Values\InlineArray;
+    use Arokettu\Json5\Values\InlineObject;
+
+    $data = [
+        new InlineArray([1,2,3]),
+        new InlineObject(['a' => 'b', 'x' => 'y'])
+    ];
+
+    echo Json5Encoder::encode($data);
+    echo Json5Encoder::encode($data, new Options(
+        inlineArrayPadding: false,
+        inlineObjectPadding: false,
+    ));
+    echo Json5Encoder::encode($data, new Options(
+        inlineArrayPadding: true,
+        inlineObjectPadding: true,
+    ));
+
+.. code-block:: json5
+
+    // default
+    [
+        [1, 2, 3],
+        { a: "b", x: "y" },
+    ]
+    // no padding
+    [
+        [1, 2, 3],
+        {a: "b", x: "y"},
+    ]
+    // full padding
+    [
+        [ 1, 2, 3 ],
+        { a: "b", x: "y" },
+    ]

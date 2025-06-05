@@ -41,6 +41,7 @@ Forked from 1.1.1
   * `EndOfLine` forces a newline
   * `Comment` a comment object not tied to a value
 * `HexInteger` now has `$padding` parameter to specify a minimal render length
+* Options: `$inlineListPadding`, `$inlineObjectPadding`
 
 ### 1.0.1
 

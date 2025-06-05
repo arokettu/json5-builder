@@ -68,7 +68,7 @@ Container Decorators
 For arrays and objects.
 
 ``ArrayValue`` and ``ObjectValue``
----------------------------------
+----------------------------------
 
 .. versionadded:: 1.1
 
@@ -168,7 +168,7 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
     your JSON5 file will have duplicate keys too.
 
 ``InlineArray`` and ``InlineObject``
------------------------------------
+------------------------------------
 
 ``\Arokettu\Json5\Values\InlineArray``
 
@@ -316,7 +316,7 @@ Nesting container structures is also fine::
         }
 
 ``CompactArray`` and ``CompactObject``
--------------------------------------
+--------------------------------------
 
 ``\Arokettu\Json5\Values\CompactArray``
 

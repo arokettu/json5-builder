@@ -62,3 +62,25 @@ Run the script:
 .. code-block:: bash
 
     php prettify.php < composer.json > composer.json5
+
+JSON Encoder
+============
+
+.. versionadded:: 2.0
+
+``\Arokettu\Json5\JsonEncoder::encode(mixed $value, Options $options = default)``
+
+A JSON encoder that partially supports the same options and helper objects.
+Like in JSON5 encoder, the document is always pretty-printed.
+
+When to use over a native ``json_encode``:
+
+* You used non-JSON-transparent helpers to format your config file but want to be able to generate a simple JSON too
+  without modifying your code.
+* You want to pretty format your config with helpers like ``InlineArray`` and ``EndOfLine``.
+* You need some other feature not supported by the native encoder, like customizable indent.
+
+Important differences:
+
+* Does not resolve ``Json5Serializable``.
+* Transparently ignores tools that would break strict JSON (comments, custom quotes, trailing commas, etc)
