@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\Values\Comment;
 use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\InlineObject;
@@ -30,6 +31,14 @@ class NestedCommentTest extends TestCase
             }
 
             JSON5, Json5Encoder::encode($obj));
+        self::assertEquals(<<<JSONC
+            {
+                // /* begin */
+                "k1": "v1" // /* end */
+                // /* standalone */
+            }
+
+            JSONC, JsonCEncoder::encode($obj));
     }
 
     public function testReplacementInFullSize(): void
@@ -43,5 +52,9 @@ class NestedCommentTest extends TestCase
             { /* /* begin *\u{200b}/ */ k1: "v1" /* /* end *\u{200b}/ */, /* /* standalone *\u{200b}/ */ }
 
             JSON5, Json5Encoder::encode(new InlineObject($obj)));
+        self::assertEquals(<<<JSONC
+            { /* /* begin *\u{200b}/ */ "k1": "v1" /* /* end *\u{200b}/ */ /* /* standalone *\u{200b}/ */ }
+
+            JSONC, JsonCEncoder::encode(new InlineObject($obj)));
     }
 }

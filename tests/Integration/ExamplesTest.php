@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Integration;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\Comment;
@@ -80,6 +81,9 @@ class ExamplesTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/data/example1.json', JsonEncoder::encode($data2, new Options(
             preserveZeroFraction: true,
         )));
+        self::assertStringEqualsFile(__DIR__ . '/data/example1.jsonc', JsonCEncoder::encode($data2, new Options(
+            preserveZeroFraction: true,
+        )));
         // json5 but with unset values
         self::assertStringEqualsFile(__DIR__ . '/data/example1.json.json5', Json5Encoder::encode($data2, new Options(
             preserveZeroFraction: true,
@@ -89,6 +93,10 @@ class ExamplesTest extends TestCase
         self::assertEquals(
             json5_decode(file_get_contents(__DIR__ . '/data/example1.json.json5')),
             json_decode(file_get_contents(__DIR__ . '/data/example1.json')),
+        );
+        self::assertEquals(
+            json5_decode(file_get_contents(__DIR__ . '/data/example1.json.json5')),
+            json5_decode(file_get_contents(__DIR__ . '/data/example1.jsonc')),
         );
     }
 }
