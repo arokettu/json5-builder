@@ -2,7 +2,7 @@
     "name": "arokettu/json5-builder",
     "type": "library",
     "description": "JSON5 config builder/encoder",
-    "keywords": ["json5", "configuration", "config", "builder", "encode"],
+    "keywords": ["json5", "jsonc", "json", "configuration", "config", "builder", "encode"],
     "license": "MIT",
     "homepage": "https://sandfox.dev/php/json5-builder.html",
     "support": {
