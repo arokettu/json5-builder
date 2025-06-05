@@ -2,6 +2,13 @@
 
 ## 2.x
 
+### 2.1.0
+
+*June 6, 2025*
+
+* ``JsonCEncoder`` to encode JSON with Comments.
+* Fixed a trailing comma appearing in JSON on two or more trailing comment or eol objects.
+
 ### 2.0.0
 
 *May 27, 2025*
