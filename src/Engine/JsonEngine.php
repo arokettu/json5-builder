@@ -7,6 +7,7 @@ namespace Arokettu\Json5\Engine;
 use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\ArrayValue;
 use Arokettu\Json5\Values\Comment;
+use Arokettu\Json5\Values\CommentDecorator;
 use Arokettu\Json5\Values\CompactArray;
 use Arokettu\Json5\Values\CompactObject;
 use Arokettu\Json5\Values\EndOfLine;
@@ -43,7 +44,15 @@ final class JsonEngine
 
     public function encode(): void
     {
-        $this->encodeValue($this->value, '');
+        $value = $this->value;
+
+        if ($this->jsonc && $value instanceof CommentDecorator) {
+            $this->renderComment($value->commentBefore, '');
+        }
+        $this->encodeValue($value, '');
+        if ($this->jsonc && $value instanceof CommentDecorator) {
+            $this->renderCommentLine($value->commentAfter, ' ');
+        }
         fwrite($this->resource, "\n");
     }
 
@@ -134,13 +143,7 @@ final class JsonEngine
                 continue;
             }
 
-            if ($state === self::STATE_START) {
-                fwrite($this->resource, "\n");
-            }
-            if ($state === self::STATE_AFTER_VALUE) {
-                if (!$this->skipComma($container, $index)) {
-                    fwrite($this->resource, ',');
-                }
+            if ($state === self::STATE_START || $state === self::STATE_AFTER_VALUE) {
                 fwrite($this->resource, "\n");
             }
 
@@ -156,12 +159,21 @@ final class JsonEngine
                 continue;
             }
 
+            if ($this->jsonc && $value instanceof CommentDecorator) {
+                $this->renderComment($value->commentBefore, $indent2);
+            }
             fwrite($this->resource, $indent2);
             if ($object) {
                 $this->encodeString((string)$key);
                 fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent2);
+            if (!$this->skipComma($container, $index + 1)) {
+                fwrite($this->resource, ',');
+            }
+            if ($this->jsonc && $value instanceof CommentDecorator) {
+                $this->renderCommentLine($value->commentAfter, ' ');
+            }
 
             $state = self::STATE_AFTER_VALUE;
         }
@@ -226,11 +238,17 @@ final class JsonEngine
                     break;
             }
 
+            if ($this->jsonc && $value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentBefore, '', ' ');
+            }
             if ($object) {
                 $this->encodeString((string)$key);
                 fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent2);
+            if ($this->jsonc && $value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentAfter, ' ', '');
+            }
 
             $state = self::STATE_AFTER_VALUE;
         }
@@ -301,11 +319,17 @@ final class JsonEngine
                 continue;
             }
 
+            if ($this->jsonc && $value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentBefore, '', ' ');
+            }
             if ($object) {
                 $this->encodeString((string)$key);
                 fwrite($this->resource, ': ');
             }
             $this->encodeValue($value, $indent);
+            if ($this->jsonc && $value instanceof CommentDecorator) {
+                $this->renderInlineComment($value->commentAfter, ' ', '');
+            }
 
             $state = self::STATE_AFTER_VALUE;
         }
