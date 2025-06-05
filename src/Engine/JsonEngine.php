@@ -32,6 +32,7 @@ final class JsonEngine
      * @param resource $resource
      */
     public function __construct(
+        private readonly bool $jsonc,
         private readonly mixed $value,
         private readonly Options $options,
         private $resource,

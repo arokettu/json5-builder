@@ -8,12 +8,12 @@ use TypeError;
 
 use function Arokettu\IsResource\try_get_resource_type;
 
-final class JsonEncoder
+final class JsonCEncoder
 {
     public static function encode(mixed $value, Options $options = new Options()): string
     {
         $stream = fopen('php://temp', 'r+');
-        (new Engine\JsonEngine(false, $value, $options, $stream))->encode();
+        (new Engine\JsonEngine(true, $value, $options, $stream))->encode();
         rewind($stream);
         $json5 = stream_get_contents($stream);
         fclose($stream);
@@ -29,7 +29,7 @@ final class JsonEncoder
         if (try_get_resource_type($stream) !== 'stream') {
             throw new TypeError('$stream must be a writable stream');
         }
-        (new Engine\JsonEngine(false, $value, $options, $stream))->encode();
+        (new Engine\JsonEngine(true, $value, $options, $stream))->encode();
         return $stream;
     }
 }
