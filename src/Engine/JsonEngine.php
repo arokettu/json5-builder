@@ -23,6 +23,8 @@ use TypeError;
  */
 final class JsonEngine
 {
+    use Helpers\RenderCommentTrait;
+
     private const STATE_START = 0;
     private const STATE_AFTER_EOL = 1;
     private const STATE_AFTER_VALUE = 2;
@@ -128,7 +130,7 @@ final class JsonEngine
         $state = self::STATE_START;
 
         foreach ($container as $index => [$key, $value]) {
-            if ($value instanceof Comment) {
+            if ($this->jsonc === false && $value instanceof Comment) {
                 continue;
             }
 
@@ -145,6 +147,12 @@ final class JsonEngine
             if ($value instanceof EndOfLine) {
                 fwrite($this->resource, "\n");
                 $state = self::STATE_AFTER_EOL;
+                continue;
+            }
+
+            if ($value instanceof Comment) { // jsonc
+                $this->renderComment($value->comment, $indent2);
+                $state = self::STATE_AFTER_COMMENT;
                 continue;
             }
 
@@ -198,6 +206,9 @@ final class JsonEngine
                 // render empty line
                 if ($state !== self::STATE_START && $state !== self::STATE_AFTER_COMMENT) {
                     fwrite($this->resource, "\n");
+                }
+                if ($this->jsonc) {
+                    $this->renderComment($value->comment, $indent2);
                 }
                 $state = self::STATE_AFTER_COMMENT;
                 continue;
@@ -265,7 +276,13 @@ final class JsonEngine
                     break;
 
                 case self::STATE_AFTER_VALUE:
-                    if (!$skipComma) { // if we skipped the comma, we should also skip the space
+                    if ($this->jsonc || !$skipComma) { // if we skipped the comma in JSON, we should also skip the space
+                        fwrite($this->resource, ' ');
+                    }
+                    break;
+
+                case self::STATE_AFTER_COMMENT:
+                    if ($this->jsonc) {
                         fwrite($this->resource, ' ');
                     }
                     break;
@@ -277,6 +294,9 @@ final class JsonEngine
             }
 
             if ($value instanceof Comment) {
+                if ($this->jsonc) {
+                    $this->renderInlineComment($value->comment, '', '');
+                }
                 $state = self::STATE_AFTER_COMMENT;
                 continue;
             }

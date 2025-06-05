@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arokettu\Json5\Tests\Formatting;
 
 use Arokettu\Json5\Json5Encoder;
+use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Values\Comment;
 use Arokettu\Json5\Values\CompactArray;
@@ -34,6 +35,14 @@ class CommentTest extends TestCase
         JsonEncoder::encode(new Comment(''));
     }
 
+    public function testNotAllowedAsRootJsonC(): void
+    {
+        self::expectException(TypeError::class);
+        self::expectExceptionMessage('Unsupported type: Arokettu\Json5\Values\Comment');
+
+        JsonCEncoder::encode(new Comment(''));
+    }
+
     public function testArray(): void
     {
         $array = [ // must still be a list
@@ -48,6 +57,7 @@ class CommentTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/array.json5', Json5Encoder::encode($array));
         self::assertStringEqualsFile(self::DATA_DIR . '/array.json', JsonEncoder::encode($array));
+        self::assertStringEqualsFile(self::DATA_DIR . '/array.jsonc', JsonCEncoder::encode($array));
     }
 
     public function testCompactArray(): void
@@ -64,6 +74,7 @@ class CommentTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.json5', Json5Encoder::encode($array));
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.json', JsonEncoder::encode($array));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_array.jsonc', JsonCEncoder::encode($array));
     }
 
     public function testInlineArray(): void
@@ -80,6 +91,7 @@ class CommentTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.json5', Json5Encoder::encode($array));
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.json', JsonEncoder::encode($array));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_array.jsonc', JsonCEncoder::encode($array));
     }
 
     public function testObject(): void
@@ -96,6 +108,7 @@ class CommentTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/object.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/object.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/object.jsonc', JsonCEncoder::encode($object));
     }
 
     public function testCompactObject(): void
@@ -112,6 +125,7 @@ class CommentTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/compact_object.jsonc', JsonCEncoder::encode($object));
     }
 
     public function testInlineObject(): void
@@ -128,6 +142,7 @@ class CommentTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/inline_object.jsonc', JsonCEncoder::encode($object));
     }
 
     public function testTwoComments(): void
@@ -143,13 +158,16 @@ class CommentTest extends TestCase
 
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments.json5', Json5Encoder::encode($object));
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments.json', JsonEncoder::encode($object));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments.jsonc', JsonCEncoder::encode($object));
 
         $compact = new CompactObject($object);
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments_compact.json5', Json5Encoder::encode($compact));
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments_compact.json', JsonEncoder::encode($compact));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_compact.jsonc', JsonCEncoder::encode($compact));
 
         $inline = new InlineObject($object);
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline.json5', Json5Encoder::encode($inline));
         self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline.json', JsonEncoder::encode($inline));
+        self::assertStringEqualsFile(self::DATA_DIR . '/2comments_inline.jsonc', JsonCEncoder::encode($inline));
     }
 }
