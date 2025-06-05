@@ -80,7 +80,24 @@ When to use over a native ``json_encode``:
 * You want to pretty format your config with helpers like ``InlineArray`` and ``EndOfLine``.
 * You need some other feature not supported by the native encoder, like customizable indent.
 
-Important differences:
+Important features:
 
 * Does not resolve ``Json5Serializable``.
 * Transparently ignores tools that would break strict JSON (comments, custom quotes, trailing commas, etc)
+
+JSONC Encoder
+=============
+
+.. versionadded:: 2.1
+
+``\Arokettu\Json5\JsonCEncoder::encode(mixed $value, Options $options = default)``
+
+A JSONC encoder that partially supports the same options and helper objects.
+Like in JSON5 encoder, the document is always pretty-printed.
+For maximum interoperability the encoder does not produce trailing commas despite some implementations allowing them.
+
+Important features:
+
+* Like JSON, does not resolve ``Json5Serializable``.
+* Renders comments and comment decorators.
+* Transparently ignores tools that would break JSONC (custom quotes, trailing commas, etc)

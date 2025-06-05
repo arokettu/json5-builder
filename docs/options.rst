@@ -32,8 +32,8 @@ String options
 ``bareKeys``
 ------------
 
-Default: ``BareKeys::Ascii``.
-Supported by encoders: JSON5 only.
+| Default: ``BareKeys::Ascii``.
+| Supported by encoders: JSON5 only.
 
 Controls rendering of unquoted keys, value is an enum ``\Arokettu\Json5\Options\BareKeys``
 
@@ -92,8 +92,8 @@ Possible values:
 ``keyQuotes``, ``valueQuotes``
 ------------------------------
 
-Default: ``keyQuotes = Quotes::Single``, ``valueQuotes = Quotes::Double``.
-Supported by encoders: JSON5 only.
+| Default: ``keyQuotes = Quotes::Single``, ``valueQuotes = Quotes::Double``.
+| Supported by encoders: JSON5 only.
 
 Controls rendering of strings and quoted keys. The value is an enum ``\Arokettu\Json5\Options\Quotes``::
 
@@ -122,8 +122,8 @@ Controls rendering of strings and quoted keys. The value is an enum ``\Arokettu\
 ``tryOtherQuotes``
 ------------------
 
-Default: ``true``.
-Supported by encoders: JSON5 only.
+| Default: ``true``.
+| Supported by encoders: JSON5 only.
 
 Overrides ``keyQuotes`` / ``valueQuotes`` for readability for some strings.
 In case a string contains target quotes but does not contain the other type, the quote type switches::
@@ -162,8 +162,8 @@ In case a string contains target quotes but does not contain the other type, the
 ``multilineStrings``
 --------------------
 
-Default: ``false``.
-Supported by encoders: JSON5 only.
+| Default: ``false``.
+| Supported by encoders: JSON5 only.
 
 Renders multiline values on multiple lines.
 Multiline support is poor in both JSON and JSON5 only.
@@ -209,8 +209,8 @@ Float options
 ``preserveZeroFraction``
 ------------------------
 
-Default: ``false``.
-Supported by encoders: JSON5, JSON.
+| Default: ``false``.
+| Supported by encoders: JSON5, JSONC, JSON.
 
 .. note:: https://www.php.net/manual/en/json.constants.php#constant.json-preserve-zero-fraction
 
@@ -243,8 +243,8 @@ Formatting options
 ``indent``
 ----------
 
-Default: ``'    '`` (4 spaces).
-Supported by encoders: JSON5, JSON.
+| Default: ``'    '`` (4 spaces).
+| Supported by encoders: JSON5, JSONC, JSON.
 
 A pretty print indentation.
 Must contain only JSON5/JSON ignorable whitespace, usually spaces and tabs::
@@ -278,8 +278,8 @@ Must contain only JSON5/JSON ignorable whitespace, usually spaces and tabs::
 .. versionadded:: 1.1
 .. versionchanged:: 2.0 ``inlineListPadding`` renamed to ``inlineArrayPadding``.
 
-Default: ``inlineArrayPadding = false``, ``inlineObjectPadding = true``.
-Supported by encoders: JSON5, JSON.
+| Default: ``inlineArrayPadding = false``, ``inlineObjectPadding = true``.
+| Supported by encoders: JSON5, JSONC, JSON.
 
 An option to pad inline container structures with spaces::
 

@@ -7,6 +7,8 @@ A tool to generate human-friendly JSON5_ files.
 The tool aims to generate new files, not modifying existing ones.
 However, it can prettify a raw JSON file a bit.
 
+The tool also supports emitting JSON and JSONC with a subset of available features.
+
 Installation
 ============
 

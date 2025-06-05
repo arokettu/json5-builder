@@ -1,28 +1,6 @@
 About the Library
 #################
 
-JSON5
-=====
-
-.. note:: https://json5.org
-
-JSON5 is a file format best suited for human readable and maintainable configs.
-It is a superset of JSON and it builds on its strong sides:
-
-* Backwards compatible with JSON (like YAML\ [1]_)
-* A subset of JavaScript ES5.1
-* Relatively easy to parse
-
-adding its own of course:
-
-* Comments
-* Unquoted keys that declutter config a lot visually
-* Trailing commas
-* Multiline strings
-
-.. [1] A feature not supported by `symfony/yaml <symfony_yaml_>`_ by the way.
-.. _symfony_yaml: https://symfony.com/doc/current/components/yaml.html
-
 Project Goal
 ============
 
@@ -39,3 +17,34 @@ First, what are not the goals:
 
 The main goal of this project is to create a tool that allows developers to generate a pretty initial config for their users.
 A side goal is so this tool can also be used to prettify existing JSON configs.
+
+JSON5
+=====
+
+.. note:: https://json5.org
+
+JSON5 is a file format best suited for human readable and maintainable configs.
+It is a superset of JSON and it builds on its strong sides:
+
+* A superset of JSON (like YAML\ [1]_)
+* A superset of JSONC
+* A subset of JavaScript ES5.1
+* Relatively easy to parse
+
+adding its own of course:
+
+* Comments
+* Unquoted keys that declutter config a lot visually
+* Trailing commas
+* Multiline strings
+
+.. [1] A feature not supported by `symfony/yaml <symfony_yaml_>`_ by the way.
+.. _symfony_yaml: https://symfony.com/doc/current/components/yaml.html
+
+JSONC
+=====
+
+.. note:: https://code.visualstudio.com/docs/languages/json#_json-with-comments
+
+JSONC or JSON with Comments is just it, a JSON that allows comment blocks.
+It is not a well-defined standard but it is widely used so it was implemented here too.

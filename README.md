@@ -23,6 +23,8 @@ However, it can prettify a raw JSON a bit.
 
 For parsing please use other tools like [colinodell/json5](https://packagist.org/packages/colinodell/json5).
 
+The tool also supports emitting JSON and JSONC with a subset of available features.
+
 ## Installation
 
 ```bash
