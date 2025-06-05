@@ -44,12 +44,6 @@ trait IterableValueTrait
             goto start; // restart parsing
         }
 
-        if (\is_array($iterable)) {
-            $iterable = new ArrayIterator($iterable);
-        } elseif ($iterable instanceof stdClass) {
-            $iterable = new ArrayObject($iterable);
-        }
-
         return new self($iterable);
     }
 
@@ -60,12 +54,6 @@ trait IterableValueTrait
         if ($iterable instanceof JsonSerializable) {
             $iterable = $iterable->jsonSerialize();
             goto start; // restart parsing
-        }
-
-        if (\is_array($iterable)) {
-            $iterable = new ArrayIterator($iterable);
-        } elseif ($iterable instanceof stdClass) {
-            $iterable = new ArrayObject($iterable);
         }
 
         return new self($iterable);
