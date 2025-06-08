@@ -24,16 +24,14 @@ JSON5
 .. note:: https://json5.org
 
 JSON5 is a file format best suited for human readable and maintainable configs.
-It is a superset of JSON and it builds on its strong sides:
+It is a superset of JSON and builds on its strengths, adding several useful features:
 
 * A superset of JSON (like YAML\ [1]_)
-* A superset of JSONC
+* A superset of JSONC (non-intended but useful feature)
 * A subset of JavaScript ES5.1
+* Formal spec (unlike JSONC)
 * Relatively easy to parse
-
-adding its own of course:
-
-* Comments
+* Supports comments (the must-have)
 * Unquoted keys that declutter config a lot visually
 * Trailing commas
 * Multiline strings
