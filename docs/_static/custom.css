@@ -1,0 +1,19 @@
+.sphinx-tabs-panel  {
+    background: var(--pst-color-background);
+    border-color: var(--pst-color-border);
+}
+
+.sphinx-tabs-tab {
+    color: var(--pst-color-primary);
+    background-color: var(--pst-color-background);
+}
+
+.sphinx-tabs-tab[aria-selected="true"] {
+    background-color: var(--pst-color-background);
+    border-color: var(--pst-color-border);
+    border-bottom-color: var(--pst-color-background);
+}
+
+[role="tablist"] {
+    border-color: var(--pst-color-border);
+}
