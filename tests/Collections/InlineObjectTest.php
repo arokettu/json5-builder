@@ -19,10 +19,20 @@ class InlineObjectTest extends TestCase
     public function testArrayAccepted(): void
     {
         $list = new InlineObject([1, 2, 3, 4]); // even if list
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonEncoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonCEncoder::encode($list));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json5',
+            Json5Encoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json',
+            JsonEncoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json',
+            JsonCEncoder::encode($list, $options),
+        );
     }
 
     public function testStdClassAccepted(): void
@@ -34,15 +44,25 @@ class InlineObjectTest extends TestCase
         $object->{'4'} = 4;
 
         $objobj = new InlineObject($object);
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json5', Json5Encoder::encode($objobj));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json', JsonEncoder::encode($objobj));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json', JsonCEncoder::encode($objobj));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json5',
+            Json5Encoder::encode($objobj, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json',
+            JsonEncoder::encode($objobj, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json',
+            JsonCEncoder::encode($objobj, $options),
+        );
     }
 
     public function testIterableAccepted(): void
     {
-        $i = function () {
+        $i = static function () {
             yield 'a' => 1;
             yield 'b' => 2;
             yield 'c' => 3;
@@ -79,16 +99,26 @@ class InlineObjectTest extends TestCase
             new InlineObject(['a' => 'b', 'c' => 'd']),
             new InlineObject(['list' => [1,2], 'obj' => ['a' => 123, 'b' => 456]]),
         ];
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/array_of_inline_objects.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/array_of_inline_objects.json', JsonEncoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/array_of_inline_objects.json', JsonCEncoder::encode($list));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/array_of_inline_objects.json5',
+            Json5Encoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/array_of_inline_objects.json',
+            JsonEncoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/array_of_inline_objects.json',
+            JsonCEncoder::encode($list, $options),
+        );
     }
 
     public function testNoExtraSpaces(): void
     {
         $list = new InlineObject([1, 2, 3, 4]); // even if list
-        $options = new Options(inlineObjectPadding: false);
+        $options = new Options(keyQuotes: Options\Quotes::Single, inlineObjectPadding: false);
 
         self::assertStringEqualsFile(
             self::DATA_DIR . '/object_value_list_no_extra_spaces.json5',

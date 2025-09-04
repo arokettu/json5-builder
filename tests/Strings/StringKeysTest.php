@@ -90,9 +90,9 @@ class StringKeysTest extends TestCase
             'com,ma' => ++$i,
         ];
 
-        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_ascii.json5', Json5Encoder::encode($data, new Options()));
-        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_unicode.json5', Json5Encoder::encode($data, new Options(bareKeys: Options\BareKeys::Unicode)));
-        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_none.json5', Json5Encoder::encode($data, new Options(bareKeys: Options\BareKeys::None)));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_ascii.json5', Json5Encoder::encode($data, new Options(keyQuotes: Options\Quotes::Single)));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_unicode.json5', Json5Encoder::encode($data, new Options(keyQuotes: Options\Quotes::Single, bareKeys: Options\BareKeys::Unicode)));
+        self::assertStringEqualsFile(__DIR__ . '/data/keys_bare_none.json5', Json5Encoder::encode($data, new Options(keyQuotes: Options\Quotes::Single, bareKeys: Options\BareKeys::None)));
 
         // json ignores it all
         self::assertStringEqualsFile(__DIR__ . '/data/keys_bare.json', JsonEncoder::encode($data, new Options()));

@@ -27,7 +27,7 @@ class MultilineStringsTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/data/multiline_off.json5', Json5Encoder::encode(['text' => $text]));
         self::assertStringEqualsFile(__DIR__ . '/data/multiline.json', JsonEncoder::encode(['text' => $text])); // ignored for json
 
-        $options = new Options(multilineStrings: true);
+        $options = new Options(keyQuotes: Options\Quotes::Single, multilineStrings: true);
 
         self::assertStringEqualsFile(__DIR__ . '/data/multiline.json5', Json5Encoder::encode(['text' => $text], $options));
         self::assertStringEqualsFile(__DIR__ . '/data/multiline.json', JsonEncoder::encode(['text' => $text], $options)); // ignored

@@ -7,6 +7,7 @@ namespace Arokettu\Json5\Tests\Collections;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
+use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\ObjectValue;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -18,10 +19,20 @@ class ObjectValueTest extends TestCase
     public function testArrayAccepted(): void
     {
         $list = new ObjectValue([1, 2, 3, 4]); // even if list
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonEncoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonCEncoder::encode($list));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json5',
+            Json5Encoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json',
+            JsonEncoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json',
+            JsonCEncoder::encode($list, $options),
+        );
     }
 
     public function testStdClassAccepted(): void
@@ -33,10 +44,20 @@ class ObjectValueTest extends TestCase
         $object->{'4'} = 4;
 
         $objobj = new ObjectValue($object);
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json5', Json5Encoder::encode($objobj));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json', JsonEncoder::encode($objobj));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json', JsonCEncoder::encode($objobj));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json5',
+            Json5Encoder::encode($objobj, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json',
+            JsonEncoder::encode($objobj, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json',
+            JsonCEncoder::encode($objobj, $options),
+        );
     }
 
     public function testIterableAccepted(): void

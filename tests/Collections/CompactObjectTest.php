@@ -7,6 +7,7 @@ namespace Arokettu\Json5\Tests\Collections;
 use Arokettu\Json5\Json5Encoder;
 use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
+use Arokettu\Json5\Options;
 use Arokettu\Json5\Values\CompactObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -18,10 +19,20 @@ class CompactObjectTest extends TestCase
     public function testArrayAccepted(): void
     {
         $list = new CompactObject([1, 2, 3, 4]); // even if list
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonEncoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_list.json', JsonCEncoder::encode($list));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json5',
+            Json5Encoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json',
+            JsonEncoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_list.json',
+            JsonCEncoder::encode($list, $options),
+        );
     }
 
     public function testStdClassAccepted(): void
@@ -33,10 +44,20 @@ class CompactObjectTest extends TestCase
         $object->{'4'} = 4;
 
         $objobj = new CompactObject($object);
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json5', Json5Encoder::encode($objobj));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json', JsonEncoder::encode($objobj));
-        self::assertStringEqualsFile(self::DATA_DIR . '/object_value_stdclass.json', JsonCEncoder::encode($objobj));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json5',
+            Json5Encoder::encode($objobj, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json',
+            JsonEncoder::encode($objobj, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/object_value_stdclass.json',
+            JsonCEncoder::encode($objobj, $options),
+        );
     }
 
     public function testIterableAccepted(): void
@@ -78,10 +99,20 @@ class CompactObjectTest extends TestCase
             new CompactObject(['a' => 'b', 'c' => 'd']),
             new CompactObject(['list' => [1,2], 'obj' => ['a' => 123, 'b' => 456]]),
         ];
+        $options = new Options(keyQuotes: Options\Quotes::Single);
 
-        self::assertStringEqualsFile(self::DATA_DIR . '/array_of_compact_objects.json5', Json5Encoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/array_of_compact_objects.json', JsonEncoder::encode($list));
-        self::assertStringEqualsFile(self::DATA_DIR . '/array_of_compact_objects.json', JsonCEncoder::encode($list));
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/array_of_compact_objects.json5',
+            Json5Encoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/array_of_compact_objects.json',
+            JsonEncoder::encode($list, $options),
+        );
+        self::assertStringEqualsFile(
+            self::DATA_DIR . '/array_of_compact_objects.json',
+            JsonCEncoder::encode($list, $options),
+        );
     }
 
     public function testJsonTransparency(): void
