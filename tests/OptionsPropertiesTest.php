@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @copyright 2025 Anton Smirnov
+ * @license MIT https://spdx.org/licenses/MIT.html
+ */
+
 declare(strict_types=1);
 
 namespace Arokettu\Json5\Tests;
@@ -27,6 +32,6 @@ final class OptionsPropertiesTest extends TestCase
         self::expectException(Error::class);
         self::expectExceptionMessage('No such property: unknown');
 
-        $unknown = $options->unknown;
+        var_dump($options->unknown);
     }
 }
