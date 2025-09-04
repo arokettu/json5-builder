@@ -120,10 +120,10 @@ These two decorators wrap any ``iterable`` or ``stdClass`` to be forced to rende
                 4,
             ],
             object: {
-                '0': 1,
-                '1': 2,
-                '2': 3,
-                '3': 4,
+                "0": 1,
+                "1": 2,
+                "2": 3,
+                "3": 4,
             },
             iterable: [
                 0,

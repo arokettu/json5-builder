@@ -92,7 +92,9 @@ Possible values:
 ``keyQuotes``, ``valueQuotes``
 ------------------------------
 
-| Default: ``keyQuotes = Quotes::Single``, ``valueQuotes = Quotes::Double``.
+.. versionchanged:: 2.2 ``keyQuotes`` default changed from ``Single`` to ``Double``
+
+| Default: ``keyQuotes = Quotes::Double``, ``valueQuotes = Quotes::Double``.
 | Supported by encoders: JSON5 only.
 
 Controls rendering of strings and quoted keys. The value is an enum ``\Arokettu\Json5\Options\Quotes``::
@@ -107,7 +109,6 @@ Controls rendering of strings and quoted keys. The value is an enum ``\Arokettu\
         'some key' => 'some value',
     ];
 
-    // invert the default config
     echo Json5Encoder::encode($value, new Options(
         keyQuotes: Quotes::Double,
         valueQuotes: Quotes::Single,
@@ -132,8 +133,7 @@ In case a string contains target quotes but does not contain the other type, the
 
     use Arokettu\Json5\Json5Encoder;
     use Arokettu\Json5\Options;
-
-    require __DIR__ . '/../vendor/autoload.php';
+    use Arokettu\Json5\Options\Quotes;
 
     $value = [
         'default key quotes' => 'default value quotes',
@@ -141,8 +141,8 @@ In case a string contains target quotes but does not contain the other type, the
         "both here: '\"" => "both here: '\"",
     ];
 
-    echo Json5Encoder::encode($value, new Options(tryOtherQuotes: false));
-    echo Json5Encoder::encode($value, new Options(tryOtherQuotes: true));
+    echo Json5Encoder::encode($value, new Options(keyQuotes: Quotes::Single, tryOtherQuotes: false));
+    echo Json5Encoder::encode($value, new Options(keyQuotes: Quotes::Single, tryOtherQuotes: true));
 
 .. code-block:: json5
 
@@ -200,7 +200,7 @@ by rendering them in heredoc style by postfixing lines with ``"\n\"``::
     So seldom are clean\n\
     And the clean ones so seldom are comical.",
         author: "unknown",
-        'take some newlines with you': "\n\n\n\n",
+        "take some newlines with you": "\n\n\n\n",
     }
 
 Float options
