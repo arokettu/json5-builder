@@ -16,7 +16,7 @@ final class Options
 
     public function __construct(
         // strings
-        public Options\Quotes $keyQuotes = Options\Quotes::Single,
+        public Options\Quotes $keyQuotes = Options\Quotes::Double,
         public Options\Quotes $valueQuotes = Options\Quotes::Double,
         public Options\BareKeys $bareKeys = Options\BareKeys::Ascii,
         public bool $tryOtherQuotes = true,
