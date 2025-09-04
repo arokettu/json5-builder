@@ -11,7 +11,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-class UnsupportedTypesTest extends TestCase
+final class UnsupportedTypesTest extends TestCase
 {
     public function testResourceJson5(): void
     {

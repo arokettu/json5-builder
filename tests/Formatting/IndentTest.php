@@ -11,7 +11,7 @@ use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
-class IndentTest extends TestCase
+final class IndentTest extends TestCase
 {
     public function testIndent(): void
     {

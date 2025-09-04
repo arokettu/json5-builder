@@ -11,7 +11,7 @@ use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 
 // phpcs:disable Generic.Files.LineLength.TooLong
-class StringValuesTest extends TestCase
+final class StringValuesTest extends TestCase
 {
     public function testStrings(): void
     {

@@ -8,7 +8,7 @@ use Arokettu\Json5\Options;
 use Error;
 use PHPUnit\Framework\TestCase;
 
-class OptionsPropertiesTest extends TestCase
+final class OptionsPropertiesTest extends TestCase
 {
     public function testUnknownPropertySet(): void
     {

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use TypeError;
 
 // phpcs:disable Generic.Files.LineLength.TooLong
-class CommentTest extends TestCase
+final class CommentTest extends TestCase
 {
     private const DATA_DIR = __DIR__ . '/data/comment';
 

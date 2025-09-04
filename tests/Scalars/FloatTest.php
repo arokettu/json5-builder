@@ -10,7 +10,7 @@ use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 
-class FloatTest extends TestCase
+final class FloatTest extends TestCase
 {
     public function testFloat(): void
     {

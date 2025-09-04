@@ -9,7 +9,7 @@ use Arokettu\Json5\JsonCEncoder;
 use Arokettu\Json5\JsonEncoder;
 use PHPUnit\Framework\TestCase;
 
-class BoolTest extends TestCase
+final class BoolTest extends TestCase
 {
     public function testBool(): void
     {

@@ -15,7 +15,7 @@ use Arokettu\Json5\Values\ObjectValue;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class EmptyTest extends TestCase
+final class EmptyTest extends TestCase
 {
     public function testEmptyArray(): void
     {

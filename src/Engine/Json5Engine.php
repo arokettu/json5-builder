@@ -102,7 +102,7 @@ final class Json5Engine
                 is_infinite($value) => $value > 0 ? 'Infinity' : '-Infinity',
                 default => Helpers\JsonHelper::encode(
                     $value,
-                    $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0
+                    $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0,
                 ),
             });
             return;

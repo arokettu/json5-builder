@@ -80,7 +80,7 @@ final class JsonEngine
         if (\is_float($value)) {
             fwrite($this->resource, Helpers\JsonHelper::encode(
                 $value,
-                $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0
+                $this->options->preserveZeroFraction ? JSON_PRESERVE_ZERO_FRACTION : 0,
             ));
             return;
         }

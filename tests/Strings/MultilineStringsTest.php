@@ -10,7 +10,7 @@ use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 
 // phpcs:disable Generic.Files.LineLength.TooLong
-class MultilineStringsTest extends TestCase
+final class MultilineStringsTest extends TestCase
 {
     public function testMultiline(): void
     {

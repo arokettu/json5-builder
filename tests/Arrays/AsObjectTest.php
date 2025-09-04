@@ -10,7 +10,7 @@ use Arokettu\Json5\JsonEncoder;
 use Arokettu\Json5\Options;
 use PHPUnit\Framework\TestCase;
 
-class AsObjectTest extends TestCase
+final class AsObjectTest extends TestCase
 {
     public function testStrings(): void
     {

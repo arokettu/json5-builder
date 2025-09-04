@@ -10,13 +10,13 @@ use Arokettu\Json5\JsonEncoder;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
-class InvalidUnicodeTest extends TestCase
+final class InvalidUnicodeTest extends TestCase
 {
     public function testInvalidUnicodeJson5(): void
     {
         self::expectException(ValueError::class);
         self::expectExceptionMessage(
-            'Unable to encode value: Malformed UTF-8 characters, possibly incorrectly encoded'
+            'Unable to encode value: Malformed UTF-8 characters, possibly incorrectly encoded',
         );
 
         Json5Encoder::encode("\xff");
@@ -26,7 +26,7 @@ class InvalidUnicodeTest extends TestCase
     {
         self::expectException(ValueError::class);
         self::expectExceptionMessage(
-            'Unable to encode value: Malformed UTF-8 characters, possibly incorrectly encoded'
+            'Unable to encode value: Malformed UTF-8 characters, possibly incorrectly encoded',
         );
 
         JsonEncoder::encode("\xff");
@@ -36,7 +36,7 @@ class InvalidUnicodeTest extends TestCase
     {
         self::expectException(ValueError::class);
         self::expectExceptionMessage(
-            'Unable to encode value: Malformed UTF-8 characters, possibly incorrectly encoded'
+            'Unable to encode value: Malformed UTF-8 characters, possibly incorrectly encoded',
         );
 
         JsonCEncoder::encode("\xff");

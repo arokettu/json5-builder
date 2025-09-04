@@ -13,7 +13,7 @@ use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-class SerializableTest extends TestCase
+final class SerializableTest extends TestCase
 {
     public function testJsonSerializable(): void
     {

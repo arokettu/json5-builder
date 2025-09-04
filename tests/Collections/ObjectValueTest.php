@@ -12,7 +12,7 @@ use Arokettu\Json5\Values\ObjectValue;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class ObjectValueTest extends TestCase
+final class ObjectValueTest extends TestCase
 {
     private const DATA_DIR = __DIR__ . '/data/object_value';
 
@@ -62,7 +62,7 @@ class ObjectValueTest extends TestCase
 
     public function testIterableAccepted(): void
     {
-        $i = function () {
+        $i = static function () {
             yield 'a' => 1;
             yield 'b' => 2;
             yield 'c' => 3;
@@ -86,7 +86,7 @@ class ObjectValueTest extends TestCase
         self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new ObjectValue($list1)));
 
         // iterable
-        $list2 = fn () => yield from $list1;
+        $list2 = static fn () => yield from $list1;
         self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new ObjectValue($list2())));
     }
 }

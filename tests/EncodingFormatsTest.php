@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
 
-class EncodingFormatsTest extends TestCase
+final class EncodingFormatsTest extends TestCase
 {
     public function testStream(): void
     {

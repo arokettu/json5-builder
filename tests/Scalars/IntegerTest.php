@@ -11,7 +11,7 @@ use Arokettu\Json5\Values\HexInteger;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
-class IntegerTest extends TestCase
+final class IntegerTest extends TestCase
 {
     public function testInt(): void
     {

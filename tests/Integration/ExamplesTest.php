@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 #[CoversNothing] // unreliable
-class ExamplesTest extends TestCase
+final class ExamplesTest extends TestCase
 {
     public function testExample1(): void
     {

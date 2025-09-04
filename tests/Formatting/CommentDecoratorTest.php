@@ -15,7 +15,7 @@ use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
-class CommentDecoratorTest extends TestCase
+final class CommentDecoratorTest extends TestCase
 {
     private const DATA_DIR = __DIR__ . '/data/comment_decorator';
 

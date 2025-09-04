@@ -11,7 +11,7 @@ use Arokettu\Json5\Values\CompactArray;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class CompactArrayTest extends TestCase
+final class CompactArrayTest extends TestCase
 {
     public function testArrayAccepted(): void
     {
@@ -39,7 +39,7 @@ class CompactArrayTest extends TestCase
 
     public function testIterableAccepted(): void
     {
-        $i = function () {
+        $i = static function () {
             yield 1;
             yield 2;
             yield 3;
@@ -108,7 +108,7 @@ class CompactArrayTest extends TestCase
         self::assertEquals('[1,2,3]', json_encode(new CompactArray($list1)));
 
         // iterable
-        $list2 = fn () => yield from $list1;
+        $list2 = static fn () => yield from $list1;
         self::assertEquals('[1,2,3]', json_encode(new CompactArray($list2())));
     }
 }

@@ -15,7 +15,7 @@ use JsonSerializable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class FromSerializableTest extends TestCase
+final class FromSerializableTest extends TestCase
 {
     public function testObjectsSupportJson5Serializable(): void
     {

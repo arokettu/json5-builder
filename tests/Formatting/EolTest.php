@@ -15,7 +15,7 @@ use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-class EolTest extends TestCase
+final class EolTest extends TestCase
 {
     private const DATA_DIR = __DIR__ . '/data/eol';
 

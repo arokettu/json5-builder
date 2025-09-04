@@ -12,7 +12,7 @@ use Arokettu\Json5\Values\CompactObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class CompactObjectTest extends TestCase
+final class CompactObjectTest extends TestCase
 {
     private const DATA_DIR = __DIR__ . '/data/compact_object';
 
@@ -62,7 +62,7 @@ class CompactObjectTest extends TestCase
 
     public function testIterableAccepted(): void
     {
-        $i = function () {
+        $i = static function () {
             yield 'a' => 1;
             yield 'b' => 2;
             yield 'c' => 3;
@@ -122,7 +122,7 @@ class CompactObjectTest extends TestCase
         self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($obj1)));
 
         // iterable
-        $obj2 = fn () => yield from $obj1;
+        $obj2 = static fn () => yield from $obj1;
         self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new CompactObject($obj2())));
     }
 }

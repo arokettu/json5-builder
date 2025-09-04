@@ -12,7 +12,7 @@ use Arokettu\Json5\Values\InlineObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class InlineObjectTest extends TestCase
+final class InlineObjectTest extends TestCase
 {
     private const DATA_DIR = __DIR__ . '/data/inline_object';
 
@@ -141,7 +141,7 @@ class InlineObjectTest extends TestCase
         self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new InlineObject($list1)));
 
         // iterable
-        $list2 = fn () => yield from $list1;
+        $list2 = static fn () => yield from $list1;
         self::assertEquals('{"0":1,"1":2,"2":3}', json_encode(new InlineObject($list2())));
     }
 }

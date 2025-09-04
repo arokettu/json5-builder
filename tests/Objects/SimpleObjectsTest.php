@@ -12,7 +12,7 @@ use ArrayObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class SimpleObjectsTest extends TestCase
+final class SimpleObjectsTest extends TestCase
 {
     public static function testStdClass(): void
     {
