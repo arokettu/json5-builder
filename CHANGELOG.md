@@ -2,6 +2,12 @@
 
 ## 2.x
 
+### 2.2.0
+
+*Sep 4, 2025*
+
+* Changed default key quotes from single to double
+
 ### 2.1.0
 
 *June 6, 2025*
