@@ -72,21 +72,21 @@ Possible values:
 
     // None
     {
-        'ascii': "unquoted in Ascii and Unicode",
-        'ユニコード': "unquoted in Unicode",
-        'contains space': "always quoted",
+        "ascii": "unquoted in Ascii and Unicode",
+        "ユニコード": "unquoted in Unicode",
+        "contains space": "always quoted",
     }
     // Ascii
     {
         ascii: "unquoted in Ascii and Unicode",
-        'ユニコード': "unquoted in Unicode",
-        'contains space': "always quoted",
+        "ユニコード": "unquoted in Unicode",
+        "contains space": "always quoted",
     }
     // Unicode
     {
         ascii: "unquoted in Ascii and Unicode",
         ユニコード: "unquoted in Unicode",
-        'contains space': "always quoted",
+        "contains space": "always quoted",
     }
 
 ``keyQuotes``, ``valueQuotes``
