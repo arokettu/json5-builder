@@ -31,7 +31,7 @@ The main differences:
 * No generic object serialization is supported.
   An object must be an instance of ``stdClass`` or ``ArrayObject``,
   or implement ``JsonSerializable`` or ``Json5Serializable``.
-  You can replicate the ``json_encode()`` behavior by wrapping an object with ``ArrayObject``.
+  You can replicate the ``json_encode()`` behavior by wrapping an object with ``get_object_vars()``.
 * The document is always pretty-printed.
 * Trailing commas are always used.
 
