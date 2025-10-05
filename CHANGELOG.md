@@ -2,6 +2,12 @@
 
 ## 2.x
 
+### 2.2.1
+
+*Oct 5, 2025*
+
+* Fixed deprecation warning on PHP 8.5
+
 ### 2.2.0
 
 *Sep 4, 2025*
