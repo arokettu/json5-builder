@@ -63,6 +63,8 @@ Run the script:
 
     php prettify.php < composer.json > composer.json5
 
+.. _json_encoder:
+
 JSON Encoder
 ============
 

@@ -6,8 +6,11 @@ Helper Objects
 .. highlight:: php
 
 The helper objects allow you control how specific values are rendered.
-They are also designed to be JSON-transparent so you can get an equivalent JSON file by using ``json_encode()``.
-This compatibility may be broken by some planned objects.
+Decorator objects are designed to be JSON-transparent so you can get an equivalent JSON file by using ``json_encode()``.
+Formatting objects are not JSON-transparent.
+
+.. hint::
+    If you use formatting objects, you can use this library's :ref:`JsonEncoder <json_encoder>` to generate JSON.
 
 Scalar Decorators
 =================
