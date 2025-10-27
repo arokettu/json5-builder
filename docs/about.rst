@@ -21,8 +21,6 @@ A side goal is so this tool can also be used to prettify existing JSON configs.
 JSON5
 =====
 
-.. note:: https://json5.org
-
 JSON5 is a file format best suited for human readable and maintainable configs.
 It is a superset of JSON and builds on its strengths, adding several useful features:
 
@@ -39,10 +37,14 @@ It is a superset of JSON and builds on its strengths, adding several useful feat
 .. [1] A feature not supported by `symfony/yaml <symfony_yaml_>`_ by the way.
 .. _symfony_yaml: https://symfony.com/doc/current/components/yaml.html
 
-JSONC
-=====
+.. seealso:: https://json5.org
 
-.. note:: https://code.visualstudio.com/docs/languages/json#_json-with-comments
+JSONC / JWCC
+============
 
-JSONC or JSON with Comments is just it, a JSON that allows comment blocks.
+JSONC (JSON with Comments) or JWCC (JSON With Commas and Comments) is just it, a JSON that allows comment blocks.
 It is not a well-defined standard but it is widely used so it was implemented here too.
+While JWCC at least tries to have a spec, JSONC is a more popular name for this, therefore it will be referred as JSONC in this doc.
+
+.. seealso:: JSONC definition: https://code.visualstudio.com/docs/languages/json#_json-with-comments
+.. seealso:: JWCC definition: https://nigeltao.github.io/blog/2021/json-with-commas-comments.html#introducing-jwcc
