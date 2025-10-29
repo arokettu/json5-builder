@@ -42,7 +42,7 @@ It is a superset of JSON and builds on its strengths, adding several useful feat
 JSONC / JWCC
 ============
 
-JSONC (JSON with Comments) or JWCC (JSON With Commas and Comments) is just it, a JSON that allows comment blocks.
+JSONC (JSON with Comments) or JWCC (JSON with Commas and Comments) is just it, a JSON that allows comment blocks.
 It is not a well-defined standard but it is widely used so it was implemented here too.
 While JWCC at least tries to have a spec, JSONC is a more popular name for this, therefore it will be referred as JSONC in this doc.
 
